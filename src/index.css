@@ -1,8 +1,8 @@
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Open Sans',
+    Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -11,3 +11,47 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.hero-image {
+  transition: transform 0.3s ease-in-out;
+}
+
+.hero-image:hover {
+  transform: scale(1.05);
+}
+
+.icon-right {
+  transition: transform 0.3s ease-in-out;
+}
+.icon-left {
+  transition: transform 0.3s ease-in-out;
+}
+
+.icon-down {
+  transition: transform 0.3s ease-in-out;
+}
+
+.icon-bottom {
+  transition: transform 0.3s ease-in-out;
+}
+
+.relative:hover .icon-right {
+  transform: translate(10px, -10px);
+}
+
+.relative:hover .icon-left {
+  transform: translate(-10px, -10px);
+}
+
+.relative:hover .icon-down {
+  transform: translate(10px, 10px);
+}
+
+.relative:hover .icon-bottom {
+  transform: translate(-10px, 10px);
+}
+
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';

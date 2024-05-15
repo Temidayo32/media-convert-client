@@ -1,0 +1,15 @@
+[
+    { "format": "MP4", "icon": "/mp4.svg", "description": "Convert your videos to MP4 format easily and quickly." },
+    { "format": "MOV", "icon": "/mov.svg", "description": "Convert your videos to MOV format easily and quickly." },
+    { "format": "AVI", "icon": "/avi.svg", "description": "Convert your videos to AVI format easily and quickly." },
+    { "format": "WEBM", "icon": "/webm.svg", "description": "Convert your videos to WEBM format easily and quickly." },
+    { "format": "GIF", "icon": "/gif.svg", "description": "Convert your videos to GIF format easily and quickly." },
+    { "format": "MPEG", "icon": "/mpeg.svg", "description": "Convert your videos to MPEG format easily and quickly." },
+    { "format": "FLV", "icon": "/flv.svg", "description": "Convert your videos to FLV format easily and quickly." },
+    { "format": "WMV", "icon": "/wmv.svg", "description": "Convert your videos to WMV format easily and quickly." },
+    { "format": "3GP", "icon": "/3gp.svg", "description": "Convert your videos to 3GP format easily and quickly." },
+    { "format": "M4V", "icon": "/m4v.svg", "description": "Convert your videos to M4V format easily and quickly." },
+    { "format": "OGG", "icon": "/ogg.svg", "description": "Convert your videos to OGG format easily and quickly." },
+    { "format": "MKV", "icon": "/mkv.svg", "description": "Convert your videos to MKV format easily and quickly." }
+  ]
+  
