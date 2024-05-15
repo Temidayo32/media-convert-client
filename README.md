@@ -1,6 +1,8 @@
-# Media Convert
+# Media Convert (frontend)
 
 **Media Convert** is a web application that allows users to upload media files, convert them to different formats, and download the converted files.
+
+Check out [Media Convert (backend)](https://github.com/Temidayo32/media-convert-backend)
 
 ## Features
 
