@@ -1,10 +1,12 @@
 import AppRoutes from './AppRoutes';
-import { Footer, Header } from './components';
+import { DataProvider } from './DataContext';
 
 function App() {
   return (
       <div>
+      <DataProvider> 
         <AppRoutes/>
+      </DataProvider>
       </div>
   );
 }

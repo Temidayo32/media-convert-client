@@ -31,13 +31,13 @@ const UploadOptions = ({ handleFileUpload, handleOpenPicker, onSuccess, onCancel
           cancel={onCancel}
           multiselect={true}
         >
-          <li className="p-4 pl-8 hover:bg-teal-600 flex items-center transition-colors duration-300">
+          <li className="p-4 pl-8 hover:bg-teal-600 flex items-center cursor-pointer transition-colors duration-300">
             <FaDropbox className="text-2xl mr-4" />
             From Dropbox
           </li>
         </DropboxChooser>
         <Link
-          className="p-4 pl-8 hover:bg-teal-600 flex items-center transition-colors duration-300"
+          className="p-4 pl-8 hover:bg-teal-600 flex items-center cursor-pointer transition-colors duration-300"
           onClick={handleOpenPicker}
         >
           <DiGoogleDrive className="text-2xl mr-4" />

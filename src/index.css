@@ -51,6 +51,37 @@ code {
   transform: translate(-10px, 10px);
 }
 
+@keyframes radiate {
+  0% {
+      width: 0; 
+      opacity: 0; 
+  }
+  50% {
+      width: 100%;
+      opacity: 1; 
+  }
+  100% {
+      width: 0; 
+      opacity: 0; 
+  }
+}
+
+@keyframes ping {
+  0% {
+      transform: scale(0.8);
+      opacity: 0.5;
+  }
+  70% {
+      transform: scale(1.2);
+      opacity: 0;
+  }
+  100% {
+      opacity: 0;
+  }
+}
+
+
+
 
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';

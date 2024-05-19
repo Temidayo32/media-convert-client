@@ -30,7 +30,7 @@ function Login({onForgotPasswordClick, show, onClose, showSignUp }) {
     return (
       <div>
         {show && (
-        <div id='closeLogin' class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-10" onClick={handleClick}>
+        <div id='closeLogin' class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-20" onClick={handleClick}>
             <div ref={loginRef} className="bg-white p-12 h-4/5 w-2/5 rounded-lg shadow-xl">
             <div class="mb-12 text-center"><p className="font-weight-bold text-3xl mb-0">Log In</p></div>
             <div class="mb-4 w-100 text-center">

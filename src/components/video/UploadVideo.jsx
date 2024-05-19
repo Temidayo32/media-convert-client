@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 
 import { FaFileCirclePlus } from "react-icons/fa6";
@@ -12,13 +12,18 @@ import useDrivePicker from 'react-google-drive-picker';
 
 import { clientId, developerKey, azureClientId } from '../../config/key';
 import UploadOptions from './UploadOptions';
+import { useData } from '../../DataContext';
 
 const UploadVideo = ({defaultFormat}) => {
-  const [showDropdown, setShowDropdown] = useState(false);
+  const navigate = useNavigate();
+  const { format: currentFormat } = useParams();
+  const { uploadedVideos, setUploadedVideos, setDownloadPageActive } = useData();
   const [openPicker, authResponse] = useDrivePicker();
-  const [uploadedVideos, setUploadedVideos] = useState([]);
+
+  const [showDropdown, setShowDropdown] = useState(false);
   const [showUploadForm, setShowUploadForm] = useState(true);
   const [formats, setFormats] = useState([]);
+  const [previousFormat, setPreviousFormat] = useState(null);
 
   useEffect(() => {
     fetch('/conversions.json')
@@ -27,11 +32,30 @@ const UploadVideo = ({defaultFormat}) => {
       .catch(error => console.error('Error fetching conversions:', error));
   }, []);
 
-  const defaultOption = formats.find((format) => format.format.toLowerCase() === defaultFormat.toLowerCase());
-  
   useEffect(() => {
     setShowUploadForm(uploadedVideos.length === 0);
   }, [uploadedVideos]);
+
+  useEffect(() => {
+      if (currentFormat !== previousFormat) {
+        setPreviousFormat(currentFormat);
+        setUploadedVideos([]);
+        }
+
+  }, [setUploadedVideos, currentFormat, previousFormat]);
+
+  const defaultOption = formats.find((format) => format.format.toLowerCase() === defaultFormat.toLowerCase());
+
+
+  function formatFileSize(bytes) {
+    const mbSize = bytes / (1024 * 1024);
+    if (mbSize < 1024) {
+      return mbSize.toFixed(2) + ' MB';
+    } else {
+      const gbSize = mbSize / 1024;
+      return gbSize.toFixed(2) + ' GB';
+    }
+  }
 
   // Handler for file selection
   const handleFileSelected = (e) => {
@@ -44,10 +68,12 @@ const UploadVideo = ({defaultFormat}) => {
     const newVideos = [...uploadedVideos];
     for (let i = 0; i < files.length; i++) {
       newVideos.push({
+        source: 'local',
         file: files[i],
         name: files[i].name,
-        size: (files[i].size / (1024 * 1024)).toFixed(2), 
+        size: formatFileSize(files[i].size),
         format: defaultFormat,
+        jobId: `${Date.now()}_${files[i].name.split('.')[0]}`
       });
     }
     setUploadedVideos(newVideos);
@@ -58,12 +84,16 @@ const UploadVideo = ({defaultFormat}) => {
     const newVideos = [...uploadedVideos];
     for (let i = 0; i < files.length; i++) {
       newVideos.push({
+        source: 'dropbox',
         file: files[i],
         name: files[i].name,
-        size: (files[i].bytes / (1024 * 1024)).toFixed(2),
+        fileLink: files[i].link,
+        size: formatFileSize(files[i].bytes),
         format: defaultFormat,
+        jobId: `${Date.now()}_${files[i].name.split('.')[0]}`
       });
     }
+    console.log(files)
     setUploadedVideos(newVideos);
     setShowUploadForm(false);
   };
@@ -72,36 +102,11 @@ const UploadVideo = ({defaultFormat}) => {
     console.log('Cancelled');
   };
 
-  const handleGoogleDriveUpload = async (googleDriveFile) => {
-    try {
-       // Fetch the embed URL HTML content
-      const response = await fetch(googleDriveFile.link);
-      const blob = await response.blob();
-
-       // Create a new File object
-      const file = new File([blob], googleDriveFile.name, { type: blob.type });
-  
-      // Add the file to the uploadedVideos state
-      setUploadedVideos((prevUploadedVideos) => [
-        ...prevUploadedVideos,
-        {
-          name: googleDriveFile.name,
-          size: (googleDriveFile.sizeBytes / (1024 * 1024)).toFixed(2), 
-          format: defaultFormat,
-          file: file,
-        },
-      ]);
-      console.log(uploadedVideos)
-    } catch (error) {
-      console.error('Error uploading file from Google Drive:', error);
-    }
-  };  
-
   const handleOpenPicker = () => {
     openPicker({
       clientId: clientId,
       developerKey: developerKey,
-      viewId: 'DOCS',
+      viewId: 'DOCS_VIDEOS',
       supportDrives: true,
       multiselect: true,
       mimeTypes: ['video/*'],
@@ -111,20 +116,19 @@ const UploadVideo = ({defaultFormat}) => {
         } else if(data.docs) {
           const selectedVideos = data.docs.filter(doc => doc.mimeType.startsWith('video/'));
           // console.log('Selected videos:', selectedVideos);
-          selectedVideos.forEach((video) => {
-            handleGoogleDriveUpload(video);
-            console.log(video)
-          });
-          // const newVideos = [...uploadedVideos];
-          // for (let i = 0; i < selectedVideos.length; i++) {
-          //   newVideos.push({
-          //     file: selectedVideos[i],
-          //     name: selectedVideos[i].name,
-          //     size: (selectedVideos[i].sizeBytes / (1024 * 1024)).toFixed(2), 
-          //     format: defaultFormat,
-          //   });
-          // }
-          // setUploadedVideos(newVideos);
+          const newVideos = [...uploadedVideos];
+          for (let i = 0; i < selectedVideos.length; i++) {
+            newVideos.push({
+              source: 'google',
+              file: selectedVideos[i],
+              fileId: selectedVideos[i].id,
+              name: selectedVideos[i].name,
+              size: formatFileSize(selectedVideos[i].sizeBytes),
+              format: defaultFormat,
+              jobId: `${Date.now()}_${selectedVideos[i].name.split('.')[0]}`
+            });
+          }
+          setUploadedVideos(newVideos);
           setShowUploadForm(false);
         }
       },
@@ -148,21 +152,34 @@ const UploadVideo = ({defaultFormat}) => {
     // Convert uploaded video
     uploadedVideos.forEach((video) => {
       const fileNameWithoutExtension = video.name.split('.')[0];
+      const fileExtension = video.name.split('.')[1];
 
       const formData = new FormData();
-      formData.append('video', video.file);
-      console.log(video.file)
+      formData.append('source', video.source);
+      formData.append('video', video.file)
+      formData.append('videoId', video.fileId);
+      formData.append('jobId', video.jobId)
+      formData.append('dropboxPath', video.fileLink)
       formData.append('videoName', fileNameWithoutExtension);
+      formData.append('videoExt', fileExtension)
       formData.append('videoSize', video.size);
       formData.append('videoFormat', video.format);
+      // for (const [key, value] of formData.entries()) {
+      //   console.log(`${key}: ${value}`);
+      // }
+
+      const endpoint = video.source === 'local' ? 'convert' : 'convertcloud';
   
-      axios.post('http://localhost:8000/convert', formData, {
+      axios.post(`http://localhost:8000/${endpoint}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     })
-      .then((response) => {
-        console.log('Conversion started:', response);
+      .then(data => console.log(data))
+      .then(() => {
+        console.log('Navigating to conversion-progress page');
+        setDownloadPageActive(true);
+        navigate('/download');
       })
       .catch((error) => {
         console.error('Error converting video:', error);
@@ -223,7 +240,7 @@ const UploadVideo = ({defaultFormat}) => {
             <div className='flex w-5/6'>
               <div className='flex flex-col w-2/3'>
                 <span className="text-teal-800 text-xl font-semibold">{video.name}</span>
-                <span className="text-gray-500 text-lg ml-2">{video.size} MB</span>
+                <span className="text-gray-500 text-lg ml-2">{video.size}</span>
               </div>
               <div className='flex items-center justify-end w-1/3'>
                 <p className='text-lg pr-2 text-gray-500'>Output:</p>

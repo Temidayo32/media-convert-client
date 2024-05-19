@@ -28,7 +28,7 @@ function AccountSuccess({ openEmailVerification }) {
       <div
         id='closeSuccess'
         onClick={handleClick}
-        className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-10"
+        className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-20"
       >
         <div className="bg-white p-12 h-3/5 w-2/5 rounded-lg shadow-xl">
           <div className="mb-3 text-center">

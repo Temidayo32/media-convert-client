@@ -4,9 +4,11 @@ const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
   const [showSignUpOptions, setShowSignUpOptions] = useState(false);
+  const [uploadedVideos, setUploadedVideos] = useState([]);
+  const [downloadPageActive, setDownloadPageActive] = useState(false);
 
   return (
-    <DataContext.Provider value={{ showSignUpOptions, setShowSignUpOptions }}>
+    <DataContext.Provider value={{ showSignUpOptions, setShowSignUpOptions, uploadedVideos, setUploadedVideos, downloadPageActive, setDownloadPageActive }}>
       {children}
     </DataContext.Provider>
   );

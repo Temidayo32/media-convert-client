@@ -29,7 +29,7 @@ function Signup({ showLogin, show, onClose, setUserCredentials, closeSignUpAndSh
     return (
       <div>
         {show && (
-            <div id='closeSignUp' onClick={handleClick} className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-10">
+            <div id='closeSignUp' onClick={handleClick} className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-20">
               <div ref={signUpRef} className="bg-white p-12 h-4/5 w-2/5 rounded-lg shadow-xl">
                 <div className="mb-12 text-center"><p className="font-weight-bold text-3xl mb-0">Create your account</p></div>
                 <div className="mb-4 w-100 text-center">

@@ -12,7 +12,7 @@ const VideoConverter = () => {
     setKey((prevKey) => prevKey + 1);
   }, [format, location.pathname]);
 
-
+  
   return (
     <div className="container mx-auto py-20"  key={key}>
       <h1 className="text-5xl py-4 text-center font-bold text-teal-800">{format.toUpperCase()} Converter</h1>

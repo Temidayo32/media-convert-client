@@ -43,7 +43,7 @@ function PasswordReset({ handleLogIn, show, onClose }) {
     return (
         <div>
           {show && (
-            <div id='closeReset' onClick={handleClick} className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-10">
+            <div id='closeReset' onClick={handleClick} className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-20">
               <div ref={passwordRef} className="bg-white p-12 h-3/5 w-2/5 rounded-lg shadow-xl">
               <div className="mb-12 text-center"><p className="font-weight-bold text-3xl mb-0">Reset Password</p></div>
               <div>
