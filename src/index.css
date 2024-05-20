@@ -53,16 +53,24 @@ code {
 
 @keyframes radiate {
   0% {
-      width: 0; 
-      opacity: 0; 
+    width: 0;
+    opacity: 0;
+  }
+  25% {
+    width: 25%;
+    opacity: 1;
   }
   50% {
-      width: 100%;
-      opacity: 1; 
+    width: 50%;
+    opacity: 1;
+  }
+  75% {
+    width: 75%;
+    opacity: 1;
   }
   100% {
-      width: 0; 
-      opacity: 0; 
+    width: 100%;
+    opacity: 1;
   }
 }
 
