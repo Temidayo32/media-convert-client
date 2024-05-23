@@ -90,7 +90,7 @@ const Conversion = () => {
                         style={{
                             width: `${getProgressPercentage(video.jobId)}%`,
                             transition: 'width 4s ease-in-out',
-                            animation: progress[video.jobId] === 'completed' || progress[video.jobId] === 'failed' ? 'none' : 'radiate 5s linear', 
+                            animation: progress[video.jobId] === 'completed' || progress[video.jobId] === 'failed' ? 'none' : 'radiate 3s linear', 
                         }}
                     />
                     <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{progress[video.jobId] || 'Pending'}</span>

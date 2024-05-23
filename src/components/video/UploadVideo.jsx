@@ -12,19 +12,40 @@ import useDrivePicker from 'react-google-drive-picker';
 
 import { clientId, developerKey, azureClientId } from '../../config/key';
 import UploadOptions from './UploadOptions';
+import AdvancedOptions from './AdvancedOptions';
 import { useData } from '../../DataContext';
+
+
+const defaultSettings = {
+  selectedCodec: '',
+  selectedFrameRate: '',
+  selectedResolution: '',
+  selectedScale: { width: '', height: '' },
+  selectedCropFilter: '',
+  selectedRotateFilter: '',
+  deshakeChecked: false,
+  selectedDenoise: '',
+  selectedAspectRatio: '',
+  selectedAudioCodec: '',
+  volume: 1,
+  noAudio: false,
+};
 
 const UploadVideo = ({defaultFormat}) => {
   const navigate = useNavigate();
   const { format: currentFormat } = useParams();
   const { uploadedVideos, setUploadedVideos, setDownloadPageActive } = useData();
+  const { showSignUpOptions, setShowSignUpOptions } = useData();
   const [openPicker, authResponse] = useDrivePicker();
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [showUploadForm, setShowUploadForm] = useState(true);
   const [formats, setFormats] = useState([]);
   const [previousFormat, setPreviousFormat] = useState(null);
+  const [currentVideoId, setCurrentVideoId] = useState(null);
 
+  // console.log(uploadedVideos)
+  
   useEffect(() => {
     fetch('/conversions.json')
       .then(response => response.json())
@@ -73,7 +94,8 @@ const UploadVideo = ({defaultFormat}) => {
         name: files[i].name,
         size: formatFileSize(files[i].size),
         format: defaultFormat,
-        jobId: `${Date.now()}_${files[i].name.split('.')[0]}`
+        jobId: `${Date.now()}_${files[i].name.split('.')[0]}`,
+        settings: { ...defaultSettings },
       });
     }
     setUploadedVideos(newVideos);
@@ -90,7 +112,8 @@ const UploadVideo = ({defaultFormat}) => {
         fileLink: files[i].link,
         size: formatFileSize(files[i].bytes),
         format: defaultFormat,
-        jobId: `${Date.now()}_${files[i].name.split('.')[0]}`
+        jobId: `${Date.now()}_${files[i].name.split('.')[0]}`,
+        settings: { ...defaultSettings },
       });
     }
     console.log(files)
@@ -125,7 +148,8 @@ const UploadVideo = ({defaultFormat}) => {
               name: selectedVideos[i].name,
               size: formatFileSize(selectedVideos[i].sizeBytes),
               format: defaultFormat,
-              jobId: `${Date.now()}_${selectedVideos[i].name.split('.')[0]}`
+              jobId: `${Date.now()}_${selectedVideos[i].name.split('.')[0]}`,
+              settings: { ...defaultSettings },
             });
           }
           setUploadedVideos(newVideos);
@@ -164,6 +188,7 @@ const UploadVideo = ({defaultFormat}) => {
       formData.append('videoExt', fileExtension)
       formData.append('videoSize', video.size);
       formData.append('videoFormat', video.format);
+      formData.append('videoSettings', JSON.stringify(video.settings))
       // for (const [key, value] of formData.entries()) {
       //   console.log(`${key}: ${value}`);
       // }
@@ -186,30 +211,70 @@ const UploadVideo = ({defaultFormat}) => {
       });
   });
   };
+
+  const updateVideoSettings = (videoId, newSettings) => {
+    setUploadedVideos((prevVideos) =>
+      prevVideos.map((video) =>
+        video.jobId === videoId ? { ...video, settings: newSettings } : video
+      )
+    );
+  };
+
+  const resetVideoSettings = (videoId) => {
+    const defaultSetting = {...defaultSettings}
+    setUploadedVideos((prevVideos) =>
+      prevVideos.map((video) =>
+        video.jobId === videoId ? { ...video, settings: defaultSetting } : video
+      )
+    );
+  };
+
+  const openModal = (videoId) => {
+    setCurrentVideoId(videoId);
+  };
+
+  const closeModal = () => {
+    setCurrentVideoId(null);
+  };
+
+  const toggleSignUpOptions = () => {
+    setShowSignUpOptions(!showSignUpOptions);
+};
   
  
   return (
     <div className="container mx-auto py-8">
+      {currentVideoId !== null && (
+        <AdvancedOptions
+          onClose={closeModal}
+          formData={uploadedVideos.find((video) => video.jobId === currentVideoId).settings}
+          onChange={(newSettings) => updateVideoSettings(currentVideoId, newSettings)}
+          resetData={() => resetVideoSettings(currentVideoId)}
+        />
+      )}
       {showUploadForm ? (
-        <div className="flex items-center justify-center w-2/3 h-64 mx-auto bg-teal-50 p-8 rounded-lg border-dashed border-4 border-teal-400">
-        <div 
-          className="relative w-2/5 h-1/2 bg-teal-500 rounded-lg shadow-lg flex items-center justify-between px-6"
-          onMouseEnter={() => setShowDropdown(true)}
-          onMouseLeave={() => setShowDropdown(false)}
-        >
-          <FaFileCirclePlus className="text-white text-4xl" />
-          <span className="text-white text-3xl pr-2 font-semibold cursor-pointer">Choose Files</span>
-          <div className="h-20 w-0.5 bg-teal-400"></div>
-          <IoIosArrowDropdownCircle className="text-white text-4xl cursor-pointer" />
-          { showDropdown && 
-            <UploadOptions 
-              handleFileUpload={handleFileUpload} 
-              handleOpenPicker={handleOpenPicker} 
-              onSuccess={onSuccess} 
-              onCancel={onCancel} 
-              handleFileSelected={handleFileSelected} />
-          }
-        </div>
+        <div className="flex flex-col items-center justify-center w-2/3 h-64 mx-auto bg-teal-50 p-8 rounded-lg border-dashed border-4 border-teal-400">
+          <div 
+            className="relative w-2/5 h-1/2 bg-teal-500 rounded-lg shadow-lg flex items-center justify-between px-6"
+            onMouseEnter={() => setShowDropdown(true)}
+            onMouseLeave={() => setShowDropdown(false)}
+          >
+            <FaFileCirclePlus className="text-white text-4xl" />
+            <span className="text-white text-3xl pr-2 font-semibold cursor-pointer">Choose Files</span>
+            <div className="h-20 w-0.5 bg-teal-400"></div>
+            <IoIosArrowDropdownCircle className="text-white text-4xl cursor-pointer" />
+            { showDropdown && 
+              <UploadOptions 
+                handleFileUpload={handleFileUpload} 
+                handleOpenPicker={handleOpenPicker} 
+                onSuccess={onSuccess} 
+                onCancel={onCancel} 
+                handleFileSelected={handleFileSelected} />
+            }
+          </div>
+          <p className="text-center text-gray-500">
+            Max file size 1GB. <button className='underline underline-offset-2' onClick={toggleSignUpOptions}>Sign up</button> for more
+          </p>
       </div>
       ) : (
         <div className="w-2/3 mx-auto bg-white p-8 rounded-lg shadow-lg">
@@ -258,9 +323,11 @@ const UploadVideo = ({defaultFormat}) => {
               </div>
             </div>
             <div className='flex items-center gap-2'>
-              <button className="mr-2" title="Settings" onClick={() => console.log('Settings clicked')}>
-                <BsGearFill className="text-3xl text-gray-500" />
-              </button>
+              <div key={video.jobId}>
+                   <button className="mr-2" title="Settings"  onClick={() => openModal(video.jobId)}>
+                    <BsGearFill className="text-3xl text-gray-500 hover:text-teal-500 transform hover:scale-110 transition transition-colors duration-300" />
+                  </button>
+              </div>
               <button title="Delete" onClick={() => handleRemoveVideo(index)}>
                 <MdDelete className="text-2xl text-gray-500 hover:text-red-600 transform hover:scale-110 transition transition-colors duration-300" />
               </button>

@@ -13,3 +13,4 @@ export {default as Signupmodal} from './home/Signupmodal'
 export {default as UploadVideo} from './video/UploadVideo';
 export {default as OneDrivePicker} from './video/OneDrivePicker';
 export {default as Conversion} from './video/Conversion';
+export {default as AdvancedOptions} from './video/AdvancedOptions';

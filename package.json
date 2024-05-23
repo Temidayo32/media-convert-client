@@ -5,9 +5,11 @@
   "dependencies": {
     "@azure/msal-browser": "^3.14.0",
     "@azure/msal-react": "^2.0.16",
+    "@emotion/styled": "^11.11.5",
     "@microsoft/mgt": "^4.2.1",
     "@microsoft/mgt-react": "^4.2.1",
     "@microsoft/microsoft-graph-client": "^3.0.7",
+    "@mui/material": "^5.15.18",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
