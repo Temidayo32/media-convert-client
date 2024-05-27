@@ -3,11 +3,14 @@ import React from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
+import  { useData } from '../../DataContext';
 
 function SignUpWithGoogle() {
+  const { setIdToken } = useData();
+
   const signInWithGoogle = () => {
     firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider()).then((userCredentials) => {
-      console.log(userCredentials);
+      setIdToken(userCredentials.credential.idToken);
     }).catch((error) => {
       console.error(error);
     });

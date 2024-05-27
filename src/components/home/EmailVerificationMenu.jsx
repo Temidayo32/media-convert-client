@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import { getAuth, sendEmailVerification } from 'firebase/auth';
 
@@ -19,16 +19,26 @@ function EmailVerificationMenu({ emailVerified, userCredentials }) {
       });
   };
 
+  useEffect(() => {
+    if (showResendModal) {
+      const timeoutId = setTimeout(() => {
+        setShowResendModal(false);
+      }, 2000); 
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [showResendModal]);
+
 
   return (
-    <div className="bg-blue-800 py-2 px-4 flex flex-col justify-center">
+    <div className="bg-orange-700 py-2 px-4 flex flex-col justify-center">
         <p className="text-white">
           Please verify your email address. Your account is limited without verifying your email address.
         </p>
         {!emailVerified && (
           <div className="space-x-2">
             <div className="inline-flex flex-col">
-            <div className="text-center mb-2 mt-4 bg-teal-800 hover:bg-teal-500 transition duration-300 font-bold py-2 px-4 rounded mr-2">
+            <div className="text-center mb-2 mt-4 bg-teal-500 hover:bg-teal-800 transition duration-300 font-bold py-2 px-4 rounded mr-2">
               <Link 
                 onClick={handleResendEmail}
                 className="text-white inline-flex items-center">
@@ -39,7 +49,7 @@ function EmailVerificationMenu({ emailVerified, userCredentials }) {
             <div className="inline-flex flex-col">
             <div className="text-center mb-2 mt-4 bg-white transition duration-300 hover:bg-teal-500 font-bold py-2 px-4 rounded mr-2">
               <Link 
-                className="text-blue-500 hover:text-white inline-flex items-center">
+                className="text-orange-500 hover:text-white inline-flex items-center">
                   <FaEdit className="mr-2" />  Change Email Address
               </Link>
             </div>

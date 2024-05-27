@@ -2,6 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://127.0.0.1:8000",
   "dependencies": {
     "@azure/msal-browser": "^3.14.0",
     "@azure/msal-react": "^2.0.16",
@@ -22,6 +23,7 @@
     "postcss": "^8.4.38",
     "react": "^18.3.1",
     "react-click-away-listener": "^2.2.3",
+    "react-cookie": "^7.1.4",
     "react-dom": "^18.3.1",
     "react-dropbox-chooser": "^0.0.5",
     "react-google-drive-picker": "^1.2.2",

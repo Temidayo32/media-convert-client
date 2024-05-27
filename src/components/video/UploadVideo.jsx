@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import io from 'socket.io-client';
 
 import { FaFileCirclePlus } from "react-icons/fa6";
 import { IoIosArrowDropdownCircle } from 'react-icons/io';
@@ -31,11 +32,13 @@ const defaultSettings = {
   noAudio: false,
 };
 
+const socket = io('http://localhost:8000'); 
+
 const UploadVideo = ({defaultFormat}) => {
   const navigate = useNavigate();
   const { format: currentFormat } = useParams();
   const { uploadedVideos, setUploadedVideos, setDownloadPageActive } = useData();
-  const { showSignUpOptions, setShowSignUpOptions } = useData();
+  const { showSignUpOptions, setShowSignUpOptions, emailVerified } = useData();
   const [openPicker, authResponse] = useDrivePicker();
 
   const [showDropdown, setShowDropdown] = useState(false);
@@ -43,9 +46,15 @@ const UploadVideo = ({defaultFormat}) => {
   const [formats, setFormats] = useState([]);
   const [previousFormat, setPreviousFormat] = useState(null);
   const [currentVideoId, setCurrentVideoId] = useState(null);
-
-  // console.log(uploadedVideos)
+  const [limitExceeded, setLimitExceeded] = useState(false);
+  const [limitMessage, setLimitMessage] = useState('');
+  const [fadeOut, setFadeOut] = useState(false);
   
+  const { idToken } = useData();
+  // console.log(emailVerified)
+  // console.log(idToken)
+
+
   useEffect(() => {
     fetch('/conversions.json')
       .then(response => response.json())
@@ -65,7 +74,40 @@ const UploadVideo = ({defaultFormat}) => {
 
   }, [setUploadedVideos, currentFormat, previousFormat]);
 
+  useEffect(() => {
+    socket.on('limitExceeded', (data) => {
+      setLimitExceeded(true);
+      setLimitMessage(data.message)
+      setFadeOut(false);
+    });
+
+    // Cleanup on component unmount
+    return () => {
+      socket.off('limitExceeded');
+    };
+  }, [])
+
+  useEffect(() => {
+    if (limitExceeded) {
+      const fadeTimer = setTimeout(() => {
+        setFadeOut(true); // Start fade-out transition
+      }, 4500); // Start fading out before the actual removal
+      const hideTimer = setTimeout(() => {
+        setLimitExceeded(false);
+      }, 5000); // Hide the notification after it has faded out
+      return () => {
+        clearTimeout(fadeTimer);
+        clearTimeout(hideTimer);
+      };
+    }
+  }, [limitExceeded]);
+
   const defaultOption = formats.find((format) => format.format.toLowerCase() === defaultFormat.toLowerCase());
+
+  // const randomSessionID = 'a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6'
+
+
+  // setCookie('sessionID', randomSessionID, { path:'/convert', maxAge: 3600000, httpOnly: true, sameSite: 'none', secure: true });
 
 
   function formatFileSize(bytes) {
@@ -192,14 +234,28 @@ const UploadVideo = ({defaultFormat}) => {
       // for (const [key, value] of formData.entries()) {
       //   console.log(`${key}: ${value}`);
       // }
-
-      const endpoint = video.source === 'local' ? 'convert' : 'convertcloud';
   
-      axios.post(`http://localhost:8000/${endpoint}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
+      // Determine the correct endpoint
+    let endpoint;
+    if (emailVerified) {
+      endpoint = video.source === 'local' ? '/signed/convert' : '/signed/convertcloud';
+    } else {
+      endpoint = video.source === 'local' ? '/convert' : '/convertcloud';
+    }
+
+    // Set up headers
+    const headers = {
+      'Content-Type': 'multipart/form-data'
+    };
+
+    if (idToken && emailVerified) {
+      headers['Authorization'] = `Bearer ${idToken}`;
+    }
+
+    
+    const requestURL = endpoint;
+
+    axios.post(requestURL, formData, { headers, withCredentials: true })
       .then(data => console.log(data))
       .then(() => {
         console.log('Navigating to conversion-progress page');
@@ -244,10 +300,17 @@ const UploadVideo = ({defaultFormat}) => {
  
   return (
     <div className="container mx-auto py-8">
+      {limitExceeded && (
+        <div className={`fixed top-24 right-5 bg-red-500 z-20 text-white p-4 rounded-lg shadow-lg transition-opacity duration-500 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
+          {limitMessage}
+        </div>
+      )}
       {currentVideoId !== null && (
         <AdvancedOptions
           onClose={closeModal}
           formData={uploadedVideos.find((video) => video.jobId === currentVideoId).settings}
+          fileName={uploadedVideos.find((video) => video.jobId === currentVideoId).name}
+          fileSize={uploadedVideos.find((video) => video.jobId === currentVideoId).size}
           onChange={(newSettings) => updateVideoSettings(currentVideoId, newSettings)}
           resetData={() => resetVideoSettings(currentVideoId)}
         />
@@ -275,6 +338,7 @@ const UploadVideo = ({defaultFormat}) => {
           <p className="text-center text-gray-500">
             Max file size 1GB. <button className='underline underline-offset-2' onClick={toggleSignUpOptions}>Sign up</button> for more
           </p>
+          {!emailVerified && (<p className='text-center text-gray-500 mt-auto text-xs'>*Limit 5 conversions/day</p>)}
       </div>
       ) : (
         <div className="w-2/3 mx-auto bg-white p-8 rounded-lg shadow-lg">
@@ -337,6 +401,7 @@ const UploadVideo = ({defaultFormat}) => {
         </ul>
         <div className="flex justify-between items-center mt-8">
           <span className="text-gray-600 text-lg">{uploadedVideos.length} videos uploaded</span>
+          {!emailVerified && (<p className='text-center text-gray-500 mt-auto text-xs'>*Limit 5 conversions/day</p>)}
           <button className="bg-teal-800 hover:bg-teal-600 text-white font-bold py-2 px-8"
             onClick={handleConvertVideos}>
             Convert

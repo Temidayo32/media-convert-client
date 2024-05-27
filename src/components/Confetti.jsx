@@ -143,11 +143,11 @@ function Confetti() {
   };
 
   const particlesLoaded = (container) => {
-    console.log(container);
+    // console.log(container);
   };
 
   return (
-    <div className="absolute top-0 left-0 w-full h-full z-10">
+    <div className="absolute top-0 left-0 w-full h-full z-20">
         <Particles
             id="tsparticles"
             options={options}

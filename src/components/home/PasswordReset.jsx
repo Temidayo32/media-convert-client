@@ -19,21 +19,6 @@ function PasswordReset({ handleLogIn, show, onClose }) {
         });
       };
     
-    // useEffect(() => {
-    //     function closeModal(event) {
-    //       if (passwordRef.current && !passwordRef.current.contains(event.target) && !event.target.classList.contains("passwordRef")) {
-    //         onClose();
-    //       }
-    //     }
-    //     const close = document.querySelector('#closeReset')
-    //     if (close) {
-    //       close.addEventListener("click", closeModal);
-    //       return () => {
-    //           close.removeEventListener("click", closeModal);
-    //       };
-    //     }
-    //   }, [passwordRef]);
-
     const handleClick = (e) => {
       if (e.target.id === 'closeReset') {
         onClose();

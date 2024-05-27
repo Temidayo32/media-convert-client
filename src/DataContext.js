@@ -6,9 +6,12 @@ export const DataProvider = ({ children }) => {
   const [showSignUpOptions, setShowSignUpOptions] = useState(false);
   const [uploadedVideos, setUploadedVideos] = useState([]);
   const [downloadPageActive, setDownloadPageActive] = useState(false);
+  const [idToken, setIdToken] = useState(null);
+  const [emailVerified, setEmailVerified] = useState(false); 
+  
 
   return (
-    <DataContext.Provider value={{ showSignUpOptions, setShowSignUpOptions, uploadedVideos, setUploadedVideos, downloadPageActive, setDownloadPageActive }}>
+    <DataContext.Provider value={{ showSignUpOptions, setShowSignUpOptions, uploadedVideos, setUploadedVideos, downloadPageActive, setDownloadPageActive, idToken, setIdToken, emailVerified, setEmailVerified }}>
       {children}
     </DataContext.Provider>
   );

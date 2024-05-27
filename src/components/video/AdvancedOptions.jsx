@@ -72,7 +72,7 @@ const audioCodecs = [
   ];
   
 
-function AdvancedOptions({ onClose, formData, onChange, resetData }) {
+function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fileSize }) {
 
     const handleClick = (e) => {
         if (e.target.id === 'closeOptions') {
@@ -145,10 +145,13 @@ function AdvancedOptions({ onClose, formData, onChange, resetData }) {
             onClick={handleClick}
           >
                 <div className="bg-white p-8 h-5/6 w-4/5 shadow-xl rounded">
-                    <div className="flex items-center mb-8">
-                        <div className='w-11/12 flex items-center gap-4 justify-start relative'>
-                            <BsGearFill className="text-3xl text-gray-600" />
-                            <h2 className="text-3xl font-semibold">Advanced Options (Optional)</h2>
+                    <div className="flex items-center mb-2">
+                        <div className=" w-11/12 flex flex-col">
+                            <div className='flex items-center mb-2 gap-4 justify-start relative'>
+                                <BsGearFill className="text-3xl text-gray-600" />
+                                <h2 className="text-3xl font-semibold">Advanced Options (Optional)</h2>
+                            </div>
+                            <p className='text-gray-500'>File name: {fileName} ({fileSize}) </p>
                         </div>
                         <div className='w-1/12 flex justify-end'>
                             <AiOutlineClose
@@ -399,7 +402,7 @@ function AdvancedOptions({ onClose, formData, onChange, resetData }) {
                     </div>
                     <div className='flex items-end'>
                       <Tooltip title="Reset All Options to Default Settings" arrow placement="top">
-                          <button onClick={() => resetData()} className='text-xl text-gray-500 mt-4 border border-2 p-2 rounded hover:bg-gray-300'>
+                          <button onClick={() => resetData()} className='text-lg text-gray-500 mt-2 border border-2 p-2 rounded hover:bg-gray-300'>
                             Reset Options
                           </button>
                       </Tooltip>

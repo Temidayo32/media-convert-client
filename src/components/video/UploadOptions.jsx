@@ -19,6 +19,7 @@ const UploadOptions = ({ handleFileUpload, handleOpenPicker, onSuccess, onCancel
               type="file"
               className="hidden"
               accept="video/*"
+              multiple='multiple'
               onChange={(e) => handleFileUpload(e)}
             />
             <IoIosFolderOpen className="text-2xl mr-4" />

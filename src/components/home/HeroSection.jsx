@@ -25,7 +25,7 @@ function HeroSection() {
                 <div className="relative">
                     <img src="/hero.svg" alt="Hero" className="w-4/6 hero-image" />
                     <div className="absolute transform -translate-x-1/2 -translate-y-1/2 hover:scale-110">
-                        <FaRocket className="text-orange-300 text-3xl ml-16 mb-20 absolute bottom-96 left-80 icon-right" />
+                        <FaRocket className="text-orange-300 text-3xl ml-12 mb-12 absolute bottom-96 left-80 icon-right" />
                         <FaVideo className="text-gray-300 text-3xl mx-28 absolute bottom-96 left-80 icon-right" />
                         <FaFileImage className="text-gray-300 text-4xl mx-32 absolute bottom-72 left-80 icon-right" />
                         <BsFiletypeDoc className="text-gray-300 text-3xl absolute bottom-96 right-16 icon-left"/>

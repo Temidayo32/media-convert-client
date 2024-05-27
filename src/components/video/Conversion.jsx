@@ -30,7 +30,7 @@ const Conversion = () => {
     };  
   }, []);
 
-    console.log('download:', downloadUrl)
+    // console.log('download:', downloadUrl)
   const handleRemoveVideo = (index) => {
         const newVideos = [...uploadedVideos];
         newVideos.splice(index, 1);
@@ -55,7 +55,7 @@ const Conversion = () => {
 
     const getProgressPercentage = (jobId) => {
       const progressValue = progress[jobId];
-      console.log("progress:", progress);
+      // console.log("progress:", progress);
   
       switch (progressValue) {
           case 'completed':

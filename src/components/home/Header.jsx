@@ -1,43 +1,75 @@
 import React, {useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Login, PasswordReset, Signup, AccountSuccess, EmailVerification, EmailVerificationMenu, Menu } from '..';
+import { getLocalStorageItem, setLocalStorageItem, removeLocalStorageItem } from '../../utils/localStorage';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useData } from '../../DataContext';
 
 
 function Header() {
-    const [showLogin, setShowLogin] = useState(true || window.localStorage.getItem('auth') === 'true');
+    const [showLogin, setShowLogin] = useState(true);
     const [showSignUp, setShowSignUp] = useState(true);
     const [showLoginOptions, setShowLoginOptions] = useState(false);
-    const {showSignUpOptions, setShowSignUpOptions} = useData();
+    const {showSignUpOptions, setShowSignUpOptions}  = useData();
+    const {idToken, setIdToken} = useData();
     const [showPasswordReset, setShowPasswordReset] = useState(false);
     const [userCredentials, setUserCredentials] = useState(null);
     const [showEmailVerification, setShowEmailVerification] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const [showUser, setShowUser ] = useState(false);
-    const [emailVerified, setEmailVerified] = useState(false); 
+    const {emailVerified, setEmailVerified} = useData(); 
 
     const auth = getAuth();
 
     useEffect(() => {
-      const subscribe = onAuthStateChanged(auth, (user) => {
+      const storedUser = getLocalStorageItem('userCredentials');
+      const storedToken = getLocalStorageItem('idToken');
+      
+      if (storedUser) {
+        setUserCredentials(storedUser);
+        setShowUser(true);
+        setEmailVerified(storedUser.emailVerified);
+        setShowLogin(false);
+      }
+  
+      if (storedToken) {
+        setIdToken(storedToken);
+      }
+  
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
         if (user) {
+          const userData = {
+            uid: user.uid,
+            emailVerified: user.emailVerified,
+          };
           setUserCredentials(user);
-          setShowUser(user.uid);
+          setShowUser(true);
           setEmailVerified(user.emailVerified);
           setShowLogin(false);
-          window.localStorage.setItem('auth', 'true');
-          user.getIdToken().then((token) => {
-            console.log(token)
-          })
+          setLocalStorageItem('userCredentials', userData);
+          
+          user.getIdToken(true).then((token) => {
+            setIdToken(token);
+            setLocalStorageItem('idToken', token);
+          });
         } else {
           setUserCredentials(null);
+          setShowUser(false);
           setShowMenu(false);
+          removeLocalStorageItem('userCredentials');
+          removeLocalStorageItem('idToken');
         }
       });
+  
+      return () => unsubscribe();
+    }, [auth, setIdToken]);
+    
 
-      return subscribe;
-    }, [auth]);
+    // useEffect(() => {
+    //   if (idToken !== null) {
+    //     console.log('Updated IdToken:', idToken);
+    //   }
+    // }, [idToken]); 
   
     const toggleLogInOptions = () => {
         setShowLogin(true);

@@ -6,20 +6,7 @@ import SignUpWithEmail from './SignUpWithEmail';
 function Signup({ showLogin, show, onClose, setUserCredentials, closeSignUpAndShowSuccess  }) {
     const signUpRef = useRef(null);
 
-    // useEffect(() => {
-    //     function closeModal(event) {
-    //       if (signUpRef.current && !signUpRef.current.contains(event.target) && !event.target.classList.contains("signUpRef")) {
-    //         onClose();
-    //       }
-    //     }
-    //     const close = document.querySelector('#closeSignUp')
-    //     if (close) {
-    //       close.addEventListener("click", closeModal);
-    //       return () => {
-    //           close.removeEventListener("click", closeModal);
-    //       };
-    //     }
-    //   }, [signUpRef]);
+    
     const handleClick = (e) => {
       if (e.target.id === 'closeSignUp') {
         onClose();
