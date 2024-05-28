@@ -13,13 +13,14 @@ function Header() {
     const {showSignUpOptions, setShowSignUpOptions}  = useData();
     const {idToken, setIdToken} = useData();
     const [showPasswordReset, setShowPasswordReset] = useState(false);
-    const [userCredentials, setUserCredentials] = useState(null);
+    const { userCredentials, setUserCredentials } = useData();
     const [showEmailVerification, setShowEmailVerification] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const [showUser, setShowUser ] = useState(false);
     const {emailVerified, setEmailVerified} = useData(); 
 
     const auth = getAuth();
+    console.log(auth.currentUser)
 
     useEffect(() => {
       const storedUser = getLocalStorageItem('userCredentials');
@@ -38,15 +39,11 @@ function Header() {
   
       const unsubscribe = onAuthStateChanged(auth, (user) => {
         if (user) {
-          const userData = {
-            uid: user.uid,
-            emailVerified: user.emailVerified,
-          };
           setUserCredentials(user);
           setShowUser(true);
           setEmailVerified(user.emailVerified);
           setShowLogin(false);
-          setLocalStorageItem('userCredentials', userData);
+          setLocalStorageItem('userCredentials', user);
           
           user.getIdToken(true).then((token) => {
             setIdToken(token);

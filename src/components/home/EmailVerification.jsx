@@ -23,8 +23,12 @@ function EmailVerification({showMenu }) {
     }
 
     const handleSendVerificationEmail = () => {
+        const actionCodeSettings = {
+            url: `http://localhost:3000/verify-email?email=${encodeURIComponent(auth.currentUser.email)}`,
+            handleCodeInApp: true
+          };
         setIsLoading(true);
-        sendEmailVerification(user)
+        sendEmailVerification(user, actionCodeSettings)
             .then(() => {
                 setVerifyEmail(true);
             })
@@ -36,8 +40,8 @@ function EmailVerification({showMenu }) {
         });
     };
 
-    const sendVerificationEmail = (user) => {
-        sendEmailVerification(user)
+    const sendVerificationEmail = (user, actionCodeSettings) => {
+        sendEmailVerification(user, actionCodeSettings)
             .then(() => {
                 setShowResentModal(true);
                 setTimeout(() => {
@@ -54,8 +58,12 @@ function EmailVerification({showMenu }) {
     };
 
     const handleResendVerificationEmail = () => {
+        const actionCodeSettings = {
+            url: `http://localhost:3000/verify-email?email=${encodeURIComponent(auth.currentUser.email)}`,
+            handleCodeInApp: true
+          };
         setError(null);
-        sendVerificationEmail(user);
+        sendVerificationEmail(user, actionCodeSettings);
     };
 
 

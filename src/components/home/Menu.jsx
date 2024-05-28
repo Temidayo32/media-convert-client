@@ -1,11 +1,26 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getAuth, signOut } from 'firebase/auth';
-import { RxHamburgerMenu } from 'react-icons/rx'; 
+import { RxHamburgerMenu, RxDashboard } from 'react-icons/rx'; 
+import { RiLogoutCircleRLine } from "react-icons/ri";
+import { MdAddTask } from "react-icons/md";
+import { useData } from '../../DataContext';
 
 function Menu() {
   const [showMenu, setShowMenu] = useState(false);
   const [menuTimer, setMenuTimer] = useState(null); 
   const auth = getAuth();
+  const { userCredentials } = useData();
+
+  const email = userCredentials.email;
+
+  let displayName = userCredentials.displayName || '';
+    if (!displayName) {
+    const username = email.split('@')[0];
+    displayName = username.charAt(0).toUpperCase() + username.slice(1);
+    }
+    
+  const photoURL = userCredentials.photoURL || `https://api.dicebear.com/8.x/micah/svg?backgroundColor=ffd4b2,ffc9a3,ffb84c&backgroundType=gradientLinear,solid`;
 
   const handleLogout = () => {
     signOut(auth)
@@ -40,7 +55,7 @@ function Menu() {
         <RxHamburgerMenu className="h-6 w-6" />
       </button>
       <div
-        className={`origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none transition-opacity duration-200 ${showMenu ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        className={`origin-top-right absolute right-0 mt-2 w-72 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none transition-opacity duration-200 ${showMenu ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         role="menu"
         aria-orientation="vertical"
         aria-labelledby="options-menu"
@@ -48,26 +63,42 @@ function Menu() {
         onMouseLeave={handleMouseLeave} 
       >
         <div className="py-1" role="none">
-          <a
-            href="#"
-            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          <div className="flex items-center p-4">
+          <img src={photoURL} alt="Menu" className="w-12 h-12 rounded-full mr-4" />
+          <div>
+            <h2 className="text-base font-bold">{displayName}</h2>
+            <p className="text-gray-600">Free Plan</p>
+          </div>
+        </div>
+        <hr class=""></hr>
+          <button
+            onClick={() => {}}
+            className="block p-4 flex items-center w-full text-base text-gray-700 hover:bg-gray-100"
             role="menuitem"
           >
-            Profile
-          </a>
-          <a
-            href="#"
-            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            <MdAddTask className='mr-4 text-2xl' /> Recent Tasks
+          </button>
+          <p className="block p-4 text-sm">Account</p>
+          <Link
+            to="/dashboard"
+            className="block p-4 flex items-center w-full text-base text-gray-700 hover:bg-gray-100"
+            role="menuitem"
+          >
+            <RxDashboard className='mr-4 text-2xl' /> Go To Dashboard
+          </Link>
+          {/* <button
+            onClick={() => {}}
+            className="block px-4 py-2 text-base text-gray-700 hover:bg-gray-100"
             role="menuitem"
           >
             Help & Support
-          </a>
+          </button> */}
           <button
             onClick={handleLogout}
-            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+            className="block p-4 flex items-center text-base text-red-500 hover:bg-gray-100 w-full text-left"
             role="menuitem"
           >
-            Logout
+            <RiLogoutCircleRLine className='mr-4 text-2xl'/> Logout
           </button>
         </div>
       </div>

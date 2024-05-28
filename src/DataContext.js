@@ -8,10 +8,11 @@ export const DataProvider = ({ children }) => {
   const [downloadPageActive, setDownloadPageActive] = useState(false);
   const [idToken, setIdToken] = useState(null);
   const [emailVerified, setEmailVerified] = useState(false); 
+  const [userCredentials, setUserCredentials] = useState(null);
   
 
   return (
-    <DataContext.Provider value={{ showSignUpOptions, setShowSignUpOptions, uploadedVideos, setUploadedVideos, downloadPageActive, setDownloadPageActive, idToken, setIdToken, emailVerified, setEmailVerified }}>
+    <DataContext.Provider value={{ showSignUpOptions, setShowSignUpOptions, uploadedVideos, setUploadedVideos, downloadPageActive, setDownloadPageActive, idToken, setIdToken, emailVerified, setEmailVerified, userCredentials, setUserCredentials }}>
       {children}
     </DataContext.Provider>
   );

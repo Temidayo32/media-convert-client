@@ -147,7 +147,7 @@ function Confetti() {
   };
 
   return (
-    <div className="absolute top-0 left-0 w-full h-full z-20">
+    <div className="absolute top-0 left-0 w-full h-full">
         <Particles
             id="tsparticles"
             options={options}

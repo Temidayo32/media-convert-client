@@ -10,7 +10,11 @@ function EmailVerificationMenu({ emailVerified, userCredentials }) {
 
   const auth = getAuth();
   const handleResendEmail = () => {
-    sendEmailVerification(auth.currentUser)
+    const actionCodeSettings = {
+      url: `http://localhost:3000/verify-email?email=${encodeURIComponent(auth.currentUser.email)}`,
+      handleCodeInApp: true
+    };
+    sendEmailVerification(auth.currentUser, actionCodeSettings)
       .then(() => {
         setShowResendModal(true);
       })
