@@ -174,7 +174,7 @@ const Profile = () => {
                         </div>
                     </div>
                     <div className="text-center mt-12">
-                        <button type="submit" className="bg-teal-500 w-full transition-transform duration-300 hover:scale-105 trans text-white p-2 rounded-full">Update Profile</button>
+                        <button type="submit" className="bg-teal-800 hover:bg-teal-500 w-full transition-transform duration-300 hover:scale-105 transform text-white p-2 rounded-full">Update Profile</button>
                     </div>
                     {message && <p className="text-center text-green-500 mt-4">{message}</p>}
                     {error && <p className="text-center text-red-500 mt-4">{error}</p>}

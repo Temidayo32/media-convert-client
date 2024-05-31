@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import { BrowserRouter as Router, Route, Routes, useParams, Navigate } from 'react-router-dom';
 import { HomePage, VideoConverter, DownloadPage } from './pages';
 import { Footer, Header, EmailVerificationRedirect, Dashboard } from './components';
@@ -11,6 +11,18 @@ const DownloadProtectedRoute = ({ element, redirectTo }) => {
 
 const DashboardProtectedRoute = ({ element, redirectTo }) => {
   const { userCredentials } = useData();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (userCredentials !== undefined) {
+      setLoading(false);
+    }
+  }, [userCredentials]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return userCredentials ? element : <Navigate to={redirectTo} />;
 };
 

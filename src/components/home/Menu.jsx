@@ -71,13 +71,13 @@ function Menu() {
           </div>
         </div>
         <hr class=""></hr>
-          <button
-            onClick={() => {}}
+          <Link
+            to='/dashboard/recent-tasks'
             className="block p-4 flex items-center w-full text-base text-gray-700 hover:bg-gray-100"
             role="menuitem"
           >
             <MdAddTask className='mr-4 text-2xl' /> Recent Tasks
-          </button>
+          </Link>
           <p className="block p-4 text-sm">Account</p>
           <Link
             to="/dashboard"

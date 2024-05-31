@@ -44,7 +44,7 @@ const Conversion = () => {
       finalizing: 'bg-indigo-500',
       completed: 'bg-green-500',
       failed: 'bg-red-500',
-      pending: 'bg-gray-500', // Adding 'failed' status for completeness
+      pending: 'bg-gray-500', 
   };
   
 

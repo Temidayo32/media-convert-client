@@ -1,6 +1,6 @@
 import React, {useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Login, PasswordReset, Signup, AccountSuccess, EmailVerification, EmailVerificationMenu, Menu } from '..';
+import { Login, PasswordReset, Signup, AccountSuccess, EmailVerification, EmailVerificationMenu, Menu, HeaderOptions } from '..';
 import { getLocalStorageItem, setLocalStorageItem, removeLocalStorageItem } from '../../utils/localStorage';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useData } from '../../DataContext';
@@ -113,9 +113,12 @@ function Header() {
           )}
         <header className="bg-white py-4 border-b border-gray-200 shadow-sm">
         <div className="container mx-auto flex justify-between items-center">
-            <div className="flex items-center">
-                <img src="/medialogo.svg" alt="Logo" className="w-14 mr-4 text-teal-800"/>
-                <Link to="/" className="text-teal-800 text-xl font-bold">Media Convert</Link>
+            <div className="flex items-center gap-12">
+                <div className='flex items-center'>
+                  <img src="/medialogo.svg" alt="Logo" className="w-14 mr-4 text-teal-800"/>
+                  <Link to="/" className="text-teal-800 text-xl font-bold">Media Convert</Link>
+                </div>
+                <HeaderOptions/>
           </div>
             <div className="flex">
                 {showUser ? (

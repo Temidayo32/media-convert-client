@@ -1,6 +1,10 @@
 import React from 'react';
 import { Link, Route, Routes, Navigate } from 'react-router-dom';
-import Profile from './Profile'; 
+import Profile from './Profile';
+import RecentTasks from './RecentTasks';
+import ChangeEmail from './ChangeEmail';
+import ChangePassword from './ChangePassword';
+import DeleteAccount from './DeleteAccount';
 
 import { ImProfile } from "react-icons/im";
 import { MdAddTask, MdOutlineMail, MdOutlinePassword } from "react-icons/md";
@@ -33,6 +37,10 @@ const Dashboard = () => {
       <main className="ml-1/4 w-4/5">
         <Routes>
           <Route path="profile" element={<Profile/>} />
+          <Route path="recent-tasks" element={<RecentTasks />} />
+          <Route path="change-email" element={<ChangeEmail />} />
+          <Route path="change-password" element={<ChangePassword />} />
+          <Route path="delete-account" element={<DeleteAccount />} />
           {/* Add routes for other components as needed */}
           <Route path="/" element={<Navigate to="profile" replace />} />
         </Routes>
