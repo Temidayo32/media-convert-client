@@ -3,6 +3,7 @@ import { useData } from '../../DataContext';
 import io from 'socket.io-client';
 
 import { MdDelete } from "react-icons/md";
+import DownloadOptions from './DownloadOptions';
 
 const socket = io('http://localhost:8000'); 
 
@@ -79,7 +80,7 @@ const Conversion = () => {
       <ul>
         {uploadedVideos.map((video, index) => (
           <li key={index} className="flex justify-between items-center m-px border w-full py-4 px-4 border-gray-300 pb-2">
-          <div className='flex w-9/12'>
+          <div className='flex w-8/12'>
             <div className='flex flex-col w-5/12'>
               <span className="text-teal-800 text-lg font-semibold">{video.name}</span>
             </div>
@@ -97,24 +98,12 @@ const Conversion = () => {
                 </div>
                 </div>
           </div>
-          <div className='flex items-center gap-6 w-3/12'>
-                <button
-                    className={`py-2 px-6 text-xl rounded transition-colors duration-300 ${progress[video.jobId] === 'completed' ? 'bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white' : 'bg-gray-400 text-gray-700 cursor-not-allowed'}`}
-                    title="download"
-                    onClick={() => {
-                      if (progress[video.jobId] === 'completed' && downloadUrl) {
-                          const link = document.createElement('a');
-                          link.href = downloadUrl;
-                          link.download = `${video.name.split('.')[0]}.${video.format}`
-                          document.body.appendChild(link);
-                          link.click();
-                          document.body.removeChild(link);
-                      }
-                  }}
-                    disabled={progress[video.jobId] !== 'completed'}
-                >
-                    Download
-                </button>
+          <div className='flex items-center z-10 gap-6 w-4/12'>
+                <DownloadOptions
+                  video={video}
+                  downloadUrl={downloadUrl}
+                  progress={progress[video.jobId]}
+                />
             <button title="Delete" onClick={() => handleRemoveVideo(index)}>
                 <MdDelete className="text-2xl text-gray-500 hover:text-red-600 transform hover:scale-110 transition transition-colors duration-300" />
             </button>

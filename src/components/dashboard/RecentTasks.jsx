@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { formatDistanceToNowStrict, addHours } from 'date-fns';
-import { useData } from '../../DataContext';
-import { storage } from '../../config/firebase_config';
-import { ref, getDownloadURL, uploadBytesResumable, deleteObject, listAll, getMetadata, updateMetadata } from 'firebase/storage';
+import { db } from '../../config/firebase_config';
+import { doc, setDoc, getDocs, collection, deleteDoc, query, where, getDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 import { MdDelete } from "react-icons/md";
 import { GiEmptyMetalBucketHandle } from "react-icons/gi";
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import DownloadOptions from '../video/DownloadOptions';
 
 
 const socket = io('http://localhost:8000');
@@ -29,65 +29,32 @@ const RecentTasks = () => {
   const auth = getAuth();
   const user = auth.currentUser;
 
-  
-  
-
-  useEffect(() => {
-    const fetchTasks = async () => {
-      if (user) {
-        // console.log(user.uid)
-        // Fetch tasks from Firebase Storage
-        const tasksRef = ref(storage, `tasks/${user.uid}/`);
-        const tasksSnapshot = await listAll(tasksRef);
-        const tasksData = await Promise.all(
-          tasksSnapshot.items.map(async (itemRef) => {
-            const url = await getDownloadURL(itemRef);
-            const metadata = await getMetadata(itemRef);
-            return {
-              jobId: itemRef.name,
-              url: metadata.customMetadata.fileUrl,
-              name: metadata.customMetadata.name,
-              format: metadata.customMetadata.format,
-              progress: metadata.customMetadata.progress,
-              completedAt: metadata.customMetadata.completedAt ? new Date(metadata.customMetadata.completedAt) : null,
-            };
-          })
-        );
-        setTasks(tasksData);
-      }
-    };
-
-    console.log(tasks)
-
-    fetchTasks();
-  }, [user]);
 
   useEffect(() => {
     const handleConversionProgress = async (data) => {
       if (!user) {
-        return; 
+        return;
       }
-
-      console.log(`Updating task for user: ${user.uid} with jobId: ${data.jobId}`);
-
+    
       try {
-        const taskRef = ref(storage, `tasks/${user.uid}/${data.jobId}`);
+        const userId = user.uid;
+        const taskId = data.jobId;
+        const taskRef = doc(db, 'tasks', taskId); 
         const metadata = {
-          customMetadata: {
-            name: data.name,
-            fileUrl: data.url,
-            format: data.format,
-            progress: data.progress,
-            completedAt: data.progress === 'completed' ? new Date().toISOString() : null,
-          },
+          name: data.name,
+          format: data.format,
+          progress: data.progress,
+          completedAt: data.progress === 'completed' ? new Date().toISOString() : null,
+          userId: userId, 
         };
 
-        if (data.progress === 'completed') {
-          await updateMetadata(taskRef, metadata);
-        } else {
-          await uploadBytesResumable(taskRef, new Blob(), { customMetadata: metadata.customMetadata });
+        if (data.url) {
+          metadata.fileUrl = data.url;
         }
-
+    
+        await setDoc(taskRef, metadata, { merge: true }); // Merge with existing document if it exists
+        console.log(`Updating task for user: ${user.uid} with jobId: ${data.jobId}`);
+    
         setTasks((prevTasks) =>
           prevTasks.map((task) =>
             task.jobId === data.jobId
@@ -99,13 +66,70 @@ const RecentTasks = () => {
         console.error('Error updating task:', err);
       }
     };
-
-    socket.on('conversion_progress', handleConversionProgress);
+    
+    if (user) {
+      socket.on('conversion_progress', handleConversionProgress);
+    }
 
     return () => {
-      socket.off('conversion_progress', handleConversionProgress);
+      if (user) {
+        socket.off('conversion_progress', handleConversionProgress);
+      }
     };
+  }, [user]); 
+  
+  useEffect(() => {
+    const fetchTasks = async () => {
+      if (user) {
+        const userId = user.uid;
+        const tasksRef = collection(db, 'tasks');
+        const q = query(tasksRef, where('userId', '==', userId));
+    
+        try {
+          const tasksSnapshot = await getDocs(q);
+          const tasksData = tasksSnapshot.docs.map((doc) => ({
+            jobId: doc.id, // Use the document ID as the jobId
+            ...doc.data(),
+          }));
+    
+          setTasks(tasksData);
+          console.log(tasks);
+        } catch (error) {
+          console.error('Error fetching tasks:', error);
+        }
+      }
+    };
+    
+  
+    fetchTasks();
   }, [user]);
+
+  const handleRemoveTask = async (jobId) => {
+    try {
+      const userId = user.uid;
+      const taskRef = doc(db, 'tasks', jobId); // Reference to the specific task document under the tasks collection
+
+      console.log(taskRef)
+  
+      // Fetch the task document to verify ownership before deletion
+      const taskDoc = await getDoc(taskRef);
+      if (taskDoc.exists()) {
+        const taskData = taskDoc.data();
+        
+        // Ensure that the authenticated user owns the task before deletion
+        if (taskData.userId === userId) {
+          await deleteDoc(taskRef); 
+          setTasks((prevTasks) => prevTasks.filter((task) => task.jobId !== jobId));
+        } else {
+          console.error('User does not have permission to delete this task.');
+        }
+      } else {
+        console.error('Task document does not exist.');
+      }
+    } catch (err) {
+      console.error('Error removing task:', err);
+    }
+  };
   
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -123,17 +147,6 @@ const RecentTasks = () => {
 
     return () => clearInterval(intervalId);
   }, []);
-
-
-  const handleRemoveTask = async (jobId) => {
-    try {
-      const taskRef = ref(storage, `tasks/${user.uid}/${jobId}`);
-      await deleteObject(taskRef);
-      setTasks((prevTasks) => prevTasks.filter((task) => task.jobId !== jobId));
-    } catch (err) {
-      console.error('Error removing task:', err);
-    }
-  };
 
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
@@ -176,12 +189,12 @@ const RecentTasks = () => {
                     </div>
                     ): (filteredTasks.map((task) => (
                     <li key={task.jobId} className={`flex justify-between items-center m-8 h-28 border rounded py-4 px-4 pb-2 ${colorMap[task.progress]}`}>
-                    <div className='flex w-6/12'>
+                    <div className='flex w-5/12'>
                         <div className='flex flex-col w-5/12'>
                         <span className="text-teal-800 text-lg font-semibold">{task.name}.{task.format}</span>
                         </div>
                     </div>
-                    <div className='flex justify-end items-center gap-12 w-6/12'>
+                    <div className='flex justify-end items-center gap-12 w-7/12'>
                         {task.progress === 'completed' && task.completedAt && (
                         <div className="text-red-600 mt-2 flex items-center flex-col">
                             <p className='text-xl'>
@@ -192,23 +205,11 @@ const RecentTasks = () => {
                             </p>
                         </div>
                         )}
-                        <button
-                        className={`py-2 px-6 text-lg rounded transition-colors duration-300 ${task.progress === 'completed' ? 'bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white' : 'bg-gray-400 text-gray-700 cursor-not-allowed'}`}
-                        title="download"
-                        onClick={() => {
-                            if (task.progress === 'completed' && task.url) {
-                            const link = document.createElement('a');
-                            link.href = task.url;
-                            link.download = `${task.name}.${task.format}`;
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                            }
-                        }}
-                        disabled={task.progress !== 'completed'}
-                        >
-                        Download
-                        </button>
+                        <DownloadOptions
+                          video={task}
+                          downloadUrl={task.url}
+                          progress={task.progress}
+                        />
                         <button title="Delete" onClick={() => handleRemoveTask(task.jobId)}>
                         <MdDelete className="text-2xl text-gray-500 hover:text-red-600 transform hover:scale-110 transition transition-colors duration-300" />
                         </button>

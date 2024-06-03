@@ -34,6 +34,8 @@ const defaultSettings = {
 
 const socket = io('http://localhost:8000'); 
 
+const MAX_FILE_SIZE = 1 * 1024 * 1024 * 1024;
+
 const UploadVideo = ({defaultFormat}) => {
   const navigate = useNavigate();
   const { format: currentFormat } = useParams();
@@ -49,6 +51,9 @@ const UploadVideo = ({defaultFormat}) => {
   const [limitExceeded, setLimitExceeded] = useState(false);
   const [limitMessage, setLimitMessage] = useState('');
   const [fadeOut, setFadeOut] = useState(false);
+  const [oversizedFiles, setOversizedFiles] = useState([]);
+  const [showErrorMessages, setShowErrorMessages] = useState(false);
+
   
   const { idToken } = useData();
   // console.log(emailVerified)
@@ -129,39 +134,74 @@ const UploadVideo = ({defaultFormat}) => {
   const handleFileUpload = (e) => {
     const files = e.target.files;
     const newVideos = [...uploadedVideos];
+    const oversizedFiles = [];
+
     for (let i = 0; i < files.length; i++) {
-      newVideos.push({
-        source: 'local',
-        file: files[i],
-        name: files[i].name,
-        size: formatFileSize(files[i].size),
-        format: defaultFormat,
-        jobId: `${Date.now()}_${files[i].name.split('.')[0]}`,
-        settings: { ...defaultSettings },
-      });
+        if (!emailVerified && files[i].size > MAX_FILE_SIZE) {
+            oversizedFiles.push(`File size of ${files[i].name} exceeds the 1 GB limit.`);
+            continue;
+        }
+
+        newVideos.push({
+            source: 'local',
+            file: files[i],
+            name: files[i].name,
+            size: formatFileSize(files[i].size),
+            format: defaultFormat,
+            jobId: `${Date.now()}_${files[i].name.split('.')[0]}`,
+            settings: { ...defaultSettings },
+        });
     }
+
     setUploadedVideos(newVideos);
+    setOversizedFiles(oversizedFiles); 
+
+    if (oversizedFiles.length > 0) {
+      setShowErrorMessages(true);
+      setTimeout(() => {
+          setShowErrorMessages(false);
+      }, 5000); // 5 seconds timeout
+    }
+
     setShowUploadForm(false);
   };
 
   const onSuccess = (files) => {
     const newVideos = [...uploadedVideos];
+    const oversizedFiles = [];
+
     for (let i = 0; i < files.length; i++) {
-      newVideos.push({
-        source: 'dropbox',
-        file: files[i],
-        name: files[i].name,
-        fileLink: files[i].link,
-        size: formatFileSize(files[i].bytes),
-        format: defaultFormat,
-        jobId: `${Date.now()}_${files[i].name.split('.')[0]}`,
-        settings: { ...defaultSettings },
-      });
+        if (!emailVerified && files[i].bytes > MAX_FILE_SIZE) {
+            oversizedFiles.push(`File size of ${files[i].name} exceeds the 1 GB limit.`);
+            continue;
+        }
+
+        newVideos.push({
+            source: 'dropbox',
+            file: files[i],
+            name: files[i].name,
+            fileLink: files[i].link,
+            size: formatFileSize(files[i].bytes),
+            format: defaultFormat,
+            jobId: `${Date.now()}_${files[i].name.split('.')[0]}`,
+            settings: { ...defaultSettings },
+        });
     }
-    console.log(files)
+
+    console.log(files);
     setUploadedVideos(newVideos);
+    setOversizedFiles(oversizedFiles); 
+
+    if (oversizedFiles.length > 0) {
+      setShowErrorMessages(true);
+      setTimeout(() => {
+          setShowErrorMessages(false);
+      }, 5000); // 5 seconds timeout
+   }
+
     setShowUploadForm(false);
   };
+
 
   const onCancel = () => {
     console.log('Cancelled');
@@ -169,35 +209,51 @@ const UploadVideo = ({defaultFormat}) => {
 
   const handleOpenPicker = () => {
     openPicker({
-      clientId: clientId,
-      developerKey: developerKey,
-      viewId: 'DOCS_VIDEOS',
-      supportDrives: true,
-      multiselect: true,
-      mimeTypes: ['video/*'],
-      callbackFunction: (data) => {
-        if (data.action === 'cancel') {
-          console.log('User clicked cancel/close button');
-        } else if(data.docs) {
-          const selectedVideos = data.docs.filter(doc => doc.mimeType.startsWith('video/'));
-          // console.log('Selected videos:', selectedVideos);
-          const newVideos = [...uploadedVideos];
-          for (let i = 0; i < selectedVideos.length; i++) {
-            newVideos.push({
-              source: 'google',
-              file: selectedVideos[i],
-              fileId: selectedVideos[i].id,
-              name: selectedVideos[i].name,
-              size: formatFileSize(selectedVideos[i].sizeBytes),
-              format: defaultFormat,
-              jobId: `${Date.now()}_${selectedVideos[i].name.split('.')[0]}`,
-              settings: { ...defaultSettings },
-            });
-          }
-          setUploadedVideos(newVideos);
-          setShowUploadForm(false);
-        }
-      },
+        clientId: clientId,
+        developerKey: developerKey,
+        viewId: 'DOCS_VIDEOS',
+        supportDrives: true,
+        multiselect: true,
+        mimeTypes: ['video/*'],
+        callbackFunction: (data) => {
+            if (data.action === 'cancel') {
+                console.log('User clicked cancel/close button');
+            } else if (data.docs) {
+                const selectedVideos = data.docs.filter(doc => doc.mimeType.startsWith('video/'));
+                const newVideos = [...uploadedVideos];
+                const oversizedFiles = [];
+
+                for (let i = 0; i < selectedVideos.length; i++) {
+                    if (!emailVerified && selectedVideos[i].sizeBytes > MAX_FILE_SIZE) {
+                        oversizedFiles.push(`File size of ${selectedVideos[i].name} exceeds the 1 GB limit.`);
+                        continue;
+                    }
+
+                    newVideos.push({
+                        source: 'google',
+                        file: selectedVideos[i],
+                        fileId: selectedVideos[i].id,
+                        name: selectedVideos[i].name,
+                        size: formatFileSize(selectedVideos[i].sizeBytes),
+                        format: defaultFormat,
+                        jobId: `${Date.now()}_${selectedVideos[i].name.split('.')[0]}`,
+                        settings: { ...defaultSettings },
+                    });
+                }
+
+                setUploadedVideos(newVideos);
+                setOversizedFiles(oversizedFiles); 
+
+                if (oversizedFiles.length > 0) {
+                  setShowErrorMessages(true);
+                  setTimeout(() => {
+                      setShowErrorMessages(false);
+                  }, 5000); // 5 seconds timeout
+                }
+
+                setShowUploadForm(false);
+            }
+        },
     });
   };
 
@@ -305,6 +361,13 @@ const UploadVideo = ({defaultFormat}) => {
           {limitMessage}
         </div>
       )}
+      {showErrorMessages && oversizedFiles.length > 0 && (
+            <div className={`fixed top-24 left-1/2 transform -translate-x-1/2 bg-red-500 text-white p-4 rounded-md shadow-lg z-50 ${!showErrorMessages ? 'opacity-0 transition-opacity duration-500' : 'opacity-100'}`}>
+                {oversizedFiles.map((message, index) => (
+                    <p key={index}>{message}</p>
+                ))}
+            </div>
+      )}
       {currentVideoId !== null && (
         <AdvancedOptions
           onClose={closeModal}
@@ -335,9 +398,12 @@ const UploadVideo = ({defaultFormat}) => {
                 handleFileSelected={handleFileSelected} />
             }
           </div>
-          <p className="text-center text-gray-500">
-            Max file size 1GB. <button className='underline underline-offset-2' onClick={toggleSignUpOptions}>Sign up</button> for more
-          </p>
+          {!emailVerified && (
+            <p className="text-center text-gray-500">
+              Max file size 1GB. <button className='underline underline-offset-2' onClick={toggleSignUpOptions}>Sign up</button> for more
+            </p>
+          )
+          } 
           {!emailVerified && (<p className='text-center text-gray-500 mt-auto text-xs'>*Limit 5 conversions/day</p>)}
       </div>
       ) : (
