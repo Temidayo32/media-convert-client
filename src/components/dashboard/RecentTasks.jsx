@@ -207,7 +207,7 @@ const RecentTasks = () => {
                         )}
                         <DownloadOptions
                           video={task}
-                          downloadUrl={task.url}
+                          downloadUrl={task.fileUrl}
                           progress={task.progress}
                         />
                         <button title="Delete" onClick={() => handleRemoveTask(task.jobId)}>
