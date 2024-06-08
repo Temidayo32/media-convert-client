@@ -1,0 +1,841 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DownloadOptions Component disables the download button if progress is not completed 1`] = `
+<DocumentFragment>
+  <div
+    class="relative inline-block text-left"
+  >
+    <div
+      aria-expanded="true"
+      aria-haspopup="true"
+      class="py-2 px-4 flex text-xl gap-6 items-center rounded-t-lg transition-colors duration-300 bg-gray-400 text-gray-700 cursor-not-allowed"
+      disabled=""
+      id="options-menu"
+    >
+      <button
+        class="bg-gray-400 text-gray-700 cursor-not-allowed"
+        disabled=""
+        type="button"
+      >
+        Download
+      </button>
+      <div
+        class="h-10 p-0 w-0.5 bg-gray-600 cursor-not-allowed"
+      />
+      <svg
+        class="text-2xl text-gray-500 cursor-not-allowed"
+        fill="currentColor"
+        height="1em"
+        stroke="currentColor"
+        stroke-width="0"
+        viewBox="0 0 512 512"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M48 256c0 114.9 93.1 208 208 208s208-93.1 208-208S370.9 48 256 48 48 141.1 48 256zm289.1-43.4c7.5-7.5 19.8-7.5 27.3 0 3.8 3.8 5.6 8.7 5.6 13.6s-1.9 9.9-5.7 13.7l-94.3 94c-7.6 6.9-19.3 6.7-26.6-.6l-95.7-95.4c-7.5-7.5-7.6-19.7 0-27.3 7.5-7.5 19.7-7.6 27.3 0l81.1 81.9 81-79.9z"
+        />
+      </svg>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`DownloadOptions Component enables the download button when progress is completed 1`] = `
+<DocumentFragment>
+  <div
+    class="relative inline-block text-left"
+  >
+    <div
+      aria-expanded="true"
+      aria-haspopup="true"
+      class="py-2 px-4 flex text-xl gap-6 items-center rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
+      id="options-menu"
+    >
+      <button
+        class="shadow-2xl drop-shadow-2xl text-white"
+        type="button"
+      >
+        Download
+      </button>
+      <div
+        class="h-10 p-0 w-0.5 bg-white"
+      />
+      <svg
+        class="text-2xl text-white cursor-pointer"
+        fill="currentColor"
+        height="1em"
+        stroke="currentColor"
+        stroke-width="0"
+        viewBox="0 0 512 512"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M48 256c0 114.9 93.1 208 208 208s208-93.1 208-208S370.9 48 256 48 48 141.1 48 256zm289.1-43.4c7.5-7.5 19.8-7.5 27.3 0 3.8 3.8 5.6 8.7 5.6 13.6s-1.9 9.9-5.7 13.7l-94.3 94c-7.6 6.9-19.3 6.7-26.6-.6l-95.7-95.4c-7.5-7.5-7.6-19.7 0-27.3 7.5-7.5 19.7-7.6 27.3 0l81.1 81.9 81-79.9z"
+        />
+      </svg>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`DownloadOptions Component handles download to device 1`] = `
+<DocumentFragment>
+  <div
+    class="relative inline-block text-left"
+  >
+    <div
+      aria-expanded="true"
+      aria-haspopup="true"
+      class="py-2 px-4 flex text-xl gap-6 items-center rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
+      id="options-menu"
+    >
+      <button
+        class="shadow-2xl drop-shadow-2xl text-white"
+        type="button"
+      >
+        Download
+      </button>
+      <div
+        class="h-10 p-0 w-0.5 bg-white"
+      />
+      <svg
+        class="text-2xl text-white cursor-pointer"
+        fill="currentColor"
+        height="1em"
+        stroke="currentColor"
+        stroke-width="0"
+        viewBox="0 0 512 512"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M48 256c0 114.9 93.1 208 208 208s208-93.1 208-208S370.9 48 256 48 48 141.1 48 256zm289.1-43.4c7.5-7.5 19.8-7.5 27.3 0 3.8 3.8 5.6 8.7 5.6 13.6s-1.9 9.9-5.7 13.7l-94.3 94c-7.6 6.9-19.3 6.7-26.6-.6l-95.7-95.4c-7.5-7.5-7.6-19.7 0-27.3 7.5-7.5 19.7-7.6 27.3 0l81.1 81.9 81-79.9z"
+        />
+      </svg>
+    </div>
+    <div
+      class="absolute text-lg top-full left-0 w-full bg-teal-500 text-center text-white rounded-b-lg my-px shadow-lg z-30"
+    >
+      <ul
+        aria-labelledby="options-menu"
+        aria-orientation="vertical"
+        class="py-1"
+        role="menu"
+      >
+        <li
+          class="cursor-pointer p-4 pl-8 bg-teal-500 hover:bg-teal-600 flex items-center transition-colors duration-300"
+          role="menuitem"
+        >
+          <svg
+            class="text-2xl mr-4"
+            fill="currentColor"
+            height="1em"
+            stroke="currentColor"
+            stroke-width="0"
+            viewBox="0 0 512 512"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M448 119c0-13.3-9.4-23-22.8-23H230.9c-2.8 0-4.3-.6-6.1-2.4l-22.5-22.5-.2-.2c-4.9-4.6-8.9-6.9-17.3-6.9H88.7C74.9 64 64 74.3 64 87v73h384v-41zM64 188h-8.3c-12.8 0-25.3 5.1-23.5 24.3C34 231.5 55.7 423 55.7 423c2.7 17.8 11.7 25 25 25h352.5c12.7 0 21-7.8 23-25 0 0 22.2-184.9 23.6-205.5 1.4-20.5-8.9-29.5-23.6-29.5H64z"
+            />
+          </svg>
+          <button
+            class="block text-left w-full"
+          >
+            Device
+          </button>
+        </li>
+        <li
+          class="cursor-pointer p-4 bg-teal-500 hover:bg-teal-600 grid items-center transition-colors duration-300 grid-rows-1"
+          role="menuitem"
+        >
+          <div
+            class="flex items-center pl-4"
+          >
+            <svg
+              class="text-2xl mr-4"
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              viewBox="0 0 528 512"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M264.4 116.3l-132 84.3 132 84.3-132 84.3L0 284.1l132.3-84.3L0 116.3 132.3 32l132.1 84.3zM131.6 395.7l132-84.3 132 84.3-132 84.3-132-84.3zm132.8-111.6l132-84.3-132-83.6L395.7 32 528 116.3l-132.3 84.3L528 284.8l-132.3 84.3-131.3-85z"
+              />
+            </svg>
+            <button
+              class="block text-left w-full"
+            >
+              Dropbox
+            </button>
+          </div>
+          <div
+            class="w-full pt-2"
+          >
+             
+          </div>
+        </li>
+        <li
+          class="cursor-pointer p-4 bg-teal-500 hover:bg-teal-600 grid items-center transition-colors duration-300 grid-rows-1"
+          role="menuitem"
+        >
+          <div
+            class="flex items-center pl-4"
+          >
+            <svg
+              class="text-3xl mr-2"
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              version="1.1"
+              viewBox="0 0 32 32"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12.649 20.427h-0.126l-0.061 0.109-3.245 5.675h14.773l0.061-0.109 3.246-5.674h-0.373zM20.573 19.075l0.062 0.108h0.126l6.536-0.028-0.187-0.322-7.199-12.471-0.126 0-6.537 0.027 0.187 0.322zM15.445 12.789l-0.063-0.109-3.292-5.646-0.186 0.322-7.201 12.47 0.064 0.109 3.292 5.648 0.186-0.323 7.138-12.363z"
+              />
+            </svg>
+            <button
+              class="block text-left w-full"
+            >
+              Google Drive
+            </button>
+          </div>
+          <div
+            class="w-full pt-2"
+          />
+        </li>
+      </ul>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`DownloadOptions Component handles upload to Dropbox 1`] = `
+<DocumentFragment>
+  <div
+    class="relative inline-block text-left"
+  >
+    <div
+      aria-expanded="true"
+      aria-haspopup="true"
+      class="py-2 px-4 flex text-xl gap-6 items-center rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
+      id="options-menu"
+    >
+      <button
+        class="shadow-2xl drop-shadow-2xl text-white"
+        type="button"
+      >
+        Download
+      </button>
+      <div
+        class="h-10 p-0 w-0.5 bg-white"
+      />
+      <svg
+        class="text-2xl text-white cursor-pointer"
+        fill="currentColor"
+        height="1em"
+        stroke="currentColor"
+        stroke-width="0"
+        viewBox="0 0 512 512"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M48 256c0 114.9 93.1 208 208 208s208-93.1 208-208S370.9 48 256 48 48 141.1 48 256zm289.1-43.4c7.5-7.5 19.8-7.5 27.3 0 3.8 3.8 5.6 8.7 5.6 13.6s-1.9 9.9-5.7 13.7l-94.3 94c-7.6 6.9-19.3 6.7-26.6-.6l-95.7-95.4c-7.5-7.5-7.6-19.7 0-27.3 7.5-7.5 19.7-7.6 27.3 0l81.1 81.9 81-79.9z"
+        />
+      </svg>
+    </div>
+    <div
+      class="absolute text-lg top-full left-0 w-full bg-teal-500 text-center text-white rounded-b-lg my-px shadow-lg z-30"
+    >
+      <ul
+        aria-labelledby="options-menu"
+        aria-orientation="vertical"
+        class="py-1"
+        role="menu"
+      >
+        <li
+          class="cursor-pointer p-4 pl-8 bg-teal-500 hover:bg-teal-600 flex items-center transition-colors duration-300"
+          role="menuitem"
+        >
+          <svg
+            class="text-2xl mr-4"
+            fill="currentColor"
+            height="1em"
+            stroke="currentColor"
+            stroke-width="0"
+            viewBox="0 0 512 512"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M448 119c0-13.3-9.4-23-22.8-23H230.9c-2.8 0-4.3-.6-6.1-2.4l-22.5-22.5-.2-.2c-4.9-4.6-8.9-6.9-17.3-6.9H88.7C74.9 64 64 74.3 64 87v73h384v-41zM64 188h-8.3c-12.8 0-25.3 5.1-23.5 24.3C34 231.5 55.7 423 55.7 423c2.7 17.8 11.7 25 25 25h352.5c12.7 0 21-7.8 23-25 0 0 22.2-184.9 23.6-205.5 1.4-20.5-8.9-29.5-23.6-29.5H64z"
+            />
+          </svg>
+          <button
+            class="block text-left w-full"
+          >
+            Device
+          </button>
+        </li>
+        <li
+          class="cursor-pointer p-4 bg-teal-500 hover:bg-teal-600 grid items-center transition-colors duration-300 grid-rows-2"
+          role="menuitem"
+        >
+          <div
+            class="flex items-center pl-4"
+          >
+            <svg
+              class="text-2xl mr-4"
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              viewBox="0 0 528 512"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M264.4 116.3l-132 84.3 132 84.3-132 84.3L0 284.1l132.3-84.3L0 116.3 132.3 32l132.1 84.3zM131.6 395.7l132-84.3 132 84.3-132 84.3-132-84.3zm132.8-111.6l132-84.3-132-83.6L395.7 32 528 116.3l-132.3 84.3L528 284.8l-132.3 84.3-131.3-85z"
+              />
+            </svg>
+            <button
+              class="block text-left w-full"
+            >
+              Dropbox
+            </button>
+          </div>
+          <div
+            class="w-full pt-2"
+          >
+             
+            <div
+              class="relative w-40 h-4 bg-gray-400 pt-2 rounded-full overflow-hidden"
+            >
+              <div
+                class="absolute left-0 top-0 bg-blue-500 h-full rounded-full"
+                style="width: 0%; transition: width 2s ease-in-out;"
+              />
+              <span
+                class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-xs"
+              >
+                0%
+              </span>
+            </div>
+          </div>
+        </li>
+        <li
+          class="cursor-pointer p-4 bg-teal-500 hover:bg-teal-600 grid items-center transition-colors duration-300 grid-rows-2"
+          role="menuitem"
+        >
+          <div
+            class="flex items-center pl-4"
+          >
+            <svg
+              class="text-3xl mr-2"
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              version="1.1"
+              viewBox="0 0 32 32"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12.649 20.427h-0.126l-0.061 0.109-3.245 5.675h14.773l0.061-0.109 3.246-5.674h-0.373zM20.573 19.075l0.062 0.108h0.126l6.536-0.028-0.187-0.322-7.199-12.471-0.126 0-6.537 0.027 0.187 0.322zM15.445 12.789l-0.063-0.109-3.292-5.646-0.186 0.322-7.201 12.47 0.064 0.109 3.292 5.648 0.186-0.323 7.138-12.363z"
+              />
+            </svg>
+            <button
+              class="block text-left w-full"
+            >
+              Google Drive
+            </button>
+          </div>
+          <div
+            class="w-full pt-2"
+          />
+        </li>
+      </ul>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`DownloadOptions Component handles upload to Dropbox 2`] = `
+<DocumentFragment>
+  <div
+    class="relative inline-block text-left"
+  >
+    <div
+      aria-expanded="true"
+      aria-haspopup="true"
+      class="py-2 px-4 flex text-xl gap-6 items-center rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
+      id="options-menu"
+    >
+      <button
+        class="shadow-2xl drop-shadow-2xl text-white"
+        type="button"
+      >
+        Download
+      </button>
+      <div
+        class="h-10 p-0 w-0.5 bg-white"
+      />
+      <svg
+        class="text-2xl text-white cursor-pointer"
+        fill="currentColor"
+        height="1em"
+        stroke="currentColor"
+        stroke-width="0"
+        viewBox="0 0 512 512"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M48 256c0 114.9 93.1 208 208 208s208-93.1 208-208S370.9 48 256 48 48 141.1 48 256zm289.1-43.4c7.5-7.5 19.8-7.5 27.3 0 3.8 3.8 5.6 8.7 5.6 13.6s-1.9 9.9-5.7 13.7l-94.3 94c-7.6 6.9-19.3 6.7-26.6-.6l-95.7-95.4c-7.5-7.5-7.6-19.7 0-27.3 7.5-7.5 19.7-7.6 27.3 0l81.1 81.9 81-79.9z"
+        />
+      </svg>
+    </div>
+    <div
+      class="absolute text-lg top-full left-0 w-full bg-teal-500 text-center text-white rounded-b-lg my-px shadow-lg z-30"
+    >
+      <ul
+        aria-labelledby="options-menu"
+        aria-orientation="vertical"
+        class="py-1"
+        role="menu"
+      >
+        <li
+          class="cursor-pointer p-4 pl-8 bg-teal-500 hover:bg-teal-600 flex items-center transition-colors duration-300"
+          role="menuitem"
+        >
+          <svg
+            class="text-2xl mr-4"
+            fill="currentColor"
+            height="1em"
+            stroke="currentColor"
+            stroke-width="0"
+            viewBox="0 0 512 512"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M448 119c0-13.3-9.4-23-22.8-23H230.9c-2.8 0-4.3-.6-6.1-2.4l-22.5-22.5-.2-.2c-4.9-4.6-8.9-6.9-17.3-6.9H88.7C74.9 64 64 74.3 64 87v73h384v-41zM64 188h-8.3c-12.8 0-25.3 5.1-23.5 24.3C34 231.5 55.7 423 55.7 423c2.7 17.8 11.7 25 25 25h352.5c12.7 0 21-7.8 23-25 0 0 22.2-184.9 23.6-205.5 1.4-20.5-8.9-29.5-23.6-29.5H64z"
+            />
+          </svg>
+          <button
+            class="block text-left w-full"
+          >
+            Device
+          </button>
+        </li>
+        <li
+          class="cursor-pointer p-4 bg-teal-500 hover:bg-teal-600 grid items-center transition-colors duration-300 grid-rows-2"
+          role="menuitem"
+        >
+          <div
+            class="flex items-center pl-4"
+          >
+            <svg
+              class="text-2xl mr-4"
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              viewBox="0 0 528 512"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M264.4 116.3l-132 84.3 132 84.3-132 84.3L0 284.1l132.3-84.3L0 116.3 132.3 32l132.1 84.3zM131.6 395.7l132-84.3 132 84.3-132 84.3-132-84.3zm132.8-111.6l132-84.3-132-83.6L395.7 32 528 116.3l-132.3 84.3L528 284.8l-132.3 84.3-131.3-85z"
+              />
+            </svg>
+            <button
+              class="block text-left w-full"
+            >
+              Dropbox
+            </button>
+          </div>
+          <div
+            class="w-full pt-2"
+          >
+             
+            <div
+              class="relative w-40 h-4 bg-gray-400 pt-2 rounded-full overflow-hidden"
+            >
+              <div
+                class="absolute left-0 top-0 bg-blue-500 h-full rounded-full"
+                style="width: 0%; transition: width 2s ease-in-out;"
+              />
+              <span
+                class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-xs"
+              >
+                0%
+              </span>
+            </div>
+          </div>
+        </li>
+        <li
+          class="cursor-pointer p-4 bg-teal-500 hover:bg-teal-600 grid items-center transition-colors duration-300 grid-rows-2"
+          role="menuitem"
+        >
+          <div
+            class="flex items-center pl-4"
+          >
+            <svg
+              class="text-3xl mr-2"
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              version="1.1"
+              viewBox="0 0 32 32"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12.649 20.427h-0.126l-0.061 0.109-3.245 5.675h14.773l0.061-0.109 3.246-5.674h-0.373zM20.573 19.075l0.062 0.108h0.126l6.536-0.028-0.187-0.322-7.199-12.471-0.126 0-6.537 0.027 0.187 0.322zM15.445 12.789l-0.063-0.109-3.292-5.646-0.186 0.322-7.201 12.47 0.064 0.109 3.292 5.648 0.186-0.323 7.138-12.363z"
+              />
+            </svg>
+            <button
+              class="block text-left w-full"
+            >
+              Google Drive
+            </button>
+          </div>
+          <div
+            class="w-full pt-2"
+          />
+        </li>
+      </ul>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`DownloadOptions Component handles upload to Google Drive 1`] = `
+<DocumentFragment>
+  <div
+    class="relative inline-block text-left"
+  >
+    <div
+      aria-expanded="true"
+      aria-haspopup="true"
+      class="py-2 px-4 flex text-xl gap-6 items-center rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
+      id="options-menu"
+    >
+      <button
+        class="shadow-2xl drop-shadow-2xl text-white"
+        type="button"
+      >
+        Download
+      </button>
+      <div
+        class="h-10 p-0 w-0.5 bg-white"
+      />
+      <svg
+        class="text-2xl text-white cursor-pointer"
+        fill="currentColor"
+        height="1em"
+        stroke="currentColor"
+        stroke-width="0"
+        viewBox="0 0 512 512"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M48 256c0 114.9 93.1 208 208 208s208-93.1 208-208S370.9 48 256 48 48 141.1 48 256zm289.1-43.4c7.5-7.5 19.8-7.5 27.3 0 3.8 3.8 5.6 8.7 5.6 13.6s-1.9 9.9-5.7 13.7l-94.3 94c-7.6 6.9-19.3 6.7-26.6-.6l-95.7-95.4c-7.5-7.5-7.6-19.7 0-27.3 7.5-7.5 19.7-7.6 27.3 0l81.1 81.9 81-79.9z"
+        />
+      </svg>
+    </div>
+    <div
+      class="absolute text-lg top-full left-0 w-full bg-teal-500 text-center text-white rounded-b-lg my-px shadow-lg z-30"
+    >
+      <ul
+        aria-labelledby="options-menu"
+        aria-orientation="vertical"
+        class="py-1"
+        role="menu"
+      >
+        <li
+          class="cursor-pointer p-4 pl-8 bg-teal-500 hover:bg-teal-600 flex items-center transition-colors duration-300"
+          role="menuitem"
+        >
+          <svg
+            class="text-2xl mr-4"
+            fill="currentColor"
+            height="1em"
+            stroke="currentColor"
+            stroke-width="0"
+            viewBox="0 0 512 512"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M448 119c0-13.3-9.4-23-22.8-23H230.9c-2.8 0-4.3-.6-6.1-2.4l-22.5-22.5-.2-.2c-4.9-4.6-8.9-6.9-17.3-6.9H88.7C74.9 64 64 74.3 64 87v73h384v-41zM64 188h-8.3c-12.8 0-25.3 5.1-23.5 24.3C34 231.5 55.7 423 55.7 423c2.7 17.8 11.7 25 25 25h352.5c12.7 0 21-7.8 23-25 0 0 22.2-184.9 23.6-205.5 1.4-20.5-8.9-29.5-23.6-29.5H64z"
+            />
+          </svg>
+          <button
+            class="block text-left w-full"
+          >
+            Device
+          </button>
+        </li>
+        <li
+          class="cursor-pointer p-4 bg-teal-500 hover:bg-teal-600 grid items-center transition-colors duration-300 grid-rows-1"
+          role="menuitem"
+        >
+          <div
+            class="flex items-center pl-4"
+          >
+            <svg
+              class="text-2xl mr-4"
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              viewBox="0 0 528 512"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M264.4 116.3l-132 84.3 132 84.3-132 84.3L0 284.1l132.3-84.3L0 116.3 132.3 32l132.1 84.3zM131.6 395.7l132-84.3 132 84.3-132 84.3-132-84.3zm132.8-111.6l132-84.3-132-83.6L395.7 32 528 116.3l-132.3 84.3L528 284.8l-132.3 84.3-131.3-85z"
+              />
+            </svg>
+            <button
+              class="block text-left w-full"
+            >
+              Dropbox
+            </button>
+          </div>
+          <div
+            class="w-full pt-2"
+          >
+             
+          </div>
+        </li>
+        <li
+          class="cursor-pointer p-4 bg-teal-500 hover:bg-teal-600 grid items-center transition-colors duration-300 grid-rows-1"
+          role="menuitem"
+        >
+          <div
+            class="flex items-center pl-4"
+          >
+            <svg
+              class="text-3xl mr-2"
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              version="1.1"
+              viewBox="0 0 32 32"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12.649 20.427h-0.126l-0.061 0.109-3.245 5.675h14.773l0.061-0.109 3.246-5.674h-0.373zM20.573 19.075l0.062 0.108h0.126l6.536-0.028-0.187-0.322-7.199-12.471-0.126 0-6.537 0.027 0.187 0.322zM15.445 12.789l-0.063-0.109-3.292-5.646-0.186 0.322-7.201 12.47 0.064 0.109 3.292 5.648 0.186-0.323 7.138-12.363z"
+              />
+            </svg>
+            <button
+              class="block text-left w-full"
+            >
+              Google Drive
+            </button>
+          </div>
+          <div
+            class="w-full pt-2"
+          />
+        </li>
+      </ul>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`DownloadOptions Component renders without crashing 1`] = `
+<DocumentFragment>
+  <div
+    class="relative inline-block text-left"
+  >
+    <div
+      aria-expanded="true"
+      aria-haspopup="true"
+      class="py-2 px-4 flex text-xl gap-6 items-center rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
+      id="options-menu"
+    >
+      <button
+        class="shadow-2xl drop-shadow-2xl text-white"
+        type="button"
+      >
+        Download
+      </button>
+      <div
+        class="h-10 p-0 w-0.5 bg-white"
+      />
+      <svg
+        class="text-2xl text-white cursor-pointer"
+        fill="currentColor"
+        height="1em"
+        stroke="currentColor"
+        stroke-width="0"
+        viewBox="0 0 512 512"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M48 256c0 114.9 93.1 208 208 208s208-93.1 208-208S370.9 48 256 48 48 141.1 48 256zm289.1-43.4c7.5-7.5 19.8-7.5 27.3 0 3.8 3.8 5.6 8.7 5.6 13.6s-1.9 9.9-5.7 13.7l-94.3 94c-7.6 6.9-19.3 6.7-26.6-.6l-95.7-95.4c-7.5-7.5-7.6-19.7 0-27.3 7.5-7.5 19.7-7.6 27.3 0l81.1 81.9 81-79.9z"
+        />
+      </svg>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`DownloadOptions Component shows the dropdown menu when the download button is clicked 1`] = `
+<DocumentFragment>
+  <div
+    class="relative inline-block text-left"
+  >
+    <div
+      aria-expanded="true"
+      aria-haspopup="true"
+      class="py-2 px-4 flex text-xl gap-6 items-center rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
+      id="options-menu"
+    >
+      <button
+        class="shadow-2xl drop-shadow-2xl text-white"
+        type="button"
+      >
+        Download
+      </button>
+      <div
+        class="h-10 p-0 w-0.5 bg-white"
+      />
+      <svg
+        class="text-2xl text-white cursor-pointer"
+        fill="currentColor"
+        height="1em"
+        stroke="currentColor"
+        stroke-width="0"
+        viewBox="0 0 512 512"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M48 256c0 114.9 93.1 208 208 208s208-93.1 208-208S370.9 48 256 48 48 141.1 48 256zm289.1-43.4c7.5-7.5 19.8-7.5 27.3 0 3.8 3.8 5.6 8.7 5.6 13.6s-1.9 9.9-5.7 13.7l-94.3 94c-7.6 6.9-19.3 6.7-26.6-.6l-95.7-95.4c-7.5-7.5-7.6-19.7 0-27.3 7.5-7.5 19.7-7.6 27.3 0l81.1 81.9 81-79.9z"
+        />
+      </svg>
+    </div>
+    <div
+      class="absolute text-lg top-full left-0 w-full bg-teal-500 text-center text-white rounded-b-lg my-px shadow-lg z-30"
+    >
+      <ul
+        aria-labelledby="options-menu"
+        aria-orientation="vertical"
+        class="py-1"
+        role="menu"
+      >
+        <li
+          class="cursor-pointer p-4 pl-8 bg-teal-500 hover:bg-teal-600 flex items-center transition-colors duration-300"
+          role="menuitem"
+        >
+          <svg
+            class="text-2xl mr-4"
+            fill="currentColor"
+            height="1em"
+            stroke="currentColor"
+            stroke-width="0"
+            viewBox="0 0 512 512"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M448 119c0-13.3-9.4-23-22.8-23H230.9c-2.8 0-4.3-.6-6.1-2.4l-22.5-22.5-.2-.2c-4.9-4.6-8.9-6.9-17.3-6.9H88.7C74.9 64 64 74.3 64 87v73h384v-41zM64 188h-8.3c-12.8 0-25.3 5.1-23.5 24.3C34 231.5 55.7 423 55.7 423c2.7 17.8 11.7 25 25 25h352.5c12.7 0 21-7.8 23-25 0 0 22.2-184.9 23.6-205.5 1.4-20.5-8.9-29.5-23.6-29.5H64z"
+            />
+          </svg>
+          <button
+            class="block text-left w-full"
+          >
+            Device
+          </button>
+        </li>
+        <li
+          class="cursor-pointer p-4 bg-teal-500 hover:bg-teal-600 grid items-center transition-colors duration-300 grid-rows-1"
+          role="menuitem"
+        >
+          <div
+            class="flex items-center pl-4"
+          >
+            <svg
+              class="text-2xl mr-4"
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              viewBox="0 0 528 512"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M264.4 116.3l-132 84.3 132 84.3-132 84.3L0 284.1l132.3-84.3L0 116.3 132.3 32l132.1 84.3zM131.6 395.7l132-84.3 132 84.3-132 84.3-132-84.3zm132.8-111.6l132-84.3-132-83.6L395.7 32 528 116.3l-132.3 84.3L528 284.8l-132.3 84.3-131.3-85z"
+              />
+            </svg>
+            <button
+              class="block text-left w-full"
+            >
+              Dropbox
+            </button>
+          </div>
+          <div
+            class="w-full pt-2"
+          >
+             
+          </div>
+        </li>
+        <li
+          class="cursor-pointer p-4 bg-teal-500 hover:bg-teal-600 grid items-center transition-colors duration-300 grid-rows-1"
+          role="menuitem"
+        >
+          <div
+            class="flex items-center pl-4"
+          >
+            <svg
+              class="text-3xl mr-2"
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              version="1.1"
+              viewBox="0 0 32 32"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12.649 20.427h-0.126l-0.061 0.109-3.245 5.675h14.773l0.061-0.109 3.246-5.674h-0.373zM20.573 19.075l0.062 0.108h0.126l6.536-0.028-0.187-0.322-7.199-12.471-0.126 0-6.537 0.027 0.187 0.322zM15.445 12.789l-0.063-0.109-3.292-5.646-0.186 0.322-7.201 12.47 0.064 0.109 3.292 5.648 0.186-0.323 7.138-12.363z"
+              />
+            </svg>
+            <button
+              class="block text-left w-full"
+            >
+              Google Drive
+            </button>
+          </div>
+          <div
+            class="w-full pt-2"
+          />
+        </li>
+      </ul>
+    </div>
+  </div>
+</DocumentFragment>
+`;
