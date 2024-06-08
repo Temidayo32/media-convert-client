@@ -21,7 +21,7 @@ const VideoSection = () => {
         <div className="flex justify-center items-center">
           <div className="flex items-center">
             <div className="grid grid-cols-1 lg:grid-cols-6 gap-16">
-              {conversions.map((conversion, index) => (
+              {conversions.slice(0, 12).map((conversion, index) => (
                 <div key={index} className="text-center">
                   <div className="bg-white flex justify-center rounded-full p-4 mb-4">
                     <img

@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useData } from '../../DataContext';
+import { onSnapshot, collection, query, where } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { db } from '../../config/firebase_config';
 import io from 'socket.io-client';
 
 import { MdDelete } from "react-icons/md";
@@ -12,24 +15,59 @@ const Conversion = () => {
   const [progress, setProgress] = useState({});
   const [downloadUrl, setDownloadUrl] = useState(null);
 
+  const auth = getAuth();
+  const user = auth.currentUser;
+
   useEffect(() => {
-    const handleConversionProgress = (data) => {
-        setProgress(prevProgress => ({
-            ...prevProgress,
-            [data.jobId]: data.progress,
-        }));
-        
-        if (data.progress === 'completed' && data.url) {
-            setDownloadUrl(data.url);
-        }
-    };
+    if (!user) return;
 
-    socket.on('conversion_progress', handleConversionProgress);
+    const userId = user.uid;
+    const tasksRef = collection(db, 'tasks');
+    const q = query(tasksRef, where('userId', '==', userId));
 
-    return () => {
-        socket.off('conversion_progress', handleConversionProgress);
-    };  
-  }, []);
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        querySnapshot.docChanges().forEach((change) => {
+            if (change.type === "modified" || change.type === "added") {
+                const data = change.doc.data();
+                const jobId = change.doc.id;
+
+                setProgress((prevProgress) => ({
+                    ...prevProgress,
+                    [jobId]: data.progress,
+                }));
+
+                if (data.progress === 'completed' && data.fileUrl) {
+                    setDownloadUrl(data.fileUrl);
+                }
+            }
+        });
+    });
+
+    return () => unsubscribe();
+}, [user]);
+
+useEffect(() => {
+  if (user) return;
+
+  const handleConversionProgress = (data) => {
+      setProgress(prevProgress => ({
+          ...prevProgress,
+          [data.jobId]: data.progress,
+      }));
+      
+      if (data.progress === 'completed' && data.url) {
+          setDownloadUrl(data.url);
+      }
+  };
+
+  socket.on('conversion_progress', handleConversionProgress);
+
+  return () => {
+      socket.off('conversion_progress', handleConversionProgress);
+  };  
+
+}, [socket]);
+
 
     // console.log('download:', downloadUrl)
   const handleRemoveVideo = (index) => {

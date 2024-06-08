@@ -89,7 +89,7 @@ const HeaderOptions = () => {
       {(isVideoHovered) && (
         <div
           className="absolute top-10 p-4 mt-0 text-lg h-96 bg-white shadow-lg rounded-r-lg z-20"
-          style={{ left: "calc(100% + 136px)", width: "40rem" }}
+          style={{ left: "calc(100% + 136px)", width: "47rem" }}
           onMouseEnter={handleMouseEnterVideo}
           onMouseLeave={handleMouseLeaveVideo}
         >

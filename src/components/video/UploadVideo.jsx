@@ -3,13 +3,14 @@ import Select from 'react-select';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import io from 'socket.io-client';
+import { getAuth } from 'firebase/auth';
+import { initGoogleAPI, handleGoogleAuth } from '../../utils/goggleAuth';
+import { gapi } from 'gapi-script';
 
 import { FaFileCirclePlus } from "react-icons/fa6";
 import { IoIosArrowDropdownCircle } from 'react-icons/io';
 import { BsGearFill } from 'react-icons/bs';
 import { MdDelete } from "react-icons/md";
-
-import useDrivePicker from 'react-google-drive-picker';
 
 import { clientId, developerKey, azureClientId } from '../../config/key';
 import UploadOptions from './UploadOptions';
@@ -41,7 +42,6 @@ const UploadVideo = ({defaultFormat}) => {
   const { format: currentFormat } = useParams();
   const { uploadedVideos, setUploadedVideos, setDownloadPageActive } = useData();
   const { showSignUpOptions, setShowSignUpOptions, emailVerified } = useData();
-  const [openPicker, authResponse] = useDrivePicker();
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [showUploadForm, setShowUploadForm] = useState(true);
@@ -56,9 +56,8 @@ const UploadVideo = ({defaultFormat}) => {
 
   
   const { idToken } = useData();
-  // console.log(emailVerified)
-  // console.log(idToken)
-
+  const auth = getAuth();
+  const user = auth.currentUser
 
   useEffect(() => {
     fetch('/conversions.json')
@@ -106,6 +105,7 @@ const UploadVideo = ({defaultFormat}) => {
       };
     }
   }, [limitExceeded]);
+
 
   const defaultOption = formats.find((format) => format.format.toLowerCase() === defaultFormat.toLowerCase());
 
@@ -207,55 +207,73 @@ const UploadVideo = ({defaultFormat}) => {
     console.log('Cancelled');
   };
 
-  const handleOpenPicker = () => {
-    openPicker({
-        clientId: clientId,
-        developerKey: developerKey,
-        viewId: 'DOCS_VIDEOS',
-        supportDrives: true,
-        multiselect: true,
-        mimeTypes: ['video/*'],
-        callbackFunction: (data) => {
-            if (data.action === 'cancel') {
-                console.log('User clicked cancel/close button');
-            } else if (data.docs) {
-                const selectedVideos = data.docs.filter(doc => doc.mimeType.startsWith('video/'));
-                const newVideos = [...uploadedVideos];
-                const oversizedFiles = [];
+  const handleOpenPicker = async () => {
+     const accessToken = await handleGoogleAuth();
+     console.log(accessToken)
+     
+     gapi.load('picker', {
+      callback: () => {
+          try {
+              const picker = new window.google.picker.PickerBuilder()
+                  .setOrigin("https://localhost:3000")
+                  .enableFeature(window.google.picker.Feature.SUPPORT_DRIVES)
+                  .enableFeature(window.google.picker.Feature.NAV_HIDDEN)
+                  .enableFeature(window.google.picker.Feature.MULTISELECT_ENABLED)
+                  .setOAuthToken(accessToken)
+                  .setDeveloperKey(developerKey)
+                  .addView(new window.google.picker.DocsUploadView())
+                  .setCallback((data) => {
+                      if (data.action === window.google.picker.Action.CANCEL) {
+                          console.log('User clicked cancel/close button');
+                      } else if (data.docs) {
+                          const selectedVideos = data.docs.filter(doc => doc.mimeType.startsWith('video/'));
+                          const newVideos = [...uploadedVideos];
+                          const oversizedFiles = [];
 
-                for (let i = 0; i < selectedVideos.length; i++) {
-                    if (!emailVerified && selectedVideos[i].sizeBytes > MAX_FILE_SIZE) {
-                        oversizedFiles.push(`File size of ${selectedVideos[i].name} exceeds the 1 GB limit.`);
-                        continue;
-                    }
+                          for (let i = 0; i < selectedVideos.length; i++) {
+                              if (!emailVerified && selectedVideos[i].sizeBytes > MAX_FILE_SIZE) {
+                                  oversizedFiles.push(`File size of ${selectedVideos[i].name} exceeds the 1 GB limit.`);
+                                  continue;
+                              }
 
-                    newVideos.push({
-                        source: 'google',
-                        file: selectedVideos[i],
-                        fileId: selectedVideos[i].id,
-                        name: selectedVideos[i].name,
-                        size: formatFileSize(selectedVideos[i].sizeBytes),
-                        format: defaultFormat,
-                        jobId: `${Date.now()}_${selectedVideos[i].name.split('.')[0]}`,
-                        settings: { ...defaultSettings },
-                    });
-                }
+                              newVideos.push({
+                                  source: 'google',
+                                  file: selectedVideos[i],
+                                  fileId: selectedVideos[i].id,
+                                  name: selectedVideos[i].name,
+                                  size: formatFileSize(selectedVideos[i].sizeBytes),
+                                  format: defaultFormat,
+                                  jobId: `${Date.now()}_${selectedVideos[i].name.split('.')[0]}`,
+                                  settings: { ...defaultSettings },
+                              });
+                          }
 
-                setUploadedVideos(newVideos);
-                setOversizedFiles(oversizedFiles); 
+                          setUploadedVideos(newVideos);
+                          setOversizedFiles(oversizedFiles);
 
-                if (oversizedFiles.length > 0) {
-                  setShowErrorMessages(true);
-                  setTimeout(() => {
-                      setShowErrorMessages(false);
-                  }, 5000); // 5 seconds timeout
-                }
+                          if (oversizedFiles.length > 0) {
+                              setShowErrorMessages(true);
+                              setTimeout(() => {
+                                  setShowErrorMessages(false);
+                              }, 5000); // 5 seconds timeout
+                          }
 
-                setShowUploadForm(false);
-            }
-        },
-    });
-  };
+                          setShowUploadForm(false);
+                      }
+                  })
+                  .build();
+
+              picker.setVisible(true);
+          } catch (error) {
+              console.error('Error occurred during Google Picker operation:', error);
+          }
+      },
+      onerror: (error) => {
+          console.error('Error loading Google Picker API:', error);
+      }
+  });
+};
+
 
   const handleRemoveVideo = (index) => {
     const newVideos = [...uploadedVideos];
@@ -287,6 +305,9 @@ const UploadVideo = ({defaultFormat}) => {
       formData.append('videoSize', video.size);
       formData.append('videoFormat', video.format);
       formData.append('videoSettings', JSON.stringify(video.settings))
+      if (user && user.uid) {
+        formData.append('userId', user.uid);
+      }
       // for (const [key, value] of formData.entries()) {
       //   console.log(`${key}: ${value}`);
       // }

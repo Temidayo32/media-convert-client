@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
 import { formatDistanceToNowStrict, addHours } from 'date-fns';
 import { db } from '../../config/firebase_config';
 import { doc, setDoc, getDocs, collection, deleteDoc, query, where, getDoc } from 'firebase/firestore';
@@ -11,7 +11,7 @@ import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import DownloadOptions from '../video/DownloadOptions';
 
 
-const socket = io('http://localhost:8000');
+// const socket = io('http://localhost:8000');
 
 const colorMap = {
   processing: 'bg-orange-200',
@@ -29,55 +29,6 @@ const RecentTasks = () => {
   const auth = getAuth();
   const user = auth.currentUser;
 
-
-  useEffect(() => {
-    const handleConversionProgress = async (data) => {
-      if (!user) {
-        return;
-      }
-    
-      try {
-        const userId = user.uid;
-        const taskId = data.jobId;
-        const taskRef = doc(db, 'tasks', taskId); 
-        const metadata = {
-          name: data.name,
-          format: data.format,
-          progress: data.progress,
-          completedAt: data.progress === 'completed' ? new Date().toISOString() : null,
-          userId: userId, 
-        };
-
-        if (data.url) {
-          metadata.fileUrl = data.url;
-        }
-    
-        await setDoc(taskRef, metadata, { merge: true }); // Merge with existing document if it exists
-        console.log(`Updating task for user: ${user.uid} with jobId: ${data.jobId}`);
-    
-        setTasks((prevTasks) =>
-          prevTasks.map((task) =>
-            task.jobId === data.jobId
-              ? { ...task, ...data, completedAt: data.progress === 'completed' ? new Date() : task.completedAt }
-              : task
-          )
-        );
-      } catch (err) {
-        console.error('Error updating task:', err);
-      }
-    };
-    
-    if (user) {
-      socket.on('conversion_progress', handleConversionProgress);
-    }
-
-    return () => {
-      if (user) {
-        socket.off('conversion_progress', handleConversionProgress);
-      }
-    };
-  }, [user]); 
-  
   useEffect(() => {
     const fetchTasks = async () => {
       if (user) {

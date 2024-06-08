@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+
 import { IoIosFolderOpen } from 'react-icons/io';
 import { FaDropbox } from 'react-icons/fa';
 import { DiGoogleDrive } from 'react-icons/di';
-import OneDrivePicker from './OneDrivePicker';
+// import OneDrivePicker from './OneDrivePicker';
 import DropboxChooser from 'react-dropbox-chooser';
 
 import { dropboxAppKey } from '../../config/key';
@@ -44,7 +45,7 @@ const UploadOptions = ({ handleFileUpload, handleOpenPicker, onSuccess, onCancel
           <DiGoogleDrive className="text-2xl mr-4" />
           From Google Drive
         </Link>
-        <OneDrivePicker onSuccess={handleFileSelected} />
+        {/* <OneDrivePicker onSuccess={handleFileSelected} /> */}
       </ul>
     </div>
   );

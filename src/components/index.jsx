@@ -19,3 +19,4 @@ export {default as AdvancedOptions} from './video/AdvancedOptions';
 export {default as Dashboard} from './dashboard/Dashboard';
 export {default as Profile } from './dashboard/Profile';
 export {default as RecentTasks} from './dashboard/RecentTasks';
+export {default as DownloadOptions } from './video/DownloadOptions';

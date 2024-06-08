@@ -5,7 +5,7 @@
    version="1.1"
    width="56.25"
    xml:space="preserve"
-   sodipodi:docname="mov.svg"
+   sodipodi:docname="mxf.svg"
    inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -82,13 +82,13 @@
            id="tspan2"
            style="stroke-width:0.8"></tspan></text><text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.46667px;font-family:Arial;-inkscape-font-specification:Arial;fill:#e7e4e4;fill-opacity:1;stroke-width:0.8"
+         style="font-size:7.46666666px;fill:#e7e4e4;fill-opacity:1;stroke-width:0.8;-inkscape-font-specification:Arial;font-family:Arial;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal"
          x="12.234748"
          y="-8.534482"
          id="text3"
          transform="scale(1,-1)"><tspan
            sodipodi:role="line"
            id="tspan3"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.46667px;font-family:Arial;-inkscape-font-specification:Arial;fill:#e7e4e4;fill-opacity:1;stroke-width:0.8"
+           style="stroke-width:0.8;-inkscape-font-specification:Arial;font-family:Arial;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;fill:#e7e4e4;fill-opacity:1;font-size:7.46666666px"
            x="12.234748"
-           y="-8.534482">MOV</tspan></text></g></g></svg>
+           y="-8.534482">MXF</tspan></text></g></g></svg>

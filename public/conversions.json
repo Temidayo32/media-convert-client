@@ -10,6 +10,10 @@
     { "format": "F4V", "icon": "/f4v.svg", "description": "Convert your videos to F4V format easily and quickly." },
     { "format": "M4V", "icon": "/m4v.svg", "description": "Convert your videos to M4V format easily and quickly." },
     { "format": "OGG", "icon": "/ogg.svg", "description": "Convert your videos to OGG format easily and quickly." },
-    { "format": "MKV", "icon": "/mkv.svg", "description": "Convert your videos to MKV format easily and quickly." }
+    { "format": "MKV", "icon": "/mkv.svg", "description": "Convert your videos to MKV format easily and quickly." },
+    { "format": "VOB", "icon": "/vob.svg", "description": "Convert your videos to VOB format easily and quickly." },
+    { "format": "RM", "icon": "/rm.svg", "description": "Convert your videos to RM format easily and quickly." },
+    { "format": "MXF", "icon": "/mxf.svg", "description": "Convert your videos to MXF format easily and quickly." },
+    { "format": "SWF", "icon": "/swf.svg", "description": "Convert your videos to SWF format easily and quickly." }
   ]
   
