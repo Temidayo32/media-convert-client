@@ -5,9 +5,7 @@ import '@testing-library/jest-dom/extend-expect';
 import { Conversion } from '../../components';
 import { useData } from '../../DataContext';
 import { getAuth } from 'firebase/auth';
-import { db } from '../../config/firebase_config';
-import { getFirestore, onSnapshot, collection, query, where } from 'firebase/firestore';
-import io from 'socket.io-client';
+import { onSnapshot } from 'firebase/firestore';
 
 // Mocking firebase/auth
 jest.mock('firebase/auth');

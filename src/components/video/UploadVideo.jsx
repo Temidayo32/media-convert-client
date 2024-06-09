@@ -109,12 +109,6 @@ const UploadVideo = ({defaultFormat}) => {
 
   const defaultOption = formats.find((format) => format.format.toLowerCase() === defaultFormat.toLowerCase());
 
-  // const randomSessionID = 'a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6'
-
-
-  // setCookie('sessionID', randomSessionID, { path:'/convert', maxAge: 3600000, httpOnly: true, sameSite: 'none', secure: true });
-
-
   function formatFileSize(bytes) {
     const mbSize = bytes / (1024 * 1024);
     if (mbSize < 1024) {
