@@ -9,6 +9,7 @@ import { MdDelete } from "react-icons/md";
 import { GiEmptyMetalBucketHandle } from "react-icons/gi";
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import DownloadOptions from '../video/DownloadOptions';
+import { handleRemoveTask } from '../../utils/removeTasks';
 
 
 // const socket = io('http://localhost:8000');
@@ -54,33 +55,6 @@ const RecentTasks = () => {
   
     fetchTasks();
   }, [user]);
-
-  const handleRemoveTask = async (jobId) => {
-    try {
-      const userId = user.uid;
-      const taskRef = doc(db, 'tasks', jobId); // Reference to the specific task document under the tasks collection
-
-      console.log(taskRef)
-  
-      // Fetch the task document to verify ownership before deletion
-      const taskDoc = await getDoc(taskRef);
-      if (taskDoc.exists()) {
-        const taskData = taskDoc.data();
-        
-        // Ensure that the authenticated user owns the task before deletion
-        if (taskData.userId === userId) {
-          await deleteDoc(taskRef); 
-          setTasks((prevTasks) => prevTasks.filter((task) => task.jobId !== jobId));
-        } else {
-          console.error('User does not have permission to delete this task.');
-        }
-      } else {
-        console.error('Task document does not exist.');
-      }
-    } catch (err) {
-      console.error('Error removing task:', err);
-    }
-  };
   
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -115,15 +89,17 @@ const RecentTasks = () => {
   return (
         <div className="container flex items-center flex-col mx-auto w-full h-screen bg-gray-100">
             <div className="relative flex items-center justify-center p-8">
-                <InputLabel htmlFor="filter" className="mr-2 text-gray-500">Filter by status:</InputLabel>
-                    <FormControl>
-                        <Select
-                        id="filter"
-                        value={filter}
-                        onChange={handleFilterChange}
-                        className="bg-white border border-gray-300 hover:border-gray-400 w-48 px-4 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline text-gray-800"
-                        style={{ borderRadius: '0' }}
-                        >
+            <InputLabel id="filter-label" htmlFor="filter" className="mr-2 text-gray-500">Filter by status:</InputLabel>
+              <FormControl>
+                <Select
+                  id="filter"
+                  value={filter}
+                  onChange={handleFilterChange}
+                  className="bg-white border border-gray-300 hover:border-gray-400 w-48 px-4 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline text-gray-800"
+                  style={{ borderRadius: '0' }}
+                  aria-labelledby="filter-label"
+                  inputProps={{ "data-testid": "filter label" }}
+                >
                         <MenuItem value="all">All</MenuItem>
                         {Object.keys(colorMap).map((status) => (
                             <MenuItem key={status} value={status}>{status.charAt(0).toUpperCase() + status.slice(1)}</MenuItem>
@@ -161,7 +137,7 @@ const RecentTasks = () => {
                           downloadUrl={task.fileUrl}
                           progress={task.progress}
                         />
-                        <button title="Delete" onClick={() => handleRemoveTask(task.jobId)}>
+                        <button title="Delete" onClick={() => handleRemoveTask(user, task.jobId, setTasks)} data-testid="delete-task-button">
                         <MdDelete className="text-2xl text-gray-500 hover:text-red-600 transform hover:scale-110 transition transition-colors duration-300" />
                         </button>
                     </div>

@@ -20,7 +20,7 @@ function Header() {
     const {emailVerified, setEmailVerified} = useData(); 
 
     const auth = getAuth();
-    console.log(auth.currentUser)
+    // console.log(auth.currentUser)
 
     useEffect(() => {
       const storedUser = getLocalStorageItem('userCredentials');

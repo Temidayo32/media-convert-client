@@ -1,8 +1,10 @@
 export {default as AccountSuccess} from './home/AccountSuccess';
+export {default as Card } from './home/Card';
 export {default as Header} from './home/Header';
 export { default as HeaderOptions} from './home/HeaderOptions';
 export {default as HeroSection} from './home/HeroSection';
 export {default as Login} from './home/Login';
+export {default as LoginWithEmail } from './home/LoginWithEmail';
 export {default as Signup} from './home/Signup';
 export {default as PasswordReset} from './home/PasswordReset';
 export {default as EmailVerification} from "./home/EmailVerification";
@@ -20,4 +22,7 @@ export {default as AdvancedOptions} from './video/AdvancedOptions';
 export {default as Dashboard} from './dashboard/Dashboard';
 export {default as Profile } from './dashboard/Profile';
 export {default as RecentTasks} from './dashboard/RecentTasks';
+export {default as ChangeEmail } from './dashboard/ChangeEmail';
+export {default as ChangePassword } from './dashboard/ChangePassword';
+export {default as DeleteAccount } from './dashboard/DeleteAccount';
 export {default as DownloadOptions } from './video/DownloadOptions';

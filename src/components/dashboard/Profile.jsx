@@ -134,7 +134,7 @@ const Profile = () => {
                 <form onSubmit={handleUpdateProfile}>
                     <div className="flex flex-col items-center mb-6 relative">
                         <div className="relative group">
-                            {isLoading ? (<CgSpinner className="animate-spin mr-2 size-28"  />): (
+                            {isLoading ? (<CgSpinner className="animate-spin mr-2 size-28" data-testid='spinner' />): (
                                 <div>
                                     <img
                                         src={photoURL}
@@ -147,6 +147,7 @@ const Profile = () => {
                                     <input
                                         type="file"
                                         accept="image/*"
+                                        data-testid='Profile Picture'
                                         onChange={handlePhotoChange}
                                         className="absolute bottom-0 right-0 w-full h-full opacity-0 cursor-pointer"
                                     />

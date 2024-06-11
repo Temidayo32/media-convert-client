@@ -94,8 +94,8 @@ function EmailVerification({showMenu }) {
                     </Link>
                     </div>
                 </div>
-                <hr class="mb-4 mt-4"></hr>
-                <div class="text-center">
+                <hr className="mb-4 mt-4"></hr>
+                <div className="text-center">
                     Wrong email address? <Link className="text-teal-500 hover:text-teal-300 transition-colors duration-300">Change Email Address</Link>
                 </div>
             </div>
@@ -117,14 +117,14 @@ function EmailVerification({showMenu }) {
                     </Link>
                     </div>
                 </div>
-                <div class="text-center">
+                <div className="text-center">
                     Didn't receive an email?  <button className="text-teal-500 hover:text-teal-300 transition-colors duration-300" onClick={handleResendVerificationEmail} >Re-send verification email</button>
                     {showResentModal && <div className="bg-green-500 text-white p-2 rounded mt-2 absolute top-20 right-4">Verification email re-sent to {email}
                 </div>}
                 </div>
                 {error && <div className="text-red-500 text-center mb-2">{error}</div>}
-                <hr class="mb-4 mt-4"></hr>
-                <div class="text-center">
+                <hr className="mb-4 mt-4"></hr>
+                <div className="text-center">
                     Wrong email address? <Link className="text-teal-500 hover:text-teal-300 transition-colors duration-300">Change Email Address</Link>
                 </div>
             </div>

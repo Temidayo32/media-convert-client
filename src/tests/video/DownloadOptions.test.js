@@ -41,7 +41,7 @@ const mockVideo = {
 const mockDownloadUrl = 'http://example.com/download.mp4';
 
 HTMLAnchorElement.prototype.click = jest.fn();
-// global.URL.createObjectURL = jest.fn().mockReturnValue(mockDownloadUrl);
+global.URL.createObjectURL = jest.fn().mockReturnValue(mockDownloadUrl);
 
 
 describe('DownloadOptions Component', () => {

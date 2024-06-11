@@ -16,12 +16,17 @@ function LoginWithEmail({ onForgotPasswordClick }) {
 
   const signInWithEmailAndPassword = () => {
     setIsLoading(true);
-    firebase.auth().signInWithEmailAndPassword(email, password).then((userCredentials) => {
-      console.log(userCredentials.user);
-    }).catch((error) => {
-      console.error(error);
-      setErrorMessage('Incorrect username or password');
-    });
+    firebase.auth().signInWithEmailAndPassword(email, password)
+      .then((userCredentials) => {
+        console.log(userCredentials.user);
+      })
+      .catch((error) => {
+        // console.error(error);
+        setErrorMessage('Incorrect username or password');
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -52,7 +57,7 @@ function LoginWithEmail({ onForgotPasswordClick }) {
       <button onClick={signInWithEmailAndPassword} disabled={isLoading} className="flex items-center justify-center  bg-teal-800 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-400">
       {isLoading ? <CgSpinner className="animate-spin mr-2 size-6" /> : 'LOG IN'}
       </button>
-      <div class="text-center text-teal-500 hover:text-teal-300 transition-colors duration-300 mb-2 mt-4">
+      <div className="text-center text-teal-500 hover:text-teal-300 transition-colors duration-300 mb-2 mt-4">
         <Link onClick={onForgotPasswordClick}>Forgot Your Password?</Link>
       </div>
     </div>

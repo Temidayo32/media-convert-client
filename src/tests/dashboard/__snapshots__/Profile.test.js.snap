@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Profile Component renders Profile component without crashing 1`] = `undefined`;
+
+exports[`Profile Component updates profile information 1`] = `undefined`;

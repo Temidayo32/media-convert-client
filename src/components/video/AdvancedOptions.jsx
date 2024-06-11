@@ -156,6 +156,7 @@ function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fil
                         <div className='w-1/12 flex justify-end'>
                             <AiOutlineClose
                             id="closeIcon"
+                            data-testid="closeIcon"
                             className="text-2xl cursor-pointer hover:text-red-600 transform hover:scale-110 transition transition-colors duration-300"
                             onClick={() => onClose()}
                             />
@@ -201,11 +202,11 @@ function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fil
                             <div className="flex items-center mb-4">
                                 <h4 className="mb-2 font-semibold w-1/6">Aspect Ratio</h4>
                                 <Select
+                                aria-label='Aspect Ratio'
                                 value={formData.selectedAspectRatio}
                                 onChange={handleAspectRatioChange}
                                 displayEmpty
                                 className='w-5/6'
-                                inputProps={{ 'aria-label': 'Without label' }}
                                 >
                                 <MenuItem value="">None</MenuItem>
                                 <MenuItem value="16:9">16:9 (Widescreen)</MenuItem>
@@ -220,11 +221,12 @@ function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fil
                                 <h4 className="mb-2 font-semibold w-1/6">Resolution</h4>
                                 <div className='w-5/6'>
                                     <FormControl fullWidth variant="outlined">
-                                        <InputLabel>Resolution</InputLabel>
+                                        <InputLabel htmlFor="resolution">Resolution</InputLabel>
                                         <Select
+                                        id="resolution"
                                         value={formData.selectedResolution}
                                         onChange={handleResolutionChange('selectedResolution')}
-                                        label="Resolution"
+                                        aria-label="Resolution"
                                         >
                                          <MenuItem value="">None</MenuItem>
                                          {resolutions.map((resolution) => (
@@ -264,51 +266,56 @@ function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fil
                             </div>
                         </div>
                         <div className="grid grid-cols-1 mb-4">
-                            <div className="flex">
-                                <h4 className="mb-2 font-semibold w-1/6">Crop Video</h4>
-                                <div className='w-5/6'>
-                                    <FormControl variant="outlined" fullWidth>
-                                        <InputLabel>Crop Filter</InputLabel>
-                                        <Select
-                                            value={formData.selectedCropFilter}
-                                            onChange={handleCropFilterChange}
-                                            label="Crop Filter"
-                                        >
-                                             <MenuItem value="">None</MenuItem>
-                                             {cropFilters.map((filter) => (
-                                                <MenuItem key={filter.value} value={filter.value}>
-                                                    {filter.label}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </div>
+                        <div className="flex">
+                                <FormControl variant="outlined" fullWidth>
+                                    <InputLabel htmlFor="crop-filter-select">Crop Filter</InputLabel>
+                                    <Select
+                                        value={formData.selectedCropFilter}
+                                        onChange={handleCropFilterChange}
+                                        label="Crop Filter"
+                                        inputProps={{
+                                            name: 'crop-filter',
+                                            id: 'crop-filter-select',
+                                        }}
+                                    >
+                                        <MenuItem value="">None</MenuItem>
+                                        {cropFilters.map((filter) => (
+                                            <MenuItem key={filter.value} value={filter.value}>
+                                                {filter.label}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
                             </div>
+
                             <div className="col-span-1 flex flex-col justify-end">
                                 <p className="text-gray-500 text-right mt-1">Crop the video</p>
                             </div>
                         </div>
                         <div className="grid grid-cols-1 mb-4">
                             <div className='flex'>
-                                <h4 className="mb-2 font-semibold w-1/6">Rotate Video</h4>
-                                <div className='w-5/6'>
-                                    <FormControl variant="outlined" fullWidth>
-                                    <InputLabel>Rotate Filter</InputLabel>
+                                <FormControl variant="outlined" fullWidth>
+                                    <InputLabel htmlFor="rotate-filter-select">Rotate Filter</InputLabel>
                                     <Select
                                         value={formData.selectedRotateFilter}
                                         onChange={handleRotateFilterChange}
                                         label="Rotate Filter"
+                                        inputProps={{
+                                            name: 'rotate-filter',
+                                            id: 'rotate-filter-select',
+                                        }}
                                     >
-                                         <MenuItem value="">None</MenuItem>
-                                         {rotateFilters.map((filter) => (
-                                        <MenuItem key={filter.value} value={filter.value}>
-                                            {filter.label}
-                                        </MenuItem>
+                                        <MenuItem value="">None</MenuItem>
+                                        {rotateFilters.map((filter) => (
+                                            <MenuItem key={filter.value} value={filter.value}>
+                                                {filter.label}
+                                            </MenuItem>
                                         ))}
                                     </Select>
-                                    </FormControl>
-                                </div>
+                                </FormControl>
                             </div>
+                        
+
                             <div className="col-span-1 flex flex-col justify-end">
                                 <p className="text-gray-500 text-right mt-1">Rotate the video</p>
                             </div>
@@ -344,7 +351,7 @@ function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fil
                                 <div className='w-5/6'>
                                     <FormControlLabel
                                         control={<Checkbox checked={formData.deshakeChecked} onChange={handleDeshakeChange} />}
-                                        label=""
+                                        label="Deshake Video"
                                     />
                                 </div>
                             </div>
@@ -375,10 +382,11 @@ function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fil
                                     
                             </div>
                             <div className="flex mb-4">
-                                <h4 className='mb-2 font-semibold w-1/6'> Volume</h4> 
+                                <h4 className='mb-2 font-semibold w-1/6'>Volume</h4> 
                                 <Slider
                                     value={formData.volume}
                                     onChange={handleVolumeChange}
+                                    aria-label='Volume'
                                     aria-labelledby="volume-slider"
                                     valueLabelDisplay="auto"
                                     min={0}
@@ -392,7 +400,7 @@ function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fil
                                       <div className='w-5/6'>
                                           <FormControlLabel
                                               control={<Checkbox checked={formData.noAudio} onChange={handleNoAudio} />}
-                                              label=""
+                                              label="No Audio"
                                           />
                                       </div>
                                   </div>
