@@ -9,6 +9,9 @@ jest.mock('../../components/Confetti', () => () => <div>Confetti</div>);
 
 global.setImmediate = (callback) => setTimeout(callback, 0);
 
+console.error = jest.fn();
+console.log = jest.fn();
+
 describe('AccountSuccess Component', () => {
     const mockOpenEmailVerification = jest.fn();
 

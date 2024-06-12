@@ -23,6 +23,9 @@ import { act } from 'react';
 // Mock dependencies
 jest.mock('axios');
 
+console.error = jest.fn();
+console.log = jest.fn();
+
 jest.mock('socket.io-client', () => () => ({
   on: jest.fn(),
   off: jest.fn(),

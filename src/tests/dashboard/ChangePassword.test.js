@@ -16,6 +16,8 @@ import { useData } from '../../DataContext';
 
 jest.mock('firebase/auth');
 jest.mock('../../DataContext');
+console.error = jest.fn();
+console.log = jest.fn();
 
 global.setImmediate = (callback) => setTimeout(callback, 0);
 

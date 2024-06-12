@@ -6,6 +6,8 @@ export {default as HeroSection} from './home/HeroSection';
 export {default as Login} from './home/Login';
 export {default as LoginWithEmail } from './home/LoginWithEmail';
 export {default as Signup} from './home/Signup';
+export {default as SignUpWithEmail} from './home/SignUpWithEmail';
+export {default as SignUpWithGoogle } from './home/SignUpWithGoogle';
 export {default as PasswordReset} from './home/PasswordReset';
 export {default as EmailVerification} from "./home/EmailVerification";
 export {default as EmailVerificationRedirect} from './home/EmailVerificationRedirect';

@@ -13,6 +13,9 @@ jest.mock('firebase/auth', () => ({
 
 global.setImmediate = (callback) => setTimeout(callback, 0);
 
+console.error = jest.fn();
+console.log = jest.fn();
+
 describe('EmailVerification Component', () => {
     const mockUser = {
         email: 'test@example.com',

@@ -26,6 +26,10 @@ import { AdvancedOptions } from '../../components';
 
 
 global.setImmediate = (callback) => setTimeout(callback, 0);
+
+console.error = jest.fn();
+console.log = jest.fn();
+
 // Mock props
 const mockOnClose = jest.fn();
 const mockOnChange = jest.fn();

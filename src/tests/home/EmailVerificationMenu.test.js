@@ -8,6 +8,9 @@ import { getAuth, sendEmailVerification } from 'firebase/auth';
 
 global.setImmediate = (callback) => setTimeout(callback, 0);
 
+console.error = jest.fn();
+console.log = jest.fn();
+
 
 jest.mock('firebase/auth', () => ({
   __esModule: true,

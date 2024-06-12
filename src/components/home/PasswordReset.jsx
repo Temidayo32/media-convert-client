@@ -12,7 +12,7 @@ function PasswordReset({ handleLogIn, show, onClose }) {
 
     const resetPassword = () => {
         firebase.auth().sendPasswordResetEmail(email).then((userCredentials) => {
-          console.log(userCredentials.user);
+          // console.log(userCredentials.user);
         }).catch((error) => {
           console.error(error);
         //   setErrorMessage('Incorrect username or password');
@@ -28,11 +28,11 @@ function PasswordReset({ handleLogIn, show, onClose }) {
     return (
         <div>
           {show && (
-            <div id='closeReset' onClick={handleClick} className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-20">
+            <div id='closeReset' data-testid='closeReset' onClick={handleClick} className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-20">
               <div ref={passwordRef} className="bg-white p-12 h-3/5 w-2/5 rounded-lg shadow-xl">
               <div className="mb-12 text-center"><p className="font-weight-bold text-3xl mb-0">Reset Password</p></div>
               <div>
-                  <div class="mb-4 text-center py-2"><strong>Reset the password you use to log into your account.</strong></div>
+                  <div className="mb-4 text-center py-2"><strong>Reset the password you use to log into your account.</strong></div>
               </div>
               <div className="flex flex-col mt-8">
                   <div className="flex items-center mb-8">
@@ -46,7 +46,7 @@ function PasswordReset({ handleLogIn, show, onClose }) {
                       />
                   </div>
                   <button onClick={resetPassword} className="bg-teal-800 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-400">RESET PASSWORD</button>
-                  <div class="text-center mb-2 mt-4">
+                  <div className="text-center mb-2 mt-4">
                           Already have an account?  <Link onClick={handleLogIn} className="text-teal-500 hover:text-teal-300 transition-colors duration-300">Log In</Link>
                   </div>
               </div>

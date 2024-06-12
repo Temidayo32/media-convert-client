@@ -18,6 +18,8 @@ import { getStorage, ref } from 'firebase/storage';
 jest.mock('../../DataContext');
 jest.mock('firebase/auth');
 jest.mock('firebase/storage');
+console.error = jest.fn();
+console.log = jest.fn();
 
 global.setImmediate = (callback) => setTimeout(callback, 0);
 

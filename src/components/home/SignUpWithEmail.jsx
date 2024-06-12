@@ -107,6 +107,7 @@ function SignUpWithEmail({setUserCredentials, closeSignUpAndShowSuccess}) {
         <input
           type="password"
           placeholder="Password"
+          data-testid='Password Set'
           value={password}
           onChange={handlePasswordChange}
           className={`border ${passwordError || !passwordsMatch ? 'border-red-500' : 'border-gray-300'} px-4 py-2 rounded w-full focus:outline-none focus:border-blue-500`}

@@ -15,6 +15,9 @@ jest.mock('firebase/compat/auth', () => ({
 
 global.setImmediate = (callback) => setTimeout(callback, 0);
 
+console.error = jest.fn();
+console.log = jest.fn();
+
 describe('LoginWithEmail Component', () => {
   beforeEach(() => {
     firebase.auth = jest.fn().mockReturnValue({

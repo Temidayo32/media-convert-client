@@ -47,6 +47,7 @@ function Menu() {
         type="button"
         className="inline-flex justify-center w-full rounded-full border border-gray-300 shadow-sm px-2 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-gray-100"
         id="options-menu"
+        data-testid='options-menu'
         aria-expanded="true"
         aria-haspopup="true"
         onMouseEnter={handleMouseEnter} // Show menu on hover
@@ -70,7 +71,7 @@ function Menu() {
             <p className="text-gray-600">Free Plan</p>
           </div>
         </div>
-        <hr class=""></hr>
+        <hr className=""></hr>
           <Link
             to='/dashboard/recent-tasks'
             className="block p-4 flex items-center w-full text-base text-gray-700 hover:bg-gray-100"

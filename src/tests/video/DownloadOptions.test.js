@@ -17,6 +17,8 @@ import { Dropbox, DropboxAuth } from 'dropbox';
  * 5. Test the upload to Dropbox functionality.
  * 6. Test the upload to Google Drive functionality.
  */
+console.error = jest.fn();
+console.log = jest.fn();
 
 // Mock the handleGoogleAuth utility function
 jest.mock('../../utils/goggleAuth', () => ({

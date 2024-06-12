@@ -14,6 +14,8 @@ import { getAuth, reauthenticateWithCredential, deleteUser, EmailAuthProvider } 
 
 
 jest.mock('firebase/auth');
+console.error = jest.fn();
+console.log = jest.fn();
 
 global.setImmediate = (callback) => setTimeout(callback, 0);
 

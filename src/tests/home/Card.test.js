@@ -6,6 +6,9 @@ import { Card } from '../../components';
 
 global.setImmediate = (callback) => setTimeout(callback, 0);
 
+console.error = jest.fn();
+console.log = jest.fn();
+
 describe('Card Component', () => {
     const mockProps = {
         format: 'MP4',

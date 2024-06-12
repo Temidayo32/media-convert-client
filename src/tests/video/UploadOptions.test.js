@@ -22,6 +22,9 @@ jest.mock('react-dropbox-chooser', () => ({ success, children }) => (
 
 global.setImmediate = (callback) => setTimeout(callback, 0);
 
+console.error = jest.fn();
+console.log = jest.fn();
+
 describe('UploadOptions Component', () => {
   afterEach(() => {
     jest.clearAllMocks(); // Clear mock function calls after each test

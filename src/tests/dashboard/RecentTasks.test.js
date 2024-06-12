@@ -25,6 +25,9 @@ jest.mock('firebase/firestore');
 jest.mock('../../components/video/DownloadOptions', () => () => <div>DownloadOptions Mock</div>);
 jest.mock('../../utils/removeTasks');
 
+console.error = jest.fn();
+console.log = jest.fn();
+
 global.setImmediate = (callback) => setTimeout(callback, 0);
 
 const mockUser = {

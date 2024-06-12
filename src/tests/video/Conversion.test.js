@@ -10,6 +10,9 @@ import { onSnapshot } from 'firebase/firestore';
 // Mocking firebase/auth
 jest.mock('firebase/auth');
 
+console.error = jest.fn();
+console.log = jest.fn();
+
 // Mocking firebase/firestore
 jest.mock('firebase/firestore', () => {
   const originalModule = jest.requireActual('firebase/firestore');

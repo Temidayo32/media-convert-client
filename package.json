@@ -79,6 +79,7 @@
     "@babel/preset-react": "^7.24.7",
     "@types/testing-library__jest-dom": "^6.0.0",
     "babel-jest": "^29.7.0",
+    "firebase-mock": "^2.3.2",
     "jest-fetch-mock": "^3.0.3",
     "msw": "^2.3.1",
     "text-encoding": "^0.7.0",

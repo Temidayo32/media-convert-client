@@ -10,6 +10,9 @@ jest.mock('../../components/Confetti', () => () => <div data-testid="confetti"><
 
 global.setImmediate = (callback) => setTimeout(callback, 0);
 
+console.error = jest.fn();
+console.log = jest.fn();
+
 describe('EmailVerificationRedirect Component', () => {
     test('displays verified email message when email parameter is present', async () => {
         const email = 'test@example.com';
