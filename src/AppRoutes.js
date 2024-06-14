@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { BrowserRouter as Router, Route, Routes, useParams, Navigate } from 'react-router-dom';
-import { HomePage, VideoConverter, DownloadPage } from './pages';
+import { HomePage, SingleVideoConverter, DownloadPage, VideoConverter } from './pages';
 import { Footer, Header, EmailVerificationRedirect, Dashboard } from './components';
 import {  useData } from './DataContext'; // Import DataProvider
 
@@ -33,7 +33,8 @@ const AppRoutes = () => {
         <Header/>
         <Routes>
           <Route exact path="/" element={<HomePage/>} />
-          <Route path="/video-converter/:format" element={<VideoConverter/>} />
+          <Route path="/video-converter" element={<VideoConverter/>} />
+          <Route path="/video-converter/:format" element={<SingleVideoConverter/>} />
           <Route 
             path="/download" 
             element={<DownloadProtectedRoute element={<DownloadPage />} redirectTo="/" />} 

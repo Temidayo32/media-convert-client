@@ -28,3 +28,5 @@ export {default as ChangeEmail } from './dashboard/ChangeEmail';
 export {default as ChangePassword } from './dashboard/ChangePassword';
 export {default as DeleteAccount } from './dashboard/DeleteAccount';
 export {default as DownloadOptions } from './video/DownloadOptions';
+export {default as VideoHero } from './videoPage/VideoHero';
+export {default as HowToConvert } from './videoPage/HowToConvert';

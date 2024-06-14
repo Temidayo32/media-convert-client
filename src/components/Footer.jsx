@@ -23,7 +23,7 @@ const Footer = () => {
             <div className="w-full lg:w-1/2">
               <h4 className="text-lg font-bold mb-4 text-teal-400">Product Features</h4>
               <ul>
-                <li className="mb-2"><a href="#" className="text-gray-400 hover:text-white">Video converter</a></li>
+                <li className="mb-2"><a href="/video-converter" className="text-gray-400 hover:text-white">Video converter</a></li>
                 <li className="mb-2"><a href="#" className="text-gray-400 hover:text-white">Image converter <sup className="border border-orange-500 rounded-full py-1 text-xs px-1">coming soon</sup></a></li>
                 <li className="mb-2"><a href="#" className="text-gray-400 hover:text-white">Document converter <sup className="border border-orange-500 rounded-full py-1 text-xs px-1">coming soon</sup></a></li>
               </ul>

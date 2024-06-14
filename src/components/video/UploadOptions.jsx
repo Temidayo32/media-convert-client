@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { IoIosFolderOpen } from 'react-icons/io';
 import { FaDropbox } from 'react-icons/fa';
 import { DiGoogleDrive } from 'react-icons/di';
-// import OneDrivePicker from './OneDrivePicker';
 import DropboxChooser from 'react-dropbox-chooser';
 
 import { dropboxAppKey } from '../../config/key';

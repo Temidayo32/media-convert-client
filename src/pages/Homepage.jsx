@@ -6,7 +6,7 @@ const HomePage = () => {
   return (
     <div>
       <HeroSection />
-      <VideoSection/>
+      <VideoSection numConversionsToShow={6} numConversions={4} hideButton={true}  />
       <Signupmodal/>
       {/* Add other sections/components here */}
     </div>

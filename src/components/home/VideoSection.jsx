@@ -1,7 +1,9 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Card from './Card';
+import { FaArrowRight } from 'react-icons/fa';
 
-const VideoSection = () => {
+const VideoSection = ({ numConversionsToShow, numConversions, hideButton }) => {
   const [conversions, setConversions] = useState([]);
 
   useEffect(() => {
@@ -12,7 +14,7 @@ const VideoSection = () => {
   }, []);
 
   return (
-    <section className="py-20 bg-orange-100">
+    <section className="pt-20 pb-10 bg-orange-100">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-teal-800">Video Conversion</h2>
@@ -21,7 +23,7 @@ const VideoSection = () => {
         <div className="flex justify-center items-center">
           <div className="flex items-center">
             <div className="grid grid-cols-1 lg:grid-cols-6 gap-16">
-              {conversions.slice(0, 12).map((conversion, index) => (
+              {conversions.slice(0, numConversionsToShow).map((conversion, index) => (
                 <div key={index} className="text-center">
                   <div className="bg-white flex justify-center rounded-full p-4 mb-4">
                     <img
@@ -39,7 +41,7 @@ const VideoSection = () => {
       </div>
 
       <div className="container mx-auto mt-12 grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {conversions.map((conversion, index) => (
+        {conversions.slice(0, numConversions).map((conversion, index) => (
           <Card
             key={index}
             format={conversion.format}
@@ -48,6 +50,15 @@ const VideoSection = () => {
           />
         ))}
       </div>
+      {hideButton && <div className="flex items-center justify-center p-4 mt-8">
+        <Link
+          to='/video-converter'
+          className="flex justify-center items-center hover:text-white text-teal-700 bg-white inline-block hover:bg-teal-700 border border-teal-100 py-4 px-8 rounded shadow-md transition duration-300"
+        >
+          MORE FORMAT <FaArrowRight className="ml-2" />
+        </Link>
+      </div>
+      }
     </section>
   );
 };

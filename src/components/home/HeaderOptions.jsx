@@ -61,10 +61,10 @@ const HeaderOptions = () => {
             <MdOutlineArrowDropDown className="size-8 ml-1" />
         </div>
         {isDropdownOpen && (
-          <div className="absolute top-10 text-lg w-60 h-96 bg-white shadow-lg rounded-l-lg z-10">
+          <div className="absolute top-10 text-base w-60 h-80 bg-white shadow-lg rounded-l-lg z-10">
             <ul className="py-1">
               <li 
-                className="block p-8 flex items-center gap-4 justify-between text-gray-700 hover:bg-gray-100"
+                className="block p-6 flex items-center gap-4 justify-between text-gray-700 hover:bg-gray-100"
                 onMouseEnter={handleMouseEnterVideo}
                 onMouseLeave={handleMouseLeaveVideo}
               >
@@ -72,12 +72,12 @@ const HeaderOptions = () => {
                 Video Conversion
                 <IoIosArrowForward className='size-6 text-gray-800'/>
               </li>
-              <li className="block p-8 text-gray-400 gap-4 cursor-not-allowed gap-2 flex items-center hover:bg-gray-100">
+              <li className="block p-6 text-gray-400 gap-4 cursor-not-allowed gap-2 flex items-center hover:bg-gray-100">
                 <FaImage className='size-8'/> 
                 Image Conversion
                 <IoIosArrowForward className='size-6'/>
               </li>
-              <li className="block p-8 text-gray-400 gap-4 cursor-not-allowed gap-2 flex items-center hover:bg-gray-100">
+              <li className="block p-6 text-gray-400 gap-4 cursor-not-allowed gap-2 flex items-center hover:bg-gray-100">
                 <IoMdDocument className='size-8'/> 
                 Document Conversion
                 <IoIosArrowForward className='size-6'/>
@@ -88,8 +88,8 @@ const HeaderOptions = () => {
       </div>
       {(isVideoHovered) && (
         <div
-          className="absolute top-10 p-4 mt-0 text-lg h-96 bg-white shadow-lg rounded-r-lg z-20"
-          style={{ left: "calc(100% + 136px)", width: "47rem" }}
+          className="absolute top-10 p-4 mt-0 text-lg h-80 bg-white shadow-lg rounded-r-lg z-20"
+          style={{ left: "calc(100% + 136px)", width: "40rem" }}
           onMouseEnter={handleMouseEnterVideo}
           onMouseLeave={handleMouseLeaveVideo}
         >
