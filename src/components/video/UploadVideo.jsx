@@ -370,14 +370,14 @@ const UploadVideo = ({defaultFormat}) => {
   
  
   return (
-    <div className="container mx-auto py-8">
+    <div className="container w-full mx-auto py-8">
       {limitExceeded && (
-        <div className={`fixed top-24 right-5 bg-red-500 z-20 text-white p-4 rounded-lg shadow-lg transition-opacity duration-500 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
+        <div className={`fixed top-24 right-5 bg-red-500 z-20 text-white text-sm md:text-lg p-2 md:p-4 rounded-lg shadow-lg transition-opacity duration-500 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
           {limitMessage}
         </div>
       )}
       {showErrorMessages && oversizedFiles.length > 0 && (
-            <div className={`fixed top-24 left-1/2 transform -translate-x-1/2 bg-red-500 text-white p-4 rounded-md shadow-lg z-50 ${!showErrorMessages ? 'opacity-0 transition-opacity duration-500' : 'opacity-100'}`}>
+            <div className={`fixed top-24 left-1/2 transform -translate-x-1/2 bg-red-500 text-sm md:text-lg p-2 md:p-4 text-white rounded-md shadow-lg z-50 ${!showErrorMessages ? 'opacity-0 transition-opacity duration-500' : 'opacity-100'}`}>
                 {oversizedFiles.map((message, index) => (
                     <p key={index}>{message}</p>
                 ))}
@@ -394,16 +394,16 @@ const UploadVideo = ({defaultFormat}) => {
         />
       )}
       {showUploadForm ? (
-        <div className="flex flex-col items-center justify-center w-2/3 h-64 mx-auto bg-teal-50 p-8 rounded-lg border-dashed border-4 border-teal-400">
+        <div className="flex flex-col items-center justify-center w-3/4 sm:w-2/3 h-48 md:h-64 mx-auto bg-teal-50 p-8 rounded-lg border-dashed border-4 border-teal-400">
           <div 
-            className="relative w-2/5 h-1/2 bg-teal-500 rounded-lg shadow-lg flex items-center justify-between px-6"
+            className="relative w-full uploadvideo uploadvideos sm:w-3/5 md-custom:w-3/5 lg:w-2/5 h-1/2 bg-teal-500 rounded-lg shadow-lg flex items-center justify-between px-6"
             onMouseEnter={() => setShowDropdown(true)}
             onMouseLeave={() => setShowDropdown(false)}
           >
-            <FaFileCirclePlus className="text-white text-4xl" />
-            <span className="text-white text-3xl pr-2 font-semibold cursor-pointer">Choose Files</span>
-            <div className="h-20 w-0.5 bg-teal-400"></div>
-            <IoIosArrowDropdownCircle className="text-white text-4xl cursor-pointer" />
+            <FaFileCirclePlus className="text-white hidden sm:block md:text-2xl lg:text-4xl cursor-pointer" />
+            <span className="uploaded text-white text-center text-sm sm:text-lg lg:text-xl xl:text-2xl ml-4 lg:ml-0 pr-2 font-semibold cursor-pointer">Choose Files</span>
+            <div className="h-20 w-0.5 md:block hidden bg-teal-400"></div>
+            <IoIosArrowDropdownCircle className="text-white hidden sm:block md:text-2xl lg:text-4xl cursor-pointer" />
             { showDropdown && 
               <UploadOptions 
                 handleFileUpload={handleFileUpload} 
@@ -414,7 +414,7 @@ const UploadVideo = ({defaultFormat}) => {
             }
           </div>
           {!emailVerified && (
-            <p className="text-center text-gray-500">
+            <p className="text-center text-xs md:text-base text-gray-500">
               Max file size 1GB. <button className='underline underline-offset-2' onClick={toggleSignUpOptions}>Sign up</button> for more
             </p>
           )
@@ -422,18 +422,18 @@ const UploadVideo = ({defaultFormat}) => {
           {!emailVerified && (<p className='text-center text-gray-500 mt-auto text-xs'>*Limit 5 conversions/day</p>)}
       </div>
       ) : (
-        <div className="w-2/3 mx-auto bg-white p-8 rounded-lg shadow-lg">
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-teal-800 text-3xl font-semibold">Uploaded Videos</span>
+        <div className="w-11/12 md:w-5/6 lg:2/3 m-4 md:m-auto bg-white p-8 rounded-lg shadow-lg">
+        <div className="flex flex-col md:flex-row items-center justify-between mb-4">
+          <span className="uploaded uploads text-teal-800 mb-4 md:mb-0 text-sm sm:text-lg lg:text-2xl xl:text-3xl font-semibold">Uploaded Videos</span>
           <div 
-            className="relative w-2/5 h-1/2 bg-teal-500 rounded-lg shadow-lg z-10 flex items-center justify-between px-6"
+            className="addMoreFiles uploadvideos relative w-3/5 lg:w-3/6 xl:w-2/5 h-1/2 bg-teal-500 rounded-lg shadow-lg z-10 flex items-center justify-between px-6"
             onMouseEnter={() => setShowDropdown(true)}
             onMouseLeave={() => setShowDropdown(false)}
           >
-            <FaFileCirclePlus className="text-white text-4xl" />
-            <span className="text-white text-2xl pr-2 font-semibold cursor-pointer">Add More Files</span>
-            <div className="h-20 w-0.5 bg-teal-400"></div>
-            <IoIosArrowDropdownCircle className="text-white text-4xl cursor-pointer" />
+            <FaFileCirclePlus className="text-white hidden sm:block sm:text-xl md:text-2xl lg:text-4xl" />
+            <span className="uploaded uploads text-white text-center text-sm py-4 md:py-0 sm:text-lg lg:text-2xl ml-4 lg:ml-0 font-semibold cursor-pointer">Add More Files</span>
+            <div className="h-20 w-0.5 md:block hidden bg-teal-400"></div>
+            <IoIosArrowDropdownCircle className="text-white hidden sm:block sm:text-xl md:text-2xl lg:text-4xl cursor-pointer" />
             { showDropdown && 
               <UploadOptions 
                 handleFileUpload={handleFileUpload} 
@@ -446,44 +446,45 @@ const UploadVideo = ({defaultFormat}) => {
         </div>
         <ul>
           {uploadedVideos.map((video, index) => (
-            <li key={index} className="flex justify-between items-center m-px border w-full py-4 px-4 border-gray-300 pb-2">
-            <div className='flex w-5/6'>
-              <div className='flex flex-col w-2/3'>
-                <span className="text-teal-800 text-xl font-semibold">{video.name}</span>
-                <span className="text-gray-500 text-lg ml-2">{video.size}</span>
+            <li key={index} className="flex flex-col gap-4 sm:gap-0 sm:flex-row justify-between items-center m-px border w-full py-4 px-4 border-gray-300">
+              <div className='flex flex-col gap-4 sm:gap-0 sm:flex-row w-full sm:w-5/6'>
+                <div className='flex flex-col w-full items-center sm:items-start justify-center sm:justify-start sm:w-2/3'>
+                  <span className="text-teal-800 text-sm md:text-base lg:text-xl font-semibold">{video.name}</span>
+                  <span className="text-gray-500 text-xs md:text-sm lg:text-lg sm:ml-2">{video.size}</span>
+                </div>
+                <div className='flex items-center text-sm lg:text-lg justify-center sm:justify-end w-full sm:w-1/3 mt-2 sm:mt-0'>
+                  <p className='text-xs md:text-sm lg:text-lg pr-2 text-gray-500'>Output:</p>
+                  <Select
+                    options={formats.map((format) => ({ label: format.format, value: format.format.toLowerCase() }))}
+                    defaultValue={{ label: defaultOption.format, value: defaultOption.format }}
+                    onChange={(selectedOption) => {
+                      const newVideos = [...uploadedVideos];
+                      newVideos[index].format = selectedOption.value;
+                      setUploadedVideos(newVideos);
+                      // console.log(newVideos)
+                    }}
+                    styles={customStyles}
+                  />
+                </div>
               </div>
-              <div className='flex items-center justify-end w-1/3'>
-                <p className='text-lg pr-2 text-gray-500'>Output:</p>
-                <Select
-                  options={formats.map((format) => ({ label: format.format, value: format.format.toLowerCase() }))}
-                  defaultValue={{ label: defaultOption.format, value: defaultOption.format }}
-                  onChange={(selectedOption) => {
-                    const newVideos = [...uploadedVideos];
-                    newVideos[index].format = selectedOption.value;
-                    setUploadedVideos(newVideos);
-                    // console.log(newVideos)
-                }}
-                styles={customStyles}
-                />
-              </div>
-            </div>
-            <div className='flex items-center gap-2'>
-              <div key={video.jobId}>
-                   <button className="mr-2" title="Settings"  onClick={() => openModal(video.jobId)}>
-                    <BsGearFill className="text-3xl text-gray-500 hover:text-teal-500 transform hover:scale-110 transition transition-colors duration-300" />
+              <div className='flex items-center justify-between gap-2 mt-2 sm:mt-0'>
+                <div key={video.jobId}>
+                  <button className="mr-2" title="Settings" onClick={() => openModal(video.jobId)}>
+                    <BsGearFill className=" text-2xl md:text-xl lg:text-3xl text-gray-500 hover:text-teal-500 transform hover:scale-110 transition transition-colors duration-300" />
                   </button>
+                </div>
+                <button title="Delete" onClick={() => handleRemoveVideo(index)}>
+                  <MdDelete className="text-xl md:text-xl lg:text-2xl text-gray-500 hover:text-red-600 transform hover:scale-110 transition transition-colors duration-300" />
+                </button>
               </div>
-              <button title="Delete" onClick={() => handleRemoveVideo(index)}>
-                <MdDelete className="text-2xl text-gray-500 hover:text-red-600 transform hover:scale-110 transition transition-colors duration-300" />
-              </button>
-            </div>
-          </li>
+            </li>
           ))}
         </ul>
+
         <div className="flex justify-between items-center mt-8">
-          <span className="text-gray-600 text-lg">{uploadedVideos.length} videos uploaded</span>
+          <span className="text-gray-600 text-xs md:text-sm lg:text-lg">{uploadedVideos.length} videos uploaded</span>
           {!emailVerified && (<p className='text-center text-gray-500 mt-auto text-xs'>*Limit 5 conversions/day</p>)}
-          <button className="bg-teal-800 hover:bg-teal-600 text-white font-bold py-2 px-8"
+          <button className="bg-teal-800 hover:bg-teal-600 text-white text-xs md:text-sm lg:text-lg font-bold py-2 px-4 lg:px-8"
             onClick={handleConvertVideos}>
             Convert
           </button>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MdOutlineArrowDropDown } from "react-icons/md";
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { FaVideo, FaImage } from "react-icons/fa";
 import { IoMdDocument, IoIosArrowForward } from "react-icons/io";
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 
 import NestedOptions from './NestedOptions';
 
@@ -57,29 +57,51 @@ const HeaderOptions = () => {
         className="relative flex items-center cursor-pointer"
       >
         <div className="hover:text-teal-500 hover:scale-105 flex items-center">
-            <span className="text-lg font-semibold">All Tools</span>
-            <MdOutlineArrowDropDown className="size-8 ml-1" />
+          <span className="text-lg font-semibold">All Tools</span>
+          {isDropdownOpen ? <FaChevronUp className="ml-4" /> : <FaChevronDown className="ml-4" />}
         </div>
         {isDropdownOpen && (
-          <div className="absolute top-10 text-base w-60 h-80 bg-white shadow-lg rounded-l-lg z-10">
+          <div className="absolute top-10 text-base w-72 xl:w-60 xl:h-80 bg-white shadow-lg rounded-lg xl:rounded-l-lg z-10">
             <ul className="py-1">
               <li 
-                className="block p-6 flex items-center gap-4 justify-between text-gray-700 hover:bg-gray-100"
-                onMouseEnter={handleMouseEnterVideo}
-                onMouseLeave={handleMouseLeaveVideo}
+                className="block p-6 flex items-center gap-4 justify-between text-gray-700 hover:bg-gray-100 xl:hidden"
               >
+                <Link to="/video-converter" className="flex items-center gap-4">
+                  <FaVideo className='size-6 text-teal-500'/> 
+                  Video Conversion
+                </Link>
+              </li>
+              <li 
+                className="block p-6 flex items-center gap-4 justify-between text-gray-700 hover:bg-gray-100 xl:hidden"
+              >
+                <Link to="/image-conversion" className="flex items-center gap-4">
+                  <FaImage className='size-6 text-teal-500'/> 
+                  Image Conversion
+                </Link>
+              </li>
+              <li 
+                className="block p-6 flex items-center gap-4 justify-between text-gray-700 hover:bg-gray-100 xl:hidden"
+              >
+                <Link to="/document-conversion" className="flex items-center gap-4">
+                  <IoMdDocument className='size-6 text-teal-500'/> 
+                  Document Conversion
+                </Link>
+              </li>
+            </ul>
+            <ul className="py-1 hidden xl:block">
+              <li className="p-6 flex items-center gap-4 justify-between text-gray-700 hover:bg-gray-100" onMouseEnter={handleMouseEnterVideo} onMouseLeave={handleMouseLeaveVideo}>
                 <FaVideo className='size-6 text-teal-500'/> 
-                Video Conversion
+                <span className="hidden xl:inline-block">Video Conversion</span>
                 <IoIosArrowForward className='size-6 text-gray-800'/>
               </li>
-              <li className="block p-6 text-gray-400 gap-4 cursor-not-allowed gap-2 flex items-center hover:bg-gray-100">
+              <li className="p-6 text-gray-400 gap-4 cursor-not-allowed flex items-center hover:bg-gray-100">
                 <FaImage className='size-8'/> 
-                Image Conversion
+                <span className="hidden xl:inline-block">Image Conversion</span>
                 <IoIosArrowForward className='size-6'/>
               </li>
-              <li className="block p-6 text-gray-400 gap-4 cursor-not-allowed gap-2 flex items-center hover:bg-gray-100">
+              <li className="p-6 text-gray-400 gap-4 cursor-not-allowed flex items-center hover:bg-gray-100">
                 <IoMdDocument className='size-8'/> 
-                Document Conversion
+                <span className="hidden xl:inline-block">Document Conversion</span>
                 <IoIosArrowForward className='size-6'/>
               </li>
             </ul>
@@ -88,7 +110,7 @@ const HeaderOptions = () => {
       </div>
       {(isVideoHovered) && (
         <div
-          className="absolute top-10 p-4 mt-0 text-lg h-80 bg-white shadow-lg rounded-r-lg z-20"
+          className="hidden xl:block absolute top-10 p-4 mt-0 text-lg h-80 bg-white shadow-lg rounded-r-lg z-20"
           style={{ left: "calc(100% + 136px)", width: "40rem" }}
           onMouseEnter={handleMouseEnterVideo}
           onMouseLeave={handleMouseLeaveVideo}
@@ -99,6 +121,5 @@ const HeaderOptions = () => {
     </div>
   );
 };
-
 
 export default HeaderOptions;

@@ -91,48 +91,48 @@ function SignUpWithEmail({setUserCredentials, closeSignUpAndShowSuccess}) {
 
   return (
     <div className="flex flex-col mt-4">
-      <div className="flex items-center mb-4">
-        <HiOutlineMail className="w-8 h-8 mr-2 text-gray-500" />
+      <div className="flex items-center mb-2 md:mb-4">
+        <HiOutlineMail className="w-8 h-8 mr-2 text-gray-500 lg:w-10 lg:h-10" />
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={handleEmailChange}
-          className={`border ${emailError ? 'border-red-500' : 'border-gray-300'} px-4 py-2 rounded w-full focus:outline-none focus:border-blue-500`}
+          className={`border ${emailError ? 'border-red-500' : 'border-gray-300'} px-2 py-1 md:px-4 md:py-2 rounded w-full focus:outline-none focus:border-blue-500 text-xs md:text-base lg:text-lg`}
         />
       </div>
-      {emailError && <p className="text-red-500 text-sm mb-2">{emailError}</p>}
-      <div className="flex items-center mb-4">
-        <RiLockPasswordLine className="w-8 h-8 mr-2 text-gray-500" />
+      {emailError && <p className="text-red-500  text-xs md:text-sm mb-2">{emailError}</p>}
+      <div className="flex items-center mb-2 md:mb-4">
+        <RiLockPasswordLine className="w-8 h-8 mr-2 text-gray-500 lg:w-10 lg:h-10" />
         <input
           type="password"
           placeholder="Password"
-          data-testid='Password Set'
           value={password}
           onChange={handlePasswordChange}
-          className={`border ${passwordError || !passwordsMatch ? 'border-red-500' : 'border-gray-300'} px-4 py-2 rounded w-full focus:outline-none focus:border-blue-500`}
+          className={`border ${passwordError || !passwordsMatch ? 'border-red-500' : 'border-gray-300'} px-2 py-1 md:px-4 md:py-2 rounded w-full focus:outline-none focus:border-blue-500 text-xs md:text-base lg:text-lg`}
         />
       </div>
-      {passwordError && <p className="text-red-500 text-sm mb-2">{passwordError}</p>}
-      <div className="flex items-center mb-4">
-        <RiLockPasswordFill className="w-8 h-8 mr-2 text-gray-500" />
+      {passwordError && <p className="text-red-500 text-xs md:text-sm mb-2">{passwordError}</p>}
+      <div className="flex items-center mb-2 md:mb-4">
+        <RiLockPasswordFill className="w-8 h-8 mr-2 text-gray-500  lg:w-10 lg:h-10" />
         <input
           type="password"
           placeholder="Confirm Password"
           value={confirmPassword}
           onChange={handleConfirmPasswordChange}
-          className={`border ${passwordError || !passwordsMatch ? 'border-red-500' : 'border-gray-300'} px-4 py-2 rounded w-full focus:outline-none focus:border-blue-500`}
+          className={`border ${passwordError || !passwordsMatch ? 'border-red-500' : 'border-gray-300'} px-2 py-1 md:px-4 md:py-2 rounded w-full focus:outline-none focus:border-blue-500 text-xs md:text-base lg:text-lg`}
         />
       </div>
-      {!passwordsMatch && <p className="text-red-500 text-sm">Passwords don't match</p>}
-      <button 
-        onClick={signUpWithEmailAndPassword} 
-        className="flex items-center justify-center bg-teal-800 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-400"
-        disabled={isLoading || !!emailError || !!passwordError || !passwordsMatch}>
-          {isLoading ? <CgSpinner className="animate-spin mr-2 size-6" /> : 'SIGN UP'}
+      {!passwordsMatch && <p className="text-red-500 text-xs md:text-sm">Passwords don't match</p>}
+      <button
+        onClick={signUpWithEmailAndPassword}
+        className="flex items-center justify-center text-xs md:text-base bg-teal-800 hover:bg-teal-500 text-white font-bold py-1 px-2  md:py-2 md:px-4 rounded transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-400"
+        disabled={isLoading || !!emailError || !!passwordError || !passwordsMatch}
+      >
+        {isLoading ? <CgSpinner className="animate-spin mr-2 size-4 md:size-6" /> : 'SIGN UP'}
       </button>
     </div>
   );
-}
+};
 
 export default SignUpWithEmail;

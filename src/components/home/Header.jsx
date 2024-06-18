@@ -5,6 +5,8 @@ import { getLocalStorageItem, setLocalStorageItem, removeLocalStorageItem } from
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useData } from '../../DataContext';
 
+import { FaBars, FaTimes } from 'react-icons/fa';
+
 
 function Header() {
     const [showLogin, setShowLogin] = useState(true);
@@ -18,6 +20,7 @@ function Header() {
     const [showMenu, setShowMenu] = useState(false);
     const [showUser, setShowUser ] = useState(false);
     const {emailVerified, setEmailVerified} = useData(); 
+    const [menuOpen, setMenuOpen] = useState(false);
 
     const auth = getAuth();
     // console.log(auth.currentUser)
@@ -101,6 +104,8 @@ function Header() {
         setShowMenu(true); 
         setShowEmailVerification(false);
       };
+
+    const handleMenuItemClick = () => setMenuOpen(false);
     
 
     return (
@@ -112,42 +117,77 @@ function Header() {
             />
           )}
         <header className="bg-white py-4 border-b border-gray-200 shadow-sm">
-        <div className="container mx-auto flex justify-between items-center">
+          <div className="container mx-auto flex justify-between items-center">
             <div className="flex items-center gap-12">
-                <div className='flex items-center'>
-                  <img src="/medialogo.svg" alt="Logo" className="w-14 mr-4 text-teal-800"/>
-                  <Link to="/" className="text-teal-800 text-xl font-bold">Media Convert</Link>
-                </div>
-                <HeaderOptions/>
-          </div>
-            <div className="flex">
-                {showUser ? (
-                    <Menu showMenu={showMenu} setShowMenu={setShowMenu} />
-                ) : (
-                    <>
-                    <button onClick={toggleLogInOptions} className="text-teal-800 hover:text-teal-500 transition-colors duration-300 py-2 px-4 mr-2">Log In</button>
-                    <button onClick={toggleSignUpOptions} className="bg-teal-800 hover:bg-teal-500 transition-colors duration-300 text-white py-2 px-4 rounded-full">Sign up</button>
-                    </>
-                )}
-                {showLogin ? (
-                    <Login showSignUp={toggleSignUpOptions} onForgotPasswordClick={togglePasswordReset} show={showLoginOptions} onClose={() => setShowLoginOptions(false)}/>
-                ) : (
-                    <PasswordReset handleLogIn={toggleLogInOptions} show={showPasswordReset} onClose={togglePasswordReset} />
-                )}
-                {showSignUp && (
-                    <Signup 
-                        showLogin={toggleLogInOptions} show={showSignUpOptions} onClose={() => setShowSignUpOptions(false)} 
-                        setUserCredentials={setUserCredentials} 
-                        closeSignUpAndShowSuccess={closeSignUpAndShowSuccess} 
-                    />
-                )}
-                {userCredentials && !showSignUp && <AccountSuccess openEmailVerification={handleOpenEmailVerification}  />}
-                {showEmailVerification && <EmailVerification showMenu={handleVerificationCompletion} />}
+              <div className='flex items-center'>
+                <img src="/medialogo.svg" alt="Logo" className="w-14 mr-4 text-teal-800"/>
+                <Link to="/" className="text-teal-800 text-xl font-bold">Media Convert</Link>
+              </div>
+              <div className="hidden md:flex">
+                <HeaderOptions />
+              </div>
             </div>
-        </div>
-        </header>
+            {showUser ? (
+                <div className="md:hidden mr-6">
+                  <Menu showMenu={showMenu} setShowMenu={setShowMenu}  />
+                </div>
+              ) :  (
+              <div className="flex md:hidden">
+              <button onClick={() => setMenuOpen(!menuOpen)} className="text-teal-800 mr-8">
+                {menuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+              </button>
+            </div>
+            )}
+            <div className="hidden md:flex mr-6">
+              {showUser ? (
+                  <Menu showMenu={showMenu} setShowMenu={setShowMenu} />
+              ) : (
+                <>
+                  <button onClick={() => { toggleLogInOptions(); handleMenuItemClick(); }} className="text-teal-800 hover:text-teal-500 transition-colors duration-300 py-2 px-4 mr-2">Log In</button>
+                  <button onClick={() => { toggleSignUpOptions(); handleMenuItemClick(); }} className="bg-teal-800 hover:bg-teal-500 transition-colors duration-300 text-white py-2 px-4 rounded-full">Sign Up</button>
+                </>
+              )}
+            </div>
+          </div>
+          {menuOpen && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-50" onClick={() => setMenuOpen(false)}>
+              <div className="fixed top-0 right-0 w-full md:w-1/2 bg-white h-full shadow-lg transition-transform transform duration-300 ease-in-out" style={{ transform: menuOpen ? 'translateX(0)' : 'translateX(100%)' }} onClick={(e) => e.stopPropagation()}>
+                <div className="flex justify-end items-center p-4 border-b border-gray-200">
+                  <button onClick={() => setMenuOpen(false)} className="text-teal-800 mr-8">
+                    <FaTimes size={24} />
+                  </button>
+                </div>
+                <div className="flex flex-col items-center py-4">
+                  {!showUser && (
+                    <>
+                      <button onClick={() => { toggleLogInOptions(); handleMenuItemClick(); }} className="text-teal-800 text-lg hover:text-teal-500 transition-colors duration-300 py-2 px-4 mt-4">Log In</button>
+                      <button onClick={() => { toggleSignUpOptions(); handleMenuItemClick(); }} className="bg-teal-800 text-lg hover:bg-teal-500 transition-colors duration-300 text-white py-2 px-4 rounded-full mt-2">Sign Up</button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+          {showLogin && (
+            <Login showSignUp={toggleSignUpOptions} onForgotPasswordClick={togglePasswordReset} show={showLoginOptions} onClose={() => setShowLoginOptions(false)} />
+          )}
+          {showPasswordReset && (
+            <PasswordReset handleLogIn={toggleLogInOptions} show={showPasswordReset} onClose={togglePasswordReset} />
+          )}
+          {showSignUp && (
+            <Signup 
+              showLogin={toggleLogInOptions} show={showSignUpOptions} onClose={() => setShowSignUpOptions(false)} 
+              setUserCredentials={setUserCredentials} 
+              closeSignUpAndShowSuccess={closeSignUpAndShowSuccess} 
+            />
+          )}
+          {userCredentials && !showSignUp && <AccountSuccess openEmailVerification={handleOpenEmailVerification} />} 
+          {showEmailVerification && <EmailVerification showMenu={handleVerificationCompletion} />}
+    </header>
         </>
     );
 }
 
 export default Header;
+
+// onItemClicked={handleMenuItemClick}

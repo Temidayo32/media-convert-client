@@ -30,3 +30,7 @@ export {default as DeleteAccount } from './dashboard/DeleteAccount';
 export {default as DownloadOptions } from './video/DownloadOptions';
 export {default as VideoHero } from './videoPage/VideoHero';
 export {default as HowToConvert } from './videoPage/HowToConvert';
+export {default as FaqItem } from './videoPage/FaqItem';
+export {default as FaqSection } from './videoPage/FaqSection';
+export { default as Audience } from './home/Audience';
+export { default as AudienceCard } from './home/AudienceCard';

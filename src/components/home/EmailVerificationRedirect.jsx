@@ -29,19 +29,19 @@ function EmailVerificationRedirect() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md text-center">
+      <div className="bg-white p-8 lg:w-2/5 md:w-3/5 w-4/5 rounded-lg shadow-md text-center">
       {showConfetti && <Confetti />}
         {email ? (
-          <p className="text-teal-500 text-lg p-8">
+          <p className="text-teal-500 text-sm sm:text-base md:text-lg p-8">
             Email verified successfully for {email}.
           </p>
         ) : (
-          <p className="text-red-500 text-lg">
+          <p className="text-red-500 text-sm sm:text-base md:text-lg">
             Error verifying email. Please try again.
           </p>
         )}
         <div className="flex items-center justify-center mb-4 pb-4 text-green-500">
-            <FaCheck className="w-40 h-40 rounded-full border-4 border-green-500 p-3" />
+            <FaCheck className="w-12 h-12 sm:w-16 sm:h-16 lg:w-28 lg:h-28 xl:w-40 xl:h-40 rounded-full border-4 border-green-500 p-3" />
           </div>
         <Link to="/" className="mt-4 transition duration-300 hover:bg-teal-500 hover:text-white text-teal-500 border rounded p-4">
           Go to Home

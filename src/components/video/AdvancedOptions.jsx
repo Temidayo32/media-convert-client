@@ -70,6 +70,20 @@ const audioCodecs = [
     { label: 'PCM', value: 'pcm', description: 'Uncompressed audio with original waveform preservation.' },
     { label: 'WAV', value: 'wav', description: 'Standard uncompressed format for professional use.' }
   ];
+
+const responsiveFontSize = {
+    fontSize: {
+        xs: '0.75rem', 
+        lg: '0.875rem', 
+        xl: '1rem',
+        },
+}
+
+const sliderStyles = {
+    width: '100%',
+    '& .MuiSlider-valueLabel': responsiveFontSize,
+    '& .MuiSlider-markLabel': responsiveFontSize,
+  };
   
 
 function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fileSize }) {
@@ -144,38 +158,38 @@ function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fil
             className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-20"
             onClick={handleClick}
           >
-                <div className="bg-white p-8 h-5/6 w-4/5 shadow-xl rounded">
+                <div className="bg-white py-16 xl:p-8 px-4 sm:px-8 lg:px-12 h-5/6 w-11/12 lg:w-4/5 shadow-xl rounded">
                     <div className="flex items-center mb-2">
                         <div className=" w-11/12 flex flex-col">
                             <div className='flex items-center mb-2 gap-4 justify-start relative'>
-                                <BsGearFill className="text-3xl text-gray-600" />
-                                <h2 className="text-3xl font-semibold">Advanced Options (Optional)</h2>
+                                <BsGearFill className="text-sm sm:text-xl lg:text-2xl xl:text-3xl text-gray-600" />
+                                <h2 className="text-sm sm:text-xl lg:text-2xl xl:text-3xl font-semibold">Advanced Options (Optional)</h2>
                             </div>
-                            <p className='text-gray-500'>File name: {fileName} ({fileSize}) </p>
+                            <p className='text-xs md:text-sm xl:text-base text-gray-500'>File name: {fileName} ({fileSize}) </p>
                         </div>
                         <div className='w-1/12 flex justify-end'>
                             <AiOutlineClose
                             id="closeIcon"
                             data-testid="closeIcon"
-                            className="text-2xl cursor-pointer hover:text-red-600 transform hover:scale-110 transition transition-colors duration-300"
+                            className="text-sm sm:text-xl lg:text-2xl cursor-pointer hover:text-red-600 transform hover:scale-110 transition transition-colors duration-300"
                             onClick={() => onClose()}
                             />
                         </div>
                     </div>
                     {/* Video Options Section */}
                     <div className='rounded h-4/5 overflow-y-scroll'>
-                        <div className="bg-gray-300 p-6">
-                            <h3 className="text-xl font-semibold">Video Options</h3>
+                        <div className="bg-gray-300 p-2 lg:p-4 xl:p-6">
+                            <h3 className="text-sm lg:text-lg xl:text-xl font-semibold">Video Options</h3>
                         </div>
-                        <div className="bg-gray-100 px-12 py-8">
+                        <div className="bg-gray-100 px-4 lg:px-8 xl:px-12 py-8">
                             {/* Add your video option fields here */}
-                            <div className='flex mb-4'>
-                                <h4 className="mb-2 font-semibold w-1/6">Video Codec</h4>
-                                <div className="grid grid-cols-5 gap-4 w-5/6">
+                            <div className='flex sm-custom:flex-row flex-col mb-4'>
+                                <h4 className="mb-2 font-semibold w-full sm-custom:w-1/6 text-xs lg:text-sm xl:text-base">Video Codec</h4>
+                                <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full sm-custom:w-5/6">
                                     {videoCodecs.map((codec) => (
                                     <Tooltip key={codec.value} title={codec.description} arrow placement="top">
                                         <div
-                                        className={`p-2 border rounded cursor-pointer duration-300 transform hover:scale-105 text-center ${formData.selectedCodec === codec.value ? 'bg-teal-500 text-white' : 'bg-white hover:bg-gray-300'}`}
+                                        className={`p-1 lg:p-2 border text-xs lg:text-sm xl:text-base rounded cursor-pointer duration-300 transform hover:scale-105 text-center ${formData.selectedCodec === codec.value ? 'bg-teal-500 text-white' : 'bg-white hover:bg-gray-300'}`}
                                         onClick={() =>  handleFieldChange('selectedCodec', codec.value)}
                                         >
                                         {codec.label}
@@ -184,13 +198,13 @@ function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fil
                                     ))}
                                 </div>
                             </div>
-                            <div className='flex mb-4'>
-                                <h4 className="mb-2 font-semibold w-1/6">Frame Rate</h4>
-                                <div className="grid grid-cols-5 gap-4 w-5/6">
+                            <div className='flex sm-custom:flex-row flex-col mb-4'>
+                                <h4 className="mb-2 font-semibold w-full sm-custom:w-1/6 text-xs lg:text-sm xl:text-base">Frame Rate</h4>
+                                <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full sm-custom:w-5/6">
                                     {frameRates.map((rate) => (
                                     <Tooltip key={rate.value} title={rate.description} arrow placement="top">
                                         <div
-                                        className={`p-2 border rounded cursor-pointer duration-300 transform hover:scale-105 text-center ${formData.selectedFrameRate === rate.value ? 'bg-teal-500 text-white' : 'bg-white hover:bg-gray-300'}`}
+                                        className={`p-1 lg:p-2 text-xs lg:text-sm xl:text-base border rounded cursor-pointer duration-300 transform hover:scale-105 text-center ${formData.selectedFrameRate === rate.value ? 'bg-teal-500 text-white' : 'bg-white hover:bg-gray-300'}`}
                                         onClick={() => handleFieldChange('selectedFrameRate', rate.value)}
                                         >
                                         {rate.label}
@@ -199,49 +213,68 @@ function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fil
                                     ))}
                                 </div>
                             </div>
-                            <div className="flex items-center mb-4">
-                                <h4 className="mb-2 font-semibold w-1/6">Aspect Ratio</h4>
+                            <div className="flex sm-custom:flex-row flex-col sm-custom:items-center mb-4">
+                                <h4 className="mb-2 font-semibold w-full sm-custom:w-1/6 text-xs lg:text-sm xl:text-base">Aspect Ratio</h4>
                                 <Select
                                 aria-label='Aspect Ratio'
                                 value={formData.selectedAspectRatio}
                                 onChange={handleAspectRatioChange}
                                 displayEmpty
-                                className='w-5/6'
+                                sx={responsiveFontSize}
                                 >
-                                <MenuItem value="">None</MenuItem>
-                                <MenuItem value="16:9">16:9 (Widescreen)</MenuItem>
-                                <MenuItem value="4:3">4:3 (Standard)</MenuItem>
-                                <MenuItem value="1:1">1:1 (Square)</MenuItem>
-                                <MenuItem value="21:9">21:9 (Cinematic)</MenuItem>
-                                <MenuItem value="9:16">9:16 (Vertical)</MenuItem>
+                                <MenuItem value="" sx={responsiveFontSize}>None</MenuItem>
+                                <MenuItem value="16:9" sx={responsiveFontSize}>16:9 (Widescreen)</MenuItem>
+                                <MenuItem value="4:3" sx={responsiveFontSize}>4:3 (Standard)</MenuItem>
+                                <MenuItem value="1:1" sx={responsiveFontSize}>1:1 (Square)</MenuItem>
+                                <MenuItem value="21:9" sx={responsiveFontSize}>21:9 (Cinematic)</MenuItem>
+                                <MenuItem value="9:16" sx={responsiveFontSize}>9:16 (Vertical)</MenuItem>
                                 </Select>
                             </div>
-                            <div className='flex'>
+                            <div className='flex sm-custom:flex-row flex-col mb-4'>
                                 {/* Resolution Section */}
-                                <h4 className="mb-2 font-semibold w-1/6">Resolution</h4>
-                                <div className='w-5/6'>
-                                    <FormControl fullWidth variant="outlined">
-                                        <InputLabel htmlFor="resolution">Resolution</InputLabel>
-                                        <Select
+                                <h4 className="mb-2 font-semibold w-full sm-custom:w-1/6 text-xs lg:text-sm xl:text-base">Resolution</h4>
+                                <div className='w-full sm-custom:w-5/6 text-xs lg:text-sm xl:text-base'>
+                                <FormControl
+                                    fullWidth
+                                    variant="outlined"
+                                    sx={responsiveFontSize}
+                                    >
+                                    <InputLabel
+                                        htmlFor="resolution"
+                                        sx={responsiveFontSize}
+                                    >
+                                        Resolution
+                                    </InputLabel>
+                                    <Select
                                         id="resolution"
                                         value={formData.selectedResolution}
                                         onChange={handleResolutionChange('selectedResolution')}
                                         aria-label="Resolution"
+                                        sx={responsiveFontSize}
+                                    >
+                                        <MenuItem
+                                        value=""
+                                        sx={responsiveFontSize}
                                         >
-                                         <MenuItem value="">None</MenuItem>
-                                         {resolutions.map((resolution) => (
-                                            <MenuItem key={resolution.value} value={resolution.value}>
+                                        None
+                                        </MenuItem>
+                                        {resolutions.map((resolution) => (
+                                        <MenuItem
+                                            key={resolution.value}
+                                            value={resolution.value}
+                                            sx={responsiveFontSize}
+                                        >
                                             {resolution.label}
-                                            </MenuItem>
+                                        </MenuItem>
                                         ))}
-                                        </Select>
+                                    </Select>
                                     </FormControl>
                                 </div>
                             </div>
-                            <div className='flex mb-4'>
+                            <div className='flex sm-custom:flex-row flex-col mb-4'>
                                 {/* Scale Filter Section */}
-                                <h4 className="mb-2 font-semibold w-1/6">Custom Resolution</h4>
-                                <div className="w-5/6">
+                                <h4 className="mb-2 font-semibold w-full sm-custom:w-1/6 text-xs lg:text-sm xl:text-base">Custom Resolution</h4>
+                                <div className="w-full sm-custom:w-5/6">
                                     <div className="flex w-full gap-4">
                                         <TextField
                                         fullWidth
@@ -251,6 +284,15 @@ function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fil
                                         onChange={handleScaleChange}
                                         variant="outlined"
                                         margin="normal"
+                                        InputProps={{
+                                            sx: responsiveFontSize,
+                                          }}
+                                          InputLabelProps={{
+                                            sx: responsiveFontSize,
+                                          }}
+                                          FormHelperTextProps={{
+                                            sx: responsiveFontSize,
+                                          }}
                                         />
                                         <TextField
                                         fullWidth
@@ -260,15 +302,25 @@ function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fil
                                         onChange={handleScaleChange}
                                         variant="outlined"
                                         margin="normal"
+                                        InputProps={{
+                                            sx: responsiveFontSize,
+                                          }}
+                                          InputLabelProps={{
+                                            sx: responsiveFontSize,
+                                          }}
+                                          FormHelperTextProps={{
+                                            sx: responsiveFontSize,
+                                          }}
                                         />
                                     </div>
-                                    <p className='text-gray-500 text-right'>Resize the video</p>
+                                    <p className='text-gray-500 text-right text-xs lg:text-sm xl:text-base'>Resize the video</p>
                             </div>
                         </div>
                         <div className="grid grid-cols-1 mb-4">
-                        <div className="flex">
-                                <FormControl variant="outlined" fullWidth>
-                                    <InputLabel htmlFor="crop-filter-select">Crop Filter</InputLabel>
+                        <div className="flex sm-custom:flex-row flex-col">
+                        <h4 className="mb-2 font-semibold w-full sm-custom:w-1/6 text-xs lg:text-sm xl:text-base">Crop Video</h4>
+                                <FormControl variant="outlined" fullWidth sx={responsiveFontSize}>
+                                    <InputLabel htmlFor="crop-filter-select" sx={responsiveFontSize}>Crop Filter</InputLabel>
                                     <Select
                                         value={formData.selectedCropFilter}
                                         onChange={handleCropFilterChange}
@@ -277,10 +329,11 @@ function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fil
                                             name: 'crop-filter',
                                             id: 'crop-filter-select',
                                         }}
+                                        sx={responsiveFontSize}
                                     >
-                                        <MenuItem value="">None</MenuItem>
+                                        <MenuItem value="" sx={responsiveFontSize}>None</MenuItem>
                                         {cropFilters.map((filter) => (
-                                            <MenuItem key={filter.value} value={filter.value}>
+                                            <MenuItem key={filter.value} value={filter.value} sx={responsiveFontSize}>
                                                 {filter.label}
                                             </MenuItem>
                                         ))}
@@ -289,13 +342,14 @@ function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fil
                             </div>
 
                             <div className="col-span-1 flex flex-col justify-end">
-                                <p className="text-gray-500 text-right mt-1">Crop the video</p>
+                                <p className="text-gray-500 text-right mt-1 text-xs lg:text-sm xl:text-base">Crop the video</p>
                             </div>
                         </div>
                         <div className="grid grid-cols-1 mb-4">
-                            <div className='flex'>
-                                <FormControl variant="outlined" fullWidth>
-                                    <InputLabel htmlFor="rotate-filter-select">Rotate Filter</InputLabel>
+                            <div className='flex sm-custom:flex-row flex-col'>
+                            <h4 className="mb-2 font-semibold w-full sm-custom:w-1/6 text-xs lg:text-sm xl:text-base">Rotate Video</h4>
+                                <FormControl variant="outlined" fullWidth sx={responsiveFontSize}>
+                                    <InputLabel htmlFor="rotate-filter-select" sx={responsiveFontSize}>Rotate Filter</InputLabel>
                                     <Select
                                         value={formData.selectedRotateFilter}
                                         onChange={handleRotateFilterChange}
@@ -304,10 +358,11 @@ function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fil
                                             name: 'rotate-filter',
                                             id: 'rotate-filter-select',
                                         }}
+                                        sx={responsiveFontSize}
                                     >
-                                        <MenuItem value="">None</MenuItem>
+                                        <MenuItem value="" sx={responsiveFontSize}>None</MenuItem>
                                         {rotateFilters.map((filter) => (
-                                            <MenuItem key={filter.value} value={filter.value}>
+                                            <MenuItem key={filter.value} value={filter.value} sx={responsiveFontSize}>
                                                 {filter.label}
                                             </MenuItem>
                                         ))}
@@ -317,41 +372,50 @@ function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fil
                         
 
                             <div className="col-span-1 flex flex-col justify-end">
-                                <p className="text-gray-500 text-right mt-1">Rotate the video</p>
+                                <p className="text-gray-500 text-right mt-1 text-xs lg:text-sm xl:text-base">Rotate the video</p>
                             </div>
                         </div>
                         <div className="grid grid-cols-1 mb-4">
-                            <div className="flex">
-                                <h4 className="mb-2 font-semibold w-1/6">Denoise Video</h4>
-                                <div className="w-5/6">
-                                <FormControl variant="outlined" fullWidth>
-                                <InputLabel id="denoise-label">Denoise Filter</InputLabel>
+                            <div className="flex sm-custom:flex-row flex-col">
+                                <h4 className="mb-2 font-semibold w-full sm-custom:w-1/6 text-xs lg:text-sm xl:text-base">Denoise Video</h4>
+                                <div className="w-full sm-custom:w-5/6">
+                                <FormControl variant="outlined" fullWidth sx={responsiveFontSize}>
+                                <InputLabel id="denoise-label" sx={responsiveFontSize}>Denoise Filter</InputLabel>
                                 <Select
                                     labelId="denoise-label"
                                     id="denoise"
                                     value={formData.selectedDenoise}
                                     onChange={handleDenoiseChange}
-                                    label="Denoise Filter" // Add label prop here
+                                    label="Denoise Filter" 
+                                    sx={responsiveFontSize}
                                 >
-                                    <MenuItem value="">None</MenuItem>
-                                    <MenuItem value="hqdn3d=1.5:1.5:6.0:6.0">Light</MenuItem>
-                                    <MenuItem value="hqdn3d=3:3:12:12">Moderate</MenuItem>
-                                    <MenuItem value="hqdn3d=6:6:24:24">Strong</MenuItem>
+                                    <MenuItem value="" sx={responsiveFontSize}>None</MenuItem>
+                                    <MenuItem value="hqdn3d=1.5:1.5:6.0:6.0" sx={responsiveFontSize}>Light</MenuItem>
+                                    <MenuItem value="hqdn3d=3:3:12:12" sx={responsiveFontSize}>Moderate</MenuItem>
+                                    <MenuItem value="hqdn3d=6:6:24:24" sx={responsiveFontSize}>Strong</MenuItem>
                                 </Select>
                                 </FormControl>
                                 </div>
                             </div>
                             <div className="col-span-1 flex flex-col justify-end">
-                                <p className="text-gray-500 text-right mt-1">Reduce video noise</p>
+                                <p className="text-gray-500 text-right mt-1 text-xs lg:text-sm xl:text-base">Reduce video noise</p>
                             </div>
                         </div>
                         <div className="grid grid-cols-1 mb-4">
                             <div className="flex items-center">
-                                <h4 className="font-semibold w-1/6">Deshake Video</h4>
+                                <h4 className="font-semibold w-full sm-custom:w-1/6 text-xs lg:text-sm xl:text-base ">Deshake Video</h4>
                                 <div className='w-5/6'>
                                     <FormControlLabel
                                         control={<Checkbox checked={formData.deshakeChecked} onChange={handleDeshakeChange} />}
                                         label="Deshake Video"
+                                        labelPlacement="start"
+                                              sx={{
+                                                ...responsiveFontSize,
+                                                '& .MuiFormControlLabel-label': {
+                                                  position: 'absolute',
+                                                  left: '-9999px',
+                                                },
+                                              }}
                                     />
                                 </div>
                             </div>
@@ -361,17 +425,17 @@ function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fil
 
 
                         </div>
-                        <div className="bg-gray-300 p-6">
-                            <h3 className="text-xl font-semibold">Audio Options</h3>
+                        <div className="bg-gray-300 p-2 lg:p-4 xl:p-6">
+                            <h3 className="text-sm lg:text-lg xl:text-xl font-semibold">Audio Options</h3>
                         </div>
-                        <div className="bg-gray-100 px-12 py-8">
-                            <div className='flex mb-4'>
-                            <h4 className="mb-2 font-semibold w-1/6">Audio Codec</h4>
-                                <div className="grid grid-cols-5 gap-4 w-5/6">
+                        <div className="bg-gray-100 px-4 lg:px-8 xl:px-12 py-8">
+                            <div className='flex sm-custom:flex-row flex-col mb-4'>
+                            <h4 className="mb-2 font-semibold w-full sm-custom:w-1/6 text-xs lg:text-sm xl:text-base">Audio Codec</h4>
+                                <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full sm-custom:w-5/6">
                                     {audioCodecs.map((codec) => (
                                         <Tooltip key={codec.value} title={codec.description} arrow placement="top">
                                             <div
-                                            className={`p-2 border rounded cursor-pointer duration-300 transform hover:scale-105 text-center ${formData.selectedAudioCodec === codec.value ? 'bg-teal-500 text-white' : 'bg-white hover:bg-gray-300'}`}
+                                            className={`p-2 border text-xs lg:text-sm xl:text-base rounded cursor-pointer duration-300 transform hover:scale-105 text-center ${formData.selectedAudioCodec === codec.value ? 'bg-teal-500 text-white' : 'bg-white hover:bg-gray-300'}`}
                                             onClick={() => handleFieldChange('selectedAudioCodec', codec.value)}
                                             >
                                             {codec.label}
@@ -381,8 +445,8 @@ function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fil
                                 </div>
                                     
                             </div>
-                            <div className="flex mb-4">
-                                <h4 className='mb-2 font-semibold w-1/6'>Volume</h4> 
+                            <div className="flex sm-custom:flex-row flex-col mb-4">
+                                <h4 className='mb-2 font-semibold w-full sm-custom:w-1/6 text-xs lg:text-sm xl:text-base'>Volume</h4> 
                                 <Slider
                                     value={formData.volume}
                                     onChange={handleVolumeChange}
@@ -392,15 +456,24 @@ function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fil
                                     min={0}
                                     max={3}
                                     step={0.1}
+                                    sx={sliderStyles}
                                 />
                               </div>
                               <div className="grid grid-cols-1 mb-4">
                                   <div className="flex items-center">
-                                      <h4 className="font-semibold w-1/6">No Audio</h4>
+                                      <h4 className="font-semibold w-full sm-custom:w-1/6 text-xs lg:text-sm xl:text-base">No Audio</h4>
                                       <div className='w-5/6'>
                                           <FormControlLabel
                                               control={<Checkbox checked={formData.noAudio} onChange={handleNoAudio} />}
                                               label="No Audio"
+                                              labelPlacement="start"
+                                              sx={{
+                                                ...responsiveFontSize,
+                                                '& .MuiFormControlLabel-label': {
+                                                  position: 'absolute',
+                                                  left: '-9999px',
+                                                },
+                                              }}
                                           />
                                       </div>
                                   </div>
@@ -410,7 +483,7 @@ function AdvancedOptions({ onClose, formData, onChange, resetData, fileName, fil
                     </div>
                     <div className='flex items-end'>
                       <Tooltip title="Reset All Options to Default Settings" arrow placement="top">
-                          <button onClick={() => resetData()} className='text-lg text-gray-500 mt-2 border border-2 p-2 rounded hover:bg-gray-300'>
+                          <button onClick={() => resetData()} className='text-xs lg:text-base xl:text-lg text-gray-500 mt-2 border border-2 p-2 rounded hover:bg-gray-300'>
                             Reset Options
                           </button>
                       </Tooltip>

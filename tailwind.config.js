@@ -6,7 +6,14 @@ module.exports = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      screens: {
+        // 's-custom': '390px', 
+        'xs-custom': '320px',
+        'sm-custom': '475px',
+        'md-custom': '767px',
+      }
+    },
   },
   plugins: [],
 }

@@ -35,38 +35,33 @@ function EmailVerificationMenu({ emailVerified, userCredentials }) {
 
 
   return (
-    <div className="bg-orange-700 py-2 px-4 flex flex-col justify-center">
-        <p className="text-white">
-          Please verify your email address. Your account is limited without verifying your email address.
-        </p>
-        {!emailVerified && (
-          <div className="space-x-2">
-            <div className="inline-flex flex-col">
-            <div className="text-center mb-2 mt-4 bg-teal-500 hover:bg-teal-800 transition duration-300 font-bold py-2 px-4 rounded mr-2">
-              <Link 
-                onClick={handleResendEmail}
-                className="text-white inline-flex items-center">
-                  <RiMailSendLine className="mr-2" />  Re-send Verification Email
-              </Link>
-            </div>
+    <div className="bg-orange-700 py-2 px-2 flex flex-col items-center md:flex-row lg:justify-between lg:items-center">
+      <p className="text-white text-xs lg:text-sm text-center lg:text-left">
+        Please verify your email address. Your account is limited without verifying your email address.
+      </p>
+      {!emailVerified && (
+        <div className="mt-1 lg:mt-0 flex flex-col md:flex-row md:space-x-2">
+          <div className="text-center text-xs lg:text-sm mb-1 mt-1 lg:mt-0 bg-teal-500 hover:bg-teal-800 transition duration-300 font-bold py-2 px-4 rounded">
+            <Link onClick={handleResendEmail} className="text-white inline-flex items-center">
+              <RiMailSendLine className="mr-2" /> Re-send Verification Email
+            </Link>
           </div>
-            <div className="inline-flex flex-col">
-            <div className="text-center mb-2 mt-4 bg-white transition duration-300 hover:bg-teal-500 font-bold py-2 px-4 rounded mr-2">
-              <Link 
-                className="text-orange-500 hover:text-white inline-flex items-center">
-                  <FaEdit className="mr-2" />  Change Email Address
-              </Link>
-            </div>
+          <div className="text-center text-xs lg:text-sm mb-1 mt-1 lg:mt-0 bg-white transition duration-300 hover:bg-teal-500 font-bold py-2 px-4 rounded">
+            <Link className="text-orange-500 hover:text-white inline-flex items-center">
+              <FaEdit className="mr-2" /> Change Email Address
+            </Link>
           </div>
-          </div>
-        )}
+        </div>
+      )}
       {showResendModal && (
-        <div className="mt-4 mb-4">
-          <div className="bg-green-500 w-1/2 text-white p-2 rounded">Verification email re-sent to {userCredentials.email}</div>
+        <div className="mt-1 mb-1 lg:mt-0 lg:mb-0 w-full lg:w-1/2">
+          <div className="bg-green-500 text-xs lg:text-sm text-white p-2 rounded text-center">
+            Verification email re-sent to {userCredentials.email}
+          </div>
         </div>
       )}
     </div>
   );
-}
+};
 
 export default EmailVerificationMenu;

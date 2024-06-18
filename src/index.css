@@ -101,6 +101,31 @@ code {
 }
 
 
+@media (min-width: 470px) and (max-width: 639.5px) {
+  div.uploadvideo {
+    width: 54%;
+  }
+
+  div.addMoreFiles {
+    width: 48%;
+  }
+
+  span.uploaded {
+    /* font-size: 1.125rem; */
+    line-height: 1.75rem;
+  }
+}
+
+@media (min-width: 390px) and (max-width: 469.5px) {
+  div.uploadvideos {
+    width: 70%;
+  }
+
+  span.uploads {
+    /* font-size: 1.125rem; */
+    line-height: 1.75rem;
+  }
+}
 
 
 @import 'tailwindcss/base';

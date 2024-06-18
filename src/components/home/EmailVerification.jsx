@@ -75,56 +75,56 @@ function EmailVerification({showMenu }) {
         className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-20"
       >
         {!verifyEmail ? ( 
-            <div className="bg-white p-12 h-2/3 w-2/5 rounded-lg shadow-xl">
+            <div className="bg-white p-12 h-4/5 sm:h-4/6 lg:h-3/5 sm-custom:w-3/5 lg:w-2/5 w-4/5 rounded-lg shadow-xl">
                 <div className="mb-3 text-center">
-                    <p className="font-weight-bold text-3xl mb-0">Verify your Email</p>
+                    <p className="font-weight-bold text-lg md:text-2xl mb-0">Verify your Email</p>
                 </div>
                 <div className="flex items-center justify-center mb-4 text-red-500">
-                    <RiMailCloseLine className="w-40 h-40 rounded-full border-4 border-red-500 p-3" />
+                    <RiMailCloseLine className="w-12 h-12 sm:w-16 sm:h-16 lg:w-28 lg:h-28 xl:w-40 xl:h-40 rounded-full border-4 border-red-500 p-3" />
                 </div>
-                <div className="mb-2 text-center py-2">
+                <div className="mb-2 text-center text-sm md:text-base py-2">
                     Please click the button below to verify your email address <strong>{email}</strong>.
                 </div>
                 <div className="flex flex-col">
                     <div 
                         onClick={handleSendVerificationEmail}
-                        className="text-center mt-2 mb-2 bg-teal-800 hover:bg-teal-500 font-bold py-2 px-4 rounded mr-2">
-                    <Link className="text-white inline-flex items-center" disabled={isLoading} >
+                        className="text-center mt-2 mb-2  bg-teal-800 hover:bg-teal-500 font-bold py-2 px-4 rounded mr-2">
+                    <Link className="text-white inline-flex  text-xs md:text-sm lg:text-base items-center" disabled={isLoading} >
                          {isLoading ? <CgSpinner className="animate-spin mr-2 size-6" /> : 'VERIFY EMAIL'}
                     </Link>
                     </div>
                 </div>
                 <hr className="mb-4 mt-4"></hr>
-                <div className="text-center">
+                <div className="text-center text-sm md:text-base">
                     Wrong email address? <Link className="text-teal-500 hover:text-teal-300 transition-colors duration-300">Change Email Address</Link>
                 </div>
             </div>
         ): (
-            <div className="bg-white p-12 h-4/5 w-2/5 rounded-lg shadow-xl">
+            <div className="bg-white p-12 h-4/5 md:h-3/4 lg:h-3/5 sm-custom:w-3/5 lg:w-2/5 w-4/5 rounded-lg shadow-xl">
                 <div className="mb-3 text-center">
-                    <p className="font-weight-bold text-3xl mb-0">Check your Email Inbox now</p>
+                    <p className="font-weight-bold text-lg md:text-2xl mb-0">Check your Email Inbox now</p>
                 </div>
                 <div className="flex items-center justify-center mb-4 text-green-500">
-                    <MdMarkEmailRead className="w-40 h-40 rounded-full border-4 border-green-500 p-3" />
+                    <MdMarkEmailRead className="w-12 h-12 sm:w-16 sm:h-16 lg:w-28 lg:h-28 xl:w-40 xl:h-40 rounded-full border-4 border-green-500 p-3" />
                 </div>
-                <div className="mb-2 text-center py-2">
+                <div className="mb-2 text-center  text-sm md:text-base py-2">
                     We've sent you a verification to your email address <strong>{email}</strong> to activate your account.
                 </div>
                 <div className="flex flex-col">
                     <div className="text-center mb-2 mt-2 bg-teal-800 hover:bg-teal-500 font-bold py-2 px-4 rounded mr-2">
-                    <Link className="text-white inline-flex items-center" onClick={showMenu} >
+                    <Link className="text-white inline-flex text-xs md:text-sm lg:text-base items-center" onClick={showMenu} >
                         CONTINUE FOR FREE <FaArrowRight className="ml-1"/>
                     </Link>
                     </div>
                 </div>
-                <div className="text-center">
+                <div className="text-center text-sm md:text-base">
                     Didn't receive an email?  <button className="text-teal-500 hover:text-teal-300 transition-colors duration-300" onClick={handleResendVerificationEmail} >Re-send verification email</button>
                     {showResentModal && <div className="bg-green-500 text-white p-2 rounded mt-2 absolute top-20 right-4">Verification email re-sent to {email}
                 </div>}
                 </div>
-                {error && <div className="text-red-500 text-center mb-2">{error}</div>}
+                {error && <div className="text-red-500 text-center text-sm md:text-base mb-2">{error}</div>}
                 <hr className="mb-4 mt-4"></hr>
-                <div className="text-center">
+                <div className="text-center text-sm md:text-base">
                     Wrong email address? <Link className="text-teal-500 hover:text-teal-300 transition-colors duration-300">Change Email Address</Link>
                 </div>
             </div>

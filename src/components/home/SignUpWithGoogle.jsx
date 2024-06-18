@@ -19,7 +19,7 @@ function SignUpWithGoogle() {
   return (
     <button onClick={signInWithGoogle} className="flex items-center justify-center bg-white border border-gray-300 hover:border-gray-400 text-gray-700 font-bold py-2 px-4 mb-4 w-full rounded shadow transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500">
       <FcGoogle className="w-5 h-5 mr-2" />
-      <span className='text-xl'>Continue with Google</span>
+      <span className='text-base md:text-xl'>Continue with Google</span>
     </button>
   );
 }

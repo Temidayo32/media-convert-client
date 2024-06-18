@@ -10,7 +10,7 @@ import { dropboxAppKey } from '../../config/key';
 
 const UploadOptions = ({ handleFileUpload, handleOpenPicker, onSuccess, onCancel, handleFileSelected }) => {
   return (
-    <div className="absolute text-2xl top-full left-0 w-full bg-teal-500 text-center text-white rounded-lg my-px shadow-lg">
+    <div className="absolute text-sm sm:text-base lg:text-xl xl:text-2xl top-full left-0 w-full bg-teal-500 text-center text-white rounded-lg my-px shadow-lg">
       <ul>
         <label htmlFor="upload-file" className="cursor-pointer">
           <li className="p-4 pl-8 hover:bg-teal-600 flex items-center transition-colors duration-300">
@@ -22,7 +22,7 @@ const UploadOptions = ({ handleFileUpload, handleOpenPicker, onSuccess, onCancel
               multiple='multiple'
               onChange={(e) => handleFileUpload(e)}
             />
-            <IoIosFolderOpen className="text-2xl mr-4" />
+            <IoIosFolderOpen className="hidden sm:block sm:text-lg lg:text-2xl mr-4" />
             From Device
           </li>
         </label>
@@ -33,7 +33,7 @@ const UploadOptions = ({ handleFileUpload, handleOpenPicker, onSuccess, onCancel
           multiselect={true}
         >
           <li className="p-4 pl-8 hover:bg-teal-600 flex items-center cursor-pointer transition-colors duration-300">
-            <FaDropbox className="text-2xl mr-4" />
+            <FaDropbox className="hidden sm:block sm:text-lg lg:text-2xl mr-4" />
             From Dropbox
           </li>
         </DropboxChooser>
@@ -41,7 +41,7 @@ const UploadOptions = ({ handleFileUpload, handleOpenPicker, onSuccess, onCancel
           className="p-4 pl-8 hover:bg-teal-600 flex items-center cursor-pointer transition-colors duration-300"
           onClick={handleOpenPicker}
         >
-          <DiGoogleDrive className="text-2xl mr-4" />
+          <DiGoogleDrive className="hidden sm:block sm:text-lg lg:text-2xl mr-4" />
           From Google Drive
         </Link>
         {/* <OneDrivePicker onSuccess={handleFileSelected} /> */}
