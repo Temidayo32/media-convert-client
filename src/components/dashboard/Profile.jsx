@@ -128,18 +128,18 @@ const Profile = () => {
 
     return (
         <div className="flex justify-center h-screen bg-gray-100">
-            <div className="mt-8 text-center">
-                <h1 className="text-3xl font-bold mb-6 text-center">User Profile</h1>
-                <p className="text-center mb-6 text-gray-600">Welcome to your user dashboard. Thanks for using Media Convert.</p>
+            <div className="mt-8 items-center justify-center text-center">
+                <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-6 text-center">User Profile</h1>
+                <p className="text-center w-4/5 sm:w-full text-xs md:text-sm lg:text-base mb-6 text-gray-600">Welcome to your user dashboard. Thanks for using Media Convert.</p>
                 <form onSubmit={handleUpdateProfile}>
                     <div className="flex flex-col items-center mb-6 relative">
                         <div className="relative group">
-                            {isLoading ? (<CgSpinner className="animate-spin mr-2 size-28" data-testid='spinner' />): (
+                            {isLoading ? (<CgSpinner className="animate-spin mr-2 size-20 md:size-28" data-testid='spinner' />): (
                                 <div>
                                     <img
                                         src={photoURL}
                                         alt="Profile"
-                                        className="w-24 h-24 rounded-full mb-4"
+                                        className="w-16 h-16 md:w-24 md:h-24 rounded-full mb-4"
                                         onLoad={() => setIsLoading(false)}
                                         onError={() => setIsLoading(false)} // Set loading state to false when image is loaded
                                     />
@@ -154,31 +154,31 @@ const Profile = () => {
                                 </div>
                             )}     
                         </div>
-                        <p className="text-gray-500">{email}</p>
+                        <p className="text-xs md:text-sm lg:text-base text-gray-500">{email}</p>
                     </div>
                     <div className="space-y-4">
-                        <div className="flex gap-4 mb-4">
+                        <div className="flex items-center flex-col sm:flex-row gap-4 mb-4">
                             <input
                                 type="text"
                                 value={firstName}
                                 onChange={(e) => setFirstName(e.target.value)}
                                 placeholder="First Name"
-                                className="p-2 border text-center border-gray-300 rounded-full w-full"
+                                className="p-2 border text-center border-gray-300 text-xs md:text-sm lg:text-base rounded-full w-3/5 sm:w-full"
                             />
                             <input
                                 type="text"
                                 value={lastName}
                                 onChange={(e) => setLastName(e.target.value)}
                                 placeholder="Last Name"
-                                className="p-2 border border-gray-300 text-center rounded-full w-full"
+                                className="p-2 border border-gray-300 text-xs md:text-sm lg:text-base text-center rounded-full w-3/5 sm:w-full"
                             />
                         </div>
                     </div>
                     <div className="text-center mt-12">
-                        <button type="submit" className="bg-teal-800 hover:bg-teal-500 w-full transition-transform duration-300 hover:scale-105 transform text-white p-2 rounded-full">Update Profile</button>
+                        <button type="submit" className="bg-teal-800 hover:bg-teal-500 w-3/5 sm:w-full transition-transform duration-300 hover:scale-105 transform text-white p-2 text-xs md:text-sm lg:text-base rounded-full">Update Profile</button>
                     </div>
-                    {message && <p className="text-center text-green-500 mt-4">{message}</p>}
-                    {error && <p className="text-center text-red-500 mt-4">{error}</p>}
+                    {message && <p className="text-center text-green-500 text-xs md:text-sm lg:text-base  mt-4">{message}</p>}
+                    {error && <p className="text-center text-red-500 text-xs md:text-sm lg:text-base mt-4">{error}</p>}
                 </form>
             </div>
         </div>

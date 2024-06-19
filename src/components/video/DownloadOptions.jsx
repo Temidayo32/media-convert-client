@@ -188,44 +188,41 @@ const DownloadOptions = ({ video, downloadUrl, progress }) => {
 
   return (
     <div className="relative inline-block text-left">
-      <div
-        className={`py-2 px-4 flex text-xl gap-6 items-center rounded-t-lg transition-colors duration-300 ${progress === 'completed' ? 'bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white' : 'bg-gray-400 text-gray-700 cursor-not-allowed'}`}
-        id="options-menu"
-        aria-expanded="true"
-        aria-haspopup="true"
+    <div
+      className={`py-2 sm:px-4 px-8 md:px-8 lg:px-4 flex items-center justify-center lg:justify-start text-center gap-4 lg:gap-6 w-full rounded-t-lg transition-colors duration-300 ${progress === 'completed' ? 'bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white' : 'bg-gray-400 text-gray-700 cursor-not-allowed'}`}
+      id="options-menu"
+      aria-expanded="true"
+      aria-haspopup="true"
+      onClick={() => setShowDropdown(true)}
+    >
+      <button
+        type="button"
         disabled={progress !== 'completed'} 
-        onClick={() => setShowDropdown(true)}
+        className={`text-sm sm:text-lg lg:text-xl xl:text-2xl ${progress === 'completed' ? 'text-white' : 'bg-gray-400 text-gray-700 cursor-not-allowed'}`}
+      >
+        Download
+      </button>
+      <div className={`hidden lg:block lg:h-10 p-0 lg:w-0.5 ${progress === 'completed' ? 'bg-white' : 'bg-gray-600 cursor-not-allowed'}`}></div>
+      <IoIosArrowDropdownCircle
+        className={`hidden lg:block lg:text-2xl ${progress === 'completed' ? 'text-white cursor-pointer' : 'text-gray-500 cursor-not-allowed'}`}
+      />
+    </div>
+    {showDropdown && progress === 'completed' && 
+      <div 
+        className="absolute top-full left-0 w-full bg-teal-500 text-center text-white rounded-b-lg shadow-lg z-30"
+        onMouseLeave={() => setShowDropdown(false)}
         >
-        <button
-          type="button"
-          disabled={progress !== 'completed'} 
-          className={`${progress === 'completed' ? 'shadow-2xl drop-shadow-2xl text-white' : 'bg-gray-400 text-gray-700 cursor-not-allowed'}`}
-        >
-          Download
-        </button>
-        <div
-          className={`h-10 p-0 w-0.5 ${progress === 'completed' ? 'bg-white' : 'bg-gray-600 cursor-not-allowed'}`}></div>
-        <IoIosArrowDropdownCircle
-          className={`text-2xl ${progress === 'completed' ? 'text-white cursor-pointer' : 'text-gray-500 cursor-not-allowed'}`}
-          />
-      </div>
-
-      {showDropdown && progress === 'completed' && 
-        <div 
-          className="absolute text-lg top-full left-0 w-full bg-teal-500 text-center text-white rounded-b-lg my-px shadow-lg z-30"
-          onMouseLeave={() => setShowDropdown(false)}
-          >
         <ul className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-          <li className="cursor-pointer p-4 pl-8 bg-teal-500 hover:bg-teal-600 flex items-center transition-colors duration-300" role="menuitem">
-          <IoIosFolderOpen className="text-2xl mr-4" />
-            <button className="block text-left w-full" onClick={handleDownloadToDevice}>
+          <li className="cursor-pointer p-4 md:pl-8 bg-teal-500 hover:bg-teal-600 flex items-center transition-colors duration-300" role="menuitem">
+            <IoIosFolderOpen className="hidden lg:block lg:text-2xl mr-4" />
+            <button className="block text-left w-full text-sm md:text-base" onClick={handleDownloadToDevice}>
               Device
             </button>
           </li>
           <li className={`cursor-pointer p-4 bg-teal-500 hover:bg-teal-600 grid items-center transition-colors duration-300 ${uploading ? 'grid-rows-2' : 'grid-rows-1'}`} role="menuitem">
-              <div className="flex items-center pl-4">
-                  <FaDropbox className="text-2xl mr-4" />
-                  <button className="block text-left w-full" onClick={handleUploadToDropbox}>
+              <div className="flex items-center md:pl-4">
+                  <FaDropbox className="hidden lg:block lg:text-2xl mr-4" />
+                  <button className="block text-left w-full text-sm md:text-base" onClick={handleUploadToDropbox}>
                       Dropbox
                   </button>
               </div>
@@ -247,9 +244,9 @@ const DownloadOptions = ({ video, downloadUrl, progress }) => {
               </div>
           </li>
           <li className={`cursor-pointer p-4 bg-teal-500 hover:bg-teal-600 grid items-center transition-colors duration-300 ${uploading ? 'grid-rows-2' : 'grid-rows-1'}`} role="menuitem">
-             <div className="flex items-center pl-4">
-                <DiGoogleDrive className="text-3xl mr-2" />
-                <button className="block text-left w-full" onClick={handleUploadToGoogleDrive}>
+             <div className="flex items-center md:pl-4">
+                <DiGoogleDrive className="hidden lg:block lg:text-3xl mr-2" />
+                <button className="block text-left w-full text-sm md:text-base" onClick={handleUploadToGoogleDrive}>
                   Google Drive
                 </button>
              </div>

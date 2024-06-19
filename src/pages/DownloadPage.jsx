@@ -38,7 +38,7 @@ const DownloadPage = () => {
 
   return (
     <div className="container mx-auto py-20" key={key}>
-      <h1 className="text-5xl py-4 text-center font-bold text-teal-800">Download Results</h1>
+      <h1 className="text-3xl md:text-4xl lg:text-5xl py-4 text-center font-bold text-teal-800">Download Results</h1>
       <Conversion />
     </div>
   );

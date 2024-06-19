@@ -117,18 +117,18 @@ function Header() {
             />
           )}
         <header className="bg-white py-4 border-b border-gray-200 shadow-sm">
-          <div className="container mx-auto flex justify-between items-center">
+          <div className="mx-4 sm:mx-6 flex justify-between items-center">
             <div className="flex items-center gap-12">
               <div className='flex items-center'>
-                <img src="/medialogo.svg" alt="Logo" className="w-14 mr-4 text-teal-800"/>
-                <Link to="/" className="text-teal-800 text-xl font-bold">Media Convert</Link>
+                <img src="/medialogo.svg" alt="Logo" className="w-8 sm:w-12 md:w-14 mr-4 text-teal-800"/>
+                <Link to="/" className="text-teal-800 text-base sm:text-lg md:text-xl font-bold">Media Convert</Link>
               </div>
               <div className="hidden md:flex">
                 <HeaderOptions />
               </div>
             </div>
             {showUser ? (
-                <div className="md:hidden mr-6">
+                <div className="md:hidden mr-4 flex sm:mr-6">
                   <Menu showMenu={showMenu} setShowMenu={setShowMenu}  />
                 </div>
               ) :  (
@@ -138,7 +138,7 @@ function Header() {
               </button>
             </div>
             )}
-            <div className="hidden md:flex mr-6">
+            <div className="hidden md:flex mr-4 sm:mr-6">
               {showUser ? (
                   <Menu showMenu={showMenu} setShowMenu={setShowMenu} />
               ) : (
