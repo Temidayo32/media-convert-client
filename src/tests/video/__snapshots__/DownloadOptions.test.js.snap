@@ -8,22 +8,21 @@ exports[`DownloadOptions Component disables the download button if progress is n
     <div
       aria-expanded="true"
       aria-haspopup="true"
-      class="py-2 px-4 flex text-xl gap-6 items-center rounded-t-lg transition-colors duration-300 bg-gray-400 text-gray-700 cursor-not-allowed"
-      disabled=""
+      class="py-2 sm:px-4 px-8 md:px-8 lg:px-4 flex items-center justify-center lg:justify-start text-center gap-4 lg:gap-6 w-full rounded-t-lg transition-colors duration-300 bg-gray-400 text-gray-700 cursor-not-allowed"
       id="options-menu"
     >
       <button
-        class="bg-gray-400 text-gray-700 cursor-not-allowed"
+        class="text-sm sm:text-lg lg:text-xl xl:text-2xl bg-gray-400 text-gray-700 cursor-not-allowed"
         disabled=""
         type="button"
       >
         Download
       </button>
       <div
-        class="h-10 p-0 w-0.5 bg-gray-600 cursor-not-allowed"
+        class="hidden lg:block lg:h-10 p-0 lg:w-0.5 bg-gray-600 cursor-not-allowed"
       />
       <svg
-        class="text-2xl text-gray-500 cursor-not-allowed"
+        class="hidden lg:block lg:text-2xl text-gray-500 cursor-not-allowed"
         fill="currentColor"
         height="1em"
         stroke="currentColor"
@@ -49,20 +48,20 @@ exports[`DownloadOptions Component enables the download button when progress is 
     <div
       aria-expanded="true"
       aria-haspopup="true"
-      class="py-2 px-4 flex text-xl gap-6 items-center rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
+      class="py-2 sm:px-4 px-8 md:px-8 lg:px-4 flex items-center justify-center lg:justify-start text-center gap-4 lg:gap-6 w-full rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
       id="options-menu"
     >
       <button
-        class="shadow-2xl drop-shadow-2xl text-white"
+        class="text-sm sm:text-lg lg:text-xl xl:text-2xl text-white"
         type="button"
       >
         Download
       </button>
       <div
-        class="h-10 p-0 w-0.5 bg-white"
+        class="hidden lg:block lg:h-10 p-0 lg:w-0.5 bg-white"
       />
       <svg
-        class="text-2xl text-white cursor-pointer"
+        class="hidden lg:block lg:text-2xl text-white cursor-pointer"
         fill="currentColor"
         height="1em"
         stroke="currentColor"
@@ -88,20 +87,20 @@ exports[`DownloadOptions Component handles download to device 1`] = `
     <div
       aria-expanded="true"
       aria-haspopup="true"
-      class="py-2 px-4 flex text-xl gap-6 items-center rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
+      class="py-2 sm:px-4 px-8 md:px-8 lg:px-4 flex items-center justify-center lg:justify-start text-center gap-4 lg:gap-6 w-full rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
       id="options-menu"
     >
       <button
-        class="shadow-2xl drop-shadow-2xl text-white"
+        class="text-sm sm:text-lg lg:text-xl xl:text-2xl text-white"
         type="button"
       >
         Download
       </button>
       <div
-        class="h-10 p-0 w-0.5 bg-white"
+        class="hidden lg:block lg:h-10 p-0 lg:w-0.5 bg-white"
       />
       <svg
-        class="text-2xl text-white cursor-pointer"
+        class="hidden lg:block lg:text-2xl text-white cursor-pointer"
         fill="currentColor"
         height="1em"
         stroke="currentColor"
@@ -116,7 +115,7 @@ exports[`DownloadOptions Component handles download to device 1`] = `
       </svg>
     </div>
     <div
-      class="absolute text-lg top-full left-0 w-full bg-teal-500 text-center text-white rounded-b-lg my-px shadow-lg z-30"
+      class="absolute top-full left-0 w-full bg-teal-500 text-center text-white rounded-b-lg shadow-lg z-30"
     >
       <ul
         aria-labelledby="options-menu"
@@ -125,11 +124,11 @@ exports[`DownloadOptions Component handles download to device 1`] = `
         role="menu"
       >
         <li
-          class="cursor-pointer p-4 pl-8 bg-teal-500 hover:bg-teal-600 flex items-center transition-colors duration-300"
+          class="cursor-pointer p-4 md:pl-8 bg-teal-500 hover:bg-teal-600 flex items-center transition-colors duration-300"
           role="menuitem"
         >
           <svg
-            class="text-2xl mr-4"
+            class="hidden lg:block lg:text-2xl mr-4"
             fill="currentColor"
             height="1em"
             stroke="currentColor"
@@ -143,7 +142,7 @@ exports[`DownloadOptions Component handles download to device 1`] = `
             />
           </svg>
           <button
-            class="block text-left w-full"
+            class="block text-left w-full text-sm md:text-base"
           >
             Device
           </button>
@@ -153,10 +152,10 @@ exports[`DownloadOptions Component handles download to device 1`] = `
           role="menuitem"
         >
           <div
-            class="flex items-center pl-4"
+            class="flex items-center md:pl-4"
           >
             <svg
-              class="text-2xl mr-4"
+              class="hidden lg:block lg:text-2xl mr-4"
               fill="currentColor"
               height="1em"
               stroke="currentColor"
@@ -170,7 +169,7 @@ exports[`DownloadOptions Component handles download to device 1`] = `
               />
             </svg>
             <button
-              class="block text-left w-full"
+              class="block text-left w-full text-sm md:text-base"
             >
               Dropbox
             </button>
@@ -186,10 +185,10 @@ exports[`DownloadOptions Component handles download to device 1`] = `
           role="menuitem"
         >
           <div
-            class="flex items-center pl-4"
+            class="flex items-center md:pl-4"
           >
             <svg
-              class="text-3xl mr-2"
+              class="hidden lg:block lg:text-3xl mr-2"
               fill="currentColor"
               height="1em"
               stroke="currentColor"
@@ -204,7 +203,7 @@ exports[`DownloadOptions Component handles download to device 1`] = `
               />
             </svg>
             <button
-              class="block text-left w-full"
+              class="block text-left w-full text-sm md:text-base"
             >
               Google Drive
             </button>
@@ -227,20 +226,20 @@ exports[`DownloadOptions Component handles upload to Dropbox 1`] = `
     <div
       aria-expanded="true"
       aria-haspopup="true"
-      class="py-2 px-4 flex text-xl gap-6 items-center rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
+      class="py-2 sm:px-4 px-8 md:px-8 lg:px-4 flex items-center justify-center lg:justify-start text-center gap-4 lg:gap-6 w-full rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
       id="options-menu"
     >
       <button
-        class="shadow-2xl drop-shadow-2xl text-white"
+        class="text-sm sm:text-lg lg:text-xl xl:text-2xl text-white"
         type="button"
       >
         Download
       </button>
       <div
-        class="h-10 p-0 w-0.5 bg-white"
+        class="hidden lg:block lg:h-10 p-0 lg:w-0.5 bg-white"
       />
       <svg
-        class="text-2xl text-white cursor-pointer"
+        class="hidden lg:block lg:text-2xl text-white cursor-pointer"
         fill="currentColor"
         height="1em"
         stroke="currentColor"
@@ -255,7 +254,7 @@ exports[`DownloadOptions Component handles upload to Dropbox 1`] = `
       </svg>
     </div>
     <div
-      class="absolute text-lg top-full left-0 w-full bg-teal-500 text-center text-white rounded-b-lg my-px shadow-lg z-30"
+      class="absolute top-full left-0 w-full bg-teal-500 text-center text-white rounded-b-lg shadow-lg z-30"
     >
       <ul
         aria-labelledby="options-menu"
@@ -264,11 +263,11 @@ exports[`DownloadOptions Component handles upload to Dropbox 1`] = `
         role="menu"
       >
         <li
-          class="cursor-pointer p-4 pl-8 bg-teal-500 hover:bg-teal-600 flex items-center transition-colors duration-300"
+          class="cursor-pointer p-4 md:pl-8 bg-teal-500 hover:bg-teal-600 flex items-center transition-colors duration-300"
           role="menuitem"
         >
           <svg
-            class="text-2xl mr-4"
+            class="hidden lg:block lg:text-2xl mr-4"
             fill="currentColor"
             height="1em"
             stroke="currentColor"
@@ -282,7 +281,7 @@ exports[`DownloadOptions Component handles upload to Dropbox 1`] = `
             />
           </svg>
           <button
-            class="block text-left w-full"
+            class="block text-left w-full text-sm md:text-base"
           >
             Device
           </button>
@@ -292,10 +291,10 @@ exports[`DownloadOptions Component handles upload to Dropbox 1`] = `
           role="menuitem"
         >
           <div
-            class="flex items-center pl-4"
+            class="flex items-center md:pl-4"
           >
             <svg
-              class="text-2xl mr-4"
+              class="hidden lg:block lg:text-2xl mr-4"
               fill="currentColor"
               height="1em"
               stroke="currentColor"
@@ -309,7 +308,7 @@ exports[`DownloadOptions Component handles upload to Dropbox 1`] = `
               />
             </svg>
             <button
-              class="block text-left w-full"
+              class="block text-left w-full text-sm md:text-base"
             >
               Dropbox
             </button>
@@ -338,10 +337,10 @@ exports[`DownloadOptions Component handles upload to Dropbox 1`] = `
           role="menuitem"
         >
           <div
-            class="flex items-center pl-4"
+            class="flex items-center md:pl-4"
           >
             <svg
-              class="text-3xl mr-2"
+              class="hidden lg:block lg:text-3xl mr-2"
               fill="currentColor"
               height="1em"
               stroke="currentColor"
@@ -356,7 +355,7 @@ exports[`DownloadOptions Component handles upload to Dropbox 1`] = `
               />
             </svg>
             <button
-              class="block text-left w-full"
+              class="block text-left w-full text-sm md:text-base"
             >
               Google Drive
             </button>
@@ -379,20 +378,20 @@ exports[`DownloadOptions Component handles upload to Dropbox 2`] = `
     <div
       aria-expanded="true"
       aria-haspopup="true"
-      class="py-2 px-4 flex text-xl gap-6 items-center rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
+      class="py-2 sm:px-4 px-8 md:px-8 lg:px-4 flex items-center justify-center lg:justify-start text-center gap-4 lg:gap-6 w-full rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
       id="options-menu"
     >
       <button
-        class="shadow-2xl drop-shadow-2xl text-white"
+        class="text-sm sm:text-lg lg:text-xl xl:text-2xl text-white"
         type="button"
       >
         Download
       </button>
       <div
-        class="h-10 p-0 w-0.5 bg-white"
+        class="hidden lg:block lg:h-10 p-0 lg:w-0.5 bg-white"
       />
       <svg
-        class="text-2xl text-white cursor-pointer"
+        class="hidden lg:block lg:text-2xl text-white cursor-pointer"
         fill="currentColor"
         height="1em"
         stroke="currentColor"
@@ -407,7 +406,7 @@ exports[`DownloadOptions Component handles upload to Dropbox 2`] = `
       </svg>
     </div>
     <div
-      class="absolute text-lg top-full left-0 w-full bg-teal-500 text-center text-white rounded-b-lg my-px shadow-lg z-30"
+      class="absolute top-full left-0 w-full bg-teal-500 text-center text-white rounded-b-lg shadow-lg z-30"
     >
       <ul
         aria-labelledby="options-menu"
@@ -416,11 +415,11 @@ exports[`DownloadOptions Component handles upload to Dropbox 2`] = `
         role="menu"
       >
         <li
-          class="cursor-pointer p-4 pl-8 bg-teal-500 hover:bg-teal-600 flex items-center transition-colors duration-300"
+          class="cursor-pointer p-4 md:pl-8 bg-teal-500 hover:bg-teal-600 flex items-center transition-colors duration-300"
           role="menuitem"
         >
           <svg
-            class="text-2xl mr-4"
+            class="hidden lg:block lg:text-2xl mr-4"
             fill="currentColor"
             height="1em"
             stroke="currentColor"
@@ -434,7 +433,7 @@ exports[`DownloadOptions Component handles upload to Dropbox 2`] = `
             />
           </svg>
           <button
-            class="block text-left w-full"
+            class="block text-left w-full text-sm md:text-base"
           >
             Device
           </button>
@@ -444,10 +443,10 @@ exports[`DownloadOptions Component handles upload to Dropbox 2`] = `
           role="menuitem"
         >
           <div
-            class="flex items-center pl-4"
+            class="flex items-center md:pl-4"
           >
             <svg
-              class="text-2xl mr-4"
+              class="hidden lg:block lg:text-2xl mr-4"
               fill="currentColor"
               height="1em"
               stroke="currentColor"
@@ -461,7 +460,7 @@ exports[`DownloadOptions Component handles upload to Dropbox 2`] = `
               />
             </svg>
             <button
-              class="block text-left w-full"
+              class="block text-left w-full text-sm md:text-base"
             >
               Dropbox
             </button>
@@ -490,10 +489,10 @@ exports[`DownloadOptions Component handles upload to Dropbox 2`] = `
           role="menuitem"
         >
           <div
-            class="flex items-center pl-4"
+            class="flex items-center md:pl-4"
           >
             <svg
-              class="text-3xl mr-2"
+              class="hidden lg:block lg:text-3xl mr-2"
               fill="currentColor"
               height="1em"
               stroke="currentColor"
@@ -508,7 +507,7 @@ exports[`DownloadOptions Component handles upload to Dropbox 2`] = `
               />
             </svg>
             <button
-              class="block text-left w-full"
+              class="block text-left w-full text-sm md:text-base"
             >
               Google Drive
             </button>
@@ -531,20 +530,20 @@ exports[`DownloadOptions Component handles upload to Google Drive 1`] = `
     <div
       aria-expanded="true"
       aria-haspopup="true"
-      class="py-2 px-4 flex text-xl gap-6 items-center rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
+      class="py-2 sm:px-4 px-8 md:px-8 lg:px-4 flex items-center justify-center lg:justify-start text-center gap-4 lg:gap-6 w-full rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
       id="options-menu"
     >
       <button
-        class="shadow-2xl drop-shadow-2xl text-white"
+        class="text-sm sm:text-lg lg:text-xl xl:text-2xl text-white"
         type="button"
       >
         Download
       </button>
       <div
-        class="h-10 p-0 w-0.5 bg-white"
+        class="hidden lg:block lg:h-10 p-0 lg:w-0.5 bg-white"
       />
       <svg
-        class="text-2xl text-white cursor-pointer"
+        class="hidden lg:block lg:text-2xl text-white cursor-pointer"
         fill="currentColor"
         height="1em"
         stroke="currentColor"
@@ -559,7 +558,7 @@ exports[`DownloadOptions Component handles upload to Google Drive 1`] = `
       </svg>
     </div>
     <div
-      class="absolute text-lg top-full left-0 w-full bg-teal-500 text-center text-white rounded-b-lg my-px shadow-lg z-30"
+      class="absolute top-full left-0 w-full bg-teal-500 text-center text-white rounded-b-lg shadow-lg z-30"
     >
       <ul
         aria-labelledby="options-menu"
@@ -568,11 +567,11 @@ exports[`DownloadOptions Component handles upload to Google Drive 1`] = `
         role="menu"
       >
         <li
-          class="cursor-pointer p-4 pl-8 bg-teal-500 hover:bg-teal-600 flex items-center transition-colors duration-300"
+          class="cursor-pointer p-4 md:pl-8 bg-teal-500 hover:bg-teal-600 flex items-center transition-colors duration-300"
           role="menuitem"
         >
           <svg
-            class="text-2xl mr-4"
+            class="hidden lg:block lg:text-2xl mr-4"
             fill="currentColor"
             height="1em"
             stroke="currentColor"
@@ -586,7 +585,7 @@ exports[`DownloadOptions Component handles upload to Google Drive 1`] = `
             />
           </svg>
           <button
-            class="block text-left w-full"
+            class="block text-left w-full text-sm md:text-base"
           >
             Device
           </button>
@@ -596,10 +595,10 @@ exports[`DownloadOptions Component handles upload to Google Drive 1`] = `
           role="menuitem"
         >
           <div
-            class="flex items-center pl-4"
+            class="flex items-center md:pl-4"
           >
             <svg
-              class="text-2xl mr-4"
+              class="hidden lg:block lg:text-2xl mr-4"
               fill="currentColor"
               height="1em"
               stroke="currentColor"
@@ -613,7 +612,7 @@ exports[`DownloadOptions Component handles upload to Google Drive 1`] = `
               />
             </svg>
             <button
-              class="block text-left w-full"
+              class="block text-left w-full text-sm md:text-base"
             >
               Dropbox
             </button>
@@ -629,10 +628,10 @@ exports[`DownloadOptions Component handles upload to Google Drive 1`] = `
           role="menuitem"
         >
           <div
-            class="flex items-center pl-4"
+            class="flex items-center md:pl-4"
           >
             <svg
-              class="text-3xl mr-2"
+              class="hidden lg:block lg:text-3xl mr-2"
               fill="currentColor"
               height="1em"
               stroke="currentColor"
@@ -647,7 +646,7 @@ exports[`DownloadOptions Component handles upload to Google Drive 1`] = `
               />
             </svg>
             <button
-              class="block text-left w-full"
+              class="block text-left w-full text-sm md:text-base"
             >
               Google Drive
             </button>
@@ -670,20 +669,20 @@ exports[`DownloadOptions Component renders without crashing 1`] = `
     <div
       aria-expanded="true"
       aria-haspopup="true"
-      class="py-2 px-4 flex text-xl gap-6 items-center rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
+      class="py-2 sm:px-4 px-8 md:px-8 lg:px-4 flex items-center justify-center lg:justify-start text-center gap-4 lg:gap-6 w-full rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
       id="options-menu"
     >
       <button
-        class="shadow-2xl drop-shadow-2xl text-white"
+        class="text-sm sm:text-lg lg:text-xl xl:text-2xl text-white"
         type="button"
       >
         Download
       </button>
       <div
-        class="h-10 p-0 w-0.5 bg-white"
+        class="hidden lg:block lg:h-10 p-0 lg:w-0.5 bg-white"
       />
       <svg
-        class="text-2xl text-white cursor-pointer"
+        class="hidden lg:block lg:text-2xl text-white cursor-pointer"
         fill="currentColor"
         height="1em"
         stroke="currentColor"
@@ -709,20 +708,20 @@ exports[`DownloadOptions Component shows the dropdown menu when the download but
     <div
       aria-expanded="true"
       aria-haspopup="true"
-      class="py-2 px-4 flex text-xl gap-6 items-center rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
+      class="py-2 sm:px-4 px-8 md:px-8 lg:px-4 flex items-center justify-center lg:justify-start text-center gap-4 lg:gap-6 w-full rounded-t-lg transition-colors duration-300 bg-teal-500 hover:bg-teal-600 shadow-2xl drop-shadow-2xl text-white"
       id="options-menu"
     >
       <button
-        class="shadow-2xl drop-shadow-2xl text-white"
+        class="text-sm sm:text-lg lg:text-xl xl:text-2xl text-white"
         type="button"
       >
         Download
       </button>
       <div
-        class="h-10 p-0 w-0.5 bg-white"
+        class="hidden lg:block lg:h-10 p-0 lg:w-0.5 bg-white"
       />
       <svg
-        class="text-2xl text-white cursor-pointer"
+        class="hidden lg:block lg:text-2xl text-white cursor-pointer"
         fill="currentColor"
         height="1em"
         stroke="currentColor"
@@ -737,7 +736,7 @@ exports[`DownloadOptions Component shows the dropdown menu when the download but
       </svg>
     </div>
     <div
-      class="absolute text-lg top-full left-0 w-full bg-teal-500 text-center text-white rounded-b-lg my-px shadow-lg z-30"
+      class="absolute top-full left-0 w-full bg-teal-500 text-center text-white rounded-b-lg shadow-lg z-30"
     >
       <ul
         aria-labelledby="options-menu"
@@ -746,11 +745,11 @@ exports[`DownloadOptions Component shows the dropdown menu when the download but
         role="menu"
       >
         <li
-          class="cursor-pointer p-4 pl-8 bg-teal-500 hover:bg-teal-600 flex items-center transition-colors duration-300"
+          class="cursor-pointer p-4 md:pl-8 bg-teal-500 hover:bg-teal-600 flex items-center transition-colors duration-300"
           role="menuitem"
         >
           <svg
-            class="text-2xl mr-4"
+            class="hidden lg:block lg:text-2xl mr-4"
             fill="currentColor"
             height="1em"
             stroke="currentColor"
@@ -764,7 +763,7 @@ exports[`DownloadOptions Component shows the dropdown menu when the download but
             />
           </svg>
           <button
-            class="block text-left w-full"
+            class="block text-left w-full text-sm md:text-base"
           >
             Device
           </button>
@@ -774,10 +773,10 @@ exports[`DownloadOptions Component shows the dropdown menu when the download but
           role="menuitem"
         >
           <div
-            class="flex items-center pl-4"
+            class="flex items-center md:pl-4"
           >
             <svg
-              class="text-2xl mr-4"
+              class="hidden lg:block lg:text-2xl mr-4"
               fill="currentColor"
               height="1em"
               stroke="currentColor"
@@ -791,7 +790,7 @@ exports[`DownloadOptions Component shows the dropdown menu when the download but
               />
             </svg>
             <button
-              class="block text-left w-full"
+              class="block text-left w-full text-sm md:text-base"
             >
               Dropbox
             </button>
@@ -807,10 +806,10 @@ exports[`DownloadOptions Component shows the dropdown menu when the download but
           role="menuitem"
         >
           <div
-            class="flex items-center pl-4"
+            class="flex items-center md:pl-4"
           >
             <svg
-              class="text-3xl mr-2"
+              class="hidden lg:block lg:text-3xl mr-2"
               fill="currentColor"
               height="1em"
               stroke="currentColor"
@@ -825,7 +824,7 @@ exports[`DownloadOptions Component shows the dropdown menu when the download but
               />
             </svg>
             <button
-              class="block text-left w-full"
+              class="block text-left w-full text-sm md:text-base"
             >
               Google Drive
             </button>

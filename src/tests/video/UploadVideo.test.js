@@ -106,11 +106,13 @@ describe('UploadVideo Component', () => {
     useData.mockReturnValue(mockUseData);
   
     global.fetch = jest.fn().mockResolvedValue({
-      json: jest.fn().mockResolvedValue([
-        { format: 'MP4' },
-        { format: 'AVI' },
-        { format: 'MOV' },
-      ]),
+      json: jest.fn().mockResolvedValue({
+        "videos": [
+          { format: 'MP4' },
+          { format: 'AVI' },
+          { format: 'MOV' },
+        ]
+      }),
     });
 
     let asFragment
@@ -143,11 +145,13 @@ describe('UploadVideo Component', () => {
 
     // Mock the asynchronous fetch call for conversions.json
     global.fetch = jest.fn().mockResolvedValue({
-      json: jest.fn().mockResolvedValue([
-        { format: 'MP4' },
-        { format: 'AVI' },
-        { format: 'MOV' },
-      ]),
+      json: jest.fn().mockResolvedValue({
+        "videos": [
+          { format: 'MP4' },
+          { format: 'AVI' },
+          { format: 'MOV' },
+        ]
+      }),
     });
 
     const { asFragment } = render(
@@ -194,11 +198,13 @@ describe('UploadVideo Component', () => {
 
     // Mock the asynchronous fetch call for conversions.json
     global.fetch = jest.fn().mockResolvedValue({
-      json: jest.fn().mockResolvedValue([
-        { format: 'MP4' },
-        { format: 'AVI' },
-        { format: 'MOV' },
-      ]),
+      json: jest.fn().mockResolvedValue({
+        "videos": [
+          { format: 'MP4' },
+          { format: 'AVI' },
+          { format: 'MOV' },
+        ]
+      }),
     });
 
     const { asFragment } = render(
@@ -245,11 +251,13 @@ describe('UploadVideo Component', () => {
   
     // Mock the asynchronous fetch call for conversions.json
     global.fetch = jest.fn().mockResolvedValue({
-      json: jest.fn().mockResolvedValue([
-        { format: 'MP4' },
-        { format: 'AVI' },
-        { format: 'MOV' },
-      ]),
+      json: jest.fn().mockResolvedValue({
+        "videos": [
+          { format: 'MP4' },
+          { format: 'AVI' },
+          { format: 'MOV' },
+        ]
+      }),
     });
   
     // Render the component
