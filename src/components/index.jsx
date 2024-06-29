@@ -34,3 +34,6 @@ export {default as FaqItem } from './videoPage/FaqItem';
 export {default as FaqSection } from './videoPage/FaqSection';
 export { default as Audience } from './home/Audience';
 export { default as AudienceCard } from './home/AudienceCard';
+export { default as UploadImage } from './image/UploadImage';
+export { default as EditImage } from './image/EditImage';
+export {default as ImageThumbnails} from './image/ImageThumbnails';

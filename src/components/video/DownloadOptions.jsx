@@ -12,7 +12,7 @@ import { DiGoogleDrive } from 'react-icons/di';
 
 const CHUNK_SIZE = 8 * 1024 * 1024;
 
-const DownloadOptions = ({ video, downloadUrl, progress }) => {
+const DownloadOptions = ({ item, downloadUrl, progress }) => {
     const [showDropdown, setShowDropdown] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [googleUploadProgress, setGoogleUploadProgress] = useState(0);
@@ -74,7 +74,7 @@ const DownloadOptions = ({ video, downloadUrl, progress }) => {
         // Finish upload session
         const result = await dbx.filesUploadSessionFinish({
           cursor: { session_id: sessionId, offset: totalSize },
-          commit: { path: `/${video.name.split('.')[0]}.${video.format}`, mode: 'add', autorename: true, mute: false },
+          commit: { path: `/${item.name.split('.')[0]}.${item.format}`, mode: 'add', autorename: true, mute: false },
         });
     
         console.log('Uploaded to Dropbox:', result);
@@ -91,7 +91,7 @@ const DownloadOptions = ({ video, downloadUrl, progress }) => {
       if (progress === 'completed' && downloadUrl) {
         const link = document.createElement('a');
         link.href = downloadUrl;
-        link.download = `${video.name.split('.')[0]}.${video.format}`;
+        link.download = `${item.name.split('.')[0]}.${item.format}`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -114,7 +114,7 @@ const DownloadOptions = ({ video, downloadUrl, progress }) => {
         const close_delim = `\r\n--${boundary}--`;
       
         const fileMetadata = {
-            name: `${video.name.split('.')[0]}.${video.format}`,
+            name: `${item.name.split('.')[0]}.${item.format}`,
         };
 
         console.log('Upload to Google Drive started...');
@@ -198,7 +198,7 @@ const DownloadOptions = ({ video, downloadUrl, progress }) => {
       <button
         type="button"
         disabled={progress !== 'completed'} 
-        className={`text-sm sm:text-lg lg:text-xl xl:text-2xl ${progress === 'completed' ? 'text-white' : 'bg-gray-400 text-gray-700 cursor-not-allowed'}`}
+        className={`text-sm sm:text-lg lg:text-xl ${progress === 'completed' ? 'text-white' : 'bg-gray-400 text-gray-700 cursor-not-allowed'}`}
       >
         Download
       </button>

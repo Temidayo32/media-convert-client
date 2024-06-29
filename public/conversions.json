@@ -1,19 +1,38 @@
-[
-    { "format": "MP4", "icon": "/mp4.svg", "description": "Convert your videos to MP4 format easily and quickly." },
-    { "format": "MOV", "icon": "/mov.svg", "description": "Convert your videos to MOV format easily and quickly." },
-    { "format": "AVI", "icon": "/avi.svg", "description": "Convert your videos to AVI format easily and quickly." },
-    { "format": "WEBM", "icon": "/webm.svg", "description": "Convert your videos to WEBM format easily and quickly." },
-    { "format": "GIF", "icon": "/gif.svg", "description": "Convert your videos to GIF format easily and quickly." },
-    { "format": "MPEG", "icon": "/mpeg.svg", "description": "Convert your videos to MPEG format easily and quickly." },
-    { "format": "FLV", "icon": "/flv.svg", "description": "Convert your videos to FLV format easily and quickly." },
-    { "format": "WMV", "icon": "/wmv.svg", "description": "Convert your videos to WMV format easily and quickly." },
-    { "format": "F4V", "icon": "/f4v.svg", "description": "Convert your videos to F4V format easily and quickly." },
-    { "format": "M4V", "icon": "/m4v.svg", "description": "Convert your videos to M4V format easily and quickly." },
-    { "format": "OGG", "icon": "/ogg.svg", "description": "Convert your videos to OGG format easily and quickly." },
-    { "format": "MKV", "icon": "/mkv.svg", "description": "Convert your videos to MKV format easily and quickly." },
-    { "format": "VOB", "icon": "/vob.svg", "description": "Convert your videos to VOB format easily and quickly." },
-    { "format": "RM", "icon": "/rm.svg", "description": "Convert your videos to RM format easily and quickly." },
-    { "format": "MXF", "icon": "/mxf.svg", "description": "Convert your videos to MXF format easily and quickly." },
-    { "format": "SWF", "icon": "/swf.svg", "description": "Convert your videos to SWF format easily and quickly." }
-  ]
-  
+{
+  "videos": [
+  { "format": "MP4", "icon": "/mp4.svg", "description": "Convert your videos to MP4 format easily and quickly." },
+  { "format": "MOV", "icon": "/mov.svg", "description": "Convert your videos to MOV format easily and quickly." },
+  { "format": "AVI", "icon": "/avi.svg", "description": "Convert your videos to AVI format easily and quickly." },
+  { "format": "WEBM", "icon": "/webm.svg", "description": "Convert your videos to WEBM format easily and quickly." },
+  { "format": "GIF", "icon": "/gif.svg", "description": "Convert your videos to GIF format easily and quickly." },
+  { "format": "MPEG", "icon": "/mpeg.svg", "description": "Convert your videos to MPEG format easily and quickly." },
+  { "format": "FLV", "icon": "/flv.svg", "description": "Convert your videos to FLV format easily and quickly." },
+  { "format": "WMV", "icon": "/wmv.svg", "description": "Convert your videos to WMV format easily and quickly." },
+  { "format": "F4V", "icon": "/f4v.svg", "description": "Convert your videos to F4V format easily and quickly." },
+  { "format": "M4V", "icon": "/m4v.svg", "description": "Convert your videos to M4V format easily and quickly." },
+  { "format": "OGG", "icon": "/ogg.svg", "description": "Convert your videos to OGG format easily and quickly." },
+  { "format": "MKV", "icon": "/mkv.svg", "description": "Convert your videos to MKV format easily and quickly." },
+  { "format": "VOB", "icon": "/vob.svg", "description": "Convert your videos to VOB format easily and quickly." },
+  { "format": "RM", "icon": "/rm.svg", "description": "Convert your videos to RM format easily and quickly." },
+  { "format": "MXF", "icon": "/mxf.svg", "description": "Convert your videos to MXF format easily and quickly." },
+  { "format": "SWF", "icon": "/swf.svg", "description": "Convert your videos to SWF format easily and quickly." }
+],
+
+"images": [
+  { "format": "PNG", "icon": "/png.svg", "description": "Convert your images to PNG format easily and quickly." },
+  { "format": "JPEG", "icon": "/jpeg.svg", "description": "Convert your images to JPEG format easily and quickly." },
+  { "format": "BMP", "icon": "/bmp.svg", "description": "Convert your images to BMP format easily and quickly." },
+  { "format": "TIFF", "icon": "/tiff.svg", "description": "Convert your images to TIFF format easily and quickly." },
+  { "format": "DXF", "icon": "/dxf.svg", "description": "Convert your images to Desktop Cutting Plotter (AutoCAD DXF R 14) format easily and quickly." },
+  { "format": "EMF", "icon": "/emf.svg", "description": "Convert your images to Enhanced Metafile format easily and quickly." },
+  { "format": "EPS", "icon": "/eps.svg", "description": "Convert your images to Encapsulated PostScript format easily and quickly." },
+  { "format": "HPGL", "icon": "/hpgl.svg", "description": "Convert your images to HP Graphics Language plot file format easily and quickly." },
+  { "format": "PDF", "icon": "/pdf.svg", "description": "Convert your images to Portable Document Format easily and quickly." },
+  { "format": "PS", "icon": "/ps.svg", "description": "Convert your images to PostScript format easily and quickly." },
+  { "format": "SVG", "icon": "/svg.svg", "description": "Convert your images to Scalable Vector Graphic format easily and quickly." },
+  { "format": "SVGZ", "icon": "/svgz.svg", "description": "Convert your images to Compressed Inkscape SVG format easily and quickly." },
+  { "format": "WMF", "icon": "/wmf.svg", "description": "Convert your images to Windows Metafile format easily and quickly." },
+  { "format": "XAML", "icon": "/xaml.svg", "description": "Convert your images to Microsoft XAML format easily and quickly." }
+]
+
+}  

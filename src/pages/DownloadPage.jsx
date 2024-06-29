@@ -6,7 +6,7 @@ import { Conversion } from '../components';
 
 const DownloadPage = () => {
   const { format } = useParams();
-  const { setDownloadPageActive, uploadedVideos } = useData();
+  const { setDownloadPageActive, uploadedVideos, uploadedImages } = useData();
   const [key, setKey] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ const DownloadPage = () => {
   }, [setDownloadPageActive, navigate]);
 
   
-  if (uploadedVideos.length === 0) {
+  if (uploadedVideos.length === 0 && uploadedImages.length === 0) {
     setDownloadPageActive(false);
     navigate('/')
   }

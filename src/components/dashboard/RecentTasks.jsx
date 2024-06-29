@@ -127,7 +127,7 @@ const RecentTasks = () => {
                   </div>
                 ) : (
                   filteredTasks.map((task) => (
-                    <li key={task.jobId} className={`flex flex-col sm:flex-row justify-center items-center m-8 sm:h-28 h-36 border rounded py-4 px-4 pb-2 ${colorMap[task.progress]}`}>
+                    <li key={task.jobId} className={`flex flex-col sm:flex-row justify-between items-center m-8 sm:h-28 h-36 border rounded py-4 px-4 pb-2 ${colorMap[task.progress]}`}>
                       <div className='flex w-full xl:w-5/12'>
                         <div className='flex flex-col sm:mb-0 mb-4 w-full md:w-5/6 xl:w-10/12'>
                           <span className="text-teal-800 text-center text-xs sm:text-sm md:text-base xl:text-lg font-semibold">{task.name}.{task.format}</span>
@@ -145,7 +145,7 @@ const RecentTasks = () => {
                         )}
                         <div className='flex justify-center sm:mb-0 mb-4 sm:justify-end items-center gap-4 md:gap-12 w-full xl:w-4/12'>
                           <DownloadOptions
-                            video={task}
+                            item={task}
                             downloadUrl={task.fileUrl}
                             progress={task.progress}
                           />

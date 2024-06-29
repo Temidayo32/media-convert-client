@@ -16,7 +16,7 @@ const HeaderOptions = () => {
   useEffect(() => {
     fetch('/conversions.json')
       .then(response => response.json())
-      .then(data => setConversions(data))
+      .then(data => setConversions(data.videos))
       .catch(error => console.error('Error fetching conversions:', error));
   }, []);
 

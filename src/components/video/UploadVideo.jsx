@@ -5,7 +5,8 @@ import axios from 'axios';
 import io from 'socket.io-client';
 import { getAuth } from 'firebase/auth';
 import { initGoogleAPI, handleGoogleAuth } from '../../utils/goggleAuth';
-import { gapi } from 'gapi-script';
+import { handleOpenPicker, onCancel, onSuccess, handleFileUpload } from '../../utils/uploadFiles';
+
 
 import { FaFileCirclePlus } from "react-icons/fa6";
 import { IoIosArrowDropdownCircle } from 'react-icons/io';
@@ -35,12 +36,10 @@ const defaultSettings = {
 
 const socket = io('http://localhost:8000'); 
 
-const MAX_FILE_SIZE = 1 * 1024 * 1024 * 1024;
-
 const UploadVideo = ({defaultFormat}) => {
   const navigate = useNavigate();
   const { format: currentFormat } = useParams();
-  const { uploadedVideos, setUploadedVideos, setDownloadPageActive } = useData();
+  const { uploadedVideos, setUploadedVideos, setDownloadPageActive, setDisplayType, oversizedFiles, setOversizedFiles } = useData();
   const { showSignUpOptions, setShowSignUpOptions, emailVerified } = useData();
 
   const [showDropdown, setShowDropdown] = useState(false);
@@ -51,18 +50,16 @@ const UploadVideo = ({defaultFormat}) => {
   const [limitExceeded, setLimitExceeded] = useState(false);
   const [limitMessage, setLimitMessage] = useState('');
   const [fadeOut, setFadeOut] = useState(false);
-  const [oversizedFiles, setOversizedFiles] = useState([]);
-  const [showErrorMessages, setShowErrorMessages] = useState(false);
 
   
-  const { idToken } = useData();
+  const { idToken, showErrorMessages, setShowErrorMessages } = useData();
   const auth = getAuth();
   const user = auth.currentUser
 
   useEffect(() => {
     fetch('/conversions.json')
       .then(response => response.json())
-      .then(data => setFormats(data))
+      .then(data => setFormats(data.videos))
       .catch(error => console.error('Error fetching conversions:', error));
   }, []);
 
@@ -109,165 +106,6 @@ const UploadVideo = ({defaultFormat}) => {
 
   const defaultOption = formats.find((format) => format.format.toLowerCase() === defaultFormat.toLowerCase());
 
-  function formatFileSize(bytes) {
-    const mbSize = bytes / (1024 * 1024);
-    if (mbSize < 1024) {
-      return mbSize.toFixed(2) + ' MB';
-    } else {
-      const gbSize = mbSize / 1024;
-      return gbSize.toFixed(2) + ' GB';
-    }
-  }
-
-  // Handler for file selection
-  const handleFileSelected = (e) => {
-    console.log('File selected:', e.detail);
-    // Handle the selected file
-  };
-
-  const handleFileUpload = (e) => {
-    const files = e.target.files;
-    const newVideos = [...uploadedVideos];
-    const oversizedFiles = [];
-
-    for (let i = 0; i < files.length; i++) {
-        if (!emailVerified && files[i].size > MAX_FILE_SIZE) {
-            oversizedFiles.push(`File size of ${files[i].name} exceeds the 1 GB limit.`);
-            continue;
-        }
-
-        newVideos.push({
-            source: 'local',
-            file: files[i],
-            name: files[i].name,
-            size: formatFileSize(files[i].size),
-            format: defaultFormat,
-            jobId: `${Date.now()}_${files[i].name.split('.')[0]}`,
-            settings: { ...defaultSettings },
-        });
-    }
-
-    setUploadedVideos(newVideos);
-    setOversizedFiles(oversizedFiles); 
-
-    if (oversizedFiles.length > 0) {
-      setShowErrorMessages(true);
-      setTimeout(() => {
-          setShowErrorMessages(false);
-      }, 5000); // 5 seconds timeout
-    }
-
-    setShowUploadForm(false);
-  };
-
-  const onSuccess = (files) => {
-    const newVideos = [...uploadedVideos];
-    const oversizedFiles = [];
-
-    for (let i = 0; i < files.length; i++) {
-        if (!emailVerified && files[i].bytes > MAX_FILE_SIZE) {
-            oversizedFiles.push(`File size of ${files[i].name} exceeds the 1 GB limit.`);
-            continue;
-        }
-
-        newVideos.push({
-            source: 'dropbox',
-            file: files[i],
-            name: files[i].name,
-            fileLink: files[i].link,
-            size: formatFileSize(files[i].bytes),
-            format: defaultFormat,
-            jobId: `${Date.now()}_${files[i].name.split('.')[0]}`,
-            settings: { ...defaultSettings },
-        });
-    }
-
-    console.log(files);
-    setUploadedVideos(newVideos);
-    setOversizedFiles(oversizedFiles); 
-
-    if (oversizedFiles.length > 0) {
-      setShowErrorMessages(true);
-      setTimeout(() => {
-          setShowErrorMessages(false);
-      }, 5000); // 5 seconds timeout
-   }
-
-    setShowUploadForm(false);
-  };
-
-
-  const onCancel = () => {
-    console.log('Cancelled');
-  };
-
-  const handleOpenPicker = async () => {
-     const accessToken = await handleGoogleAuth();
-     console.log(accessToken)
-     
-     gapi.load('picker', {
-      callback: () => {
-          try {
-              const picker = new window.google.picker.PickerBuilder()
-                  .setOrigin("https://localhost:3000")
-                  .enableFeature(window.google.picker.Feature.SUPPORT_DRIVES)
-                  .enableFeature(window.google.picker.Feature.NAV_HIDDEN)
-                  .enableFeature(window.google.picker.Feature.MULTISELECT_ENABLED)
-                  .setOAuthToken(accessToken)
-                  .setDeveloperKey(developerKey)
-                  .addView(new window.google.picker.DocsUploadView())
-                  .setCallback((data) => {
-                      if (data.action === window.google.picker.Action.CANCEL) {
-                          console.log('User clicked cancel/close button');
-                      } else if (data.docs) {
-                          const selectedVideos = data.docs.filter(doc => doc.mimeType.startsWith('video/'));
-                          const newVideos = [...uploadedVideos];
-                          const oversizedFiles = [];
-
-                          for (let i = 0; i < selectedVideos.length; i++) {
-                              if (!emailVerified && selectedVideos[i].sizeBytes > MAX_FILE_SIZE) {
-                                  oversizedFiles.push(`File size of ${selectedVideos[i].name} exceeds the 1 GB limit.`);
-                                  continue;
-                              }
-
-                              newVideos.push({
-                                  source: 'google',
-                                  file: selectedVideos[i],
-                                  fileId: selectedVideos[i].id,
-                                  name: selectedVideos[i].name,
-                                  size: formatFileSize(selectedVideos[i].sizeBytes),
-                                  format: defaultFormat,
-                                  jobId: `${Date.now()}_${selectedVideos[i].name.split('.')[0]}`,
-                                  settings: { ...defaultSettings },
-                              });
-                          }
-
-                          setUploadedVideos(newVideos);
-                          setOversizedFiles(oversizedFiles);
-
-                          if (oversizedFiles.length > 0) {
-                              setShowErrorMessages(true);
-                              setTimeout(() => {
-                                  setShowErrorMessages(false);
-                              }, 5000); // 5 seconds timeout
-                          }
-
-                          setShowUploadForm(false);
-                      }
-                  })
-                  .build();
-
-              picker.setVisible(true);
-          } catch (error) {
-              console.error('Error occurred during Google Picker operation:', error);
-          }
-      },
-      onerror: (error) => {
-          console.error('Error loading Google Picker API:', error);
-      }
-  });
-};
-
 
   const handleRemoveVideo = (index) => {
     const newVideos = [...uploadedVideos];
@@ -289,6 +127,7 @@ const UploadVideo = ({defaultFormat}) => {
       const fileExtension = video.name.split('.')[1];
 
       const formData = new FormData();
+      formData.append('mimeType', 'video');
       formData.append('source', video.source);
       formData.append('video', video.file)
       formData.append('videoId', video.fileId);
@@ -309,9 +148,9 @@ const UploadVideo = ({defaultFormat}) => {
       // Determine the correct endpoint
     let endpoint;
     if (emailVerified) {
-      endpoint = video.source === 'local' ? '/signed/convert' : '/signed/convertcloud';
+      endpoint = video.source === 'local' ? '/video/signed/convert' : '/video/signed/convertcloud';
     } else {
-      endpoint = video.source === 'local' ? '/convert' : '/convertcloud';
+      endpoint = video.source === 'local' ? '/video/convert' : '/video/convertcloud';
     }
 
     // Set up headers
@@ -330,6 +169,7 @@ const UploadVideo = ({defaultFormat}) => {
       .then(data => console.log(data))
       .then(() => {
         console.log('Navigating to conversion-progress page');
+        setDisplayType('videos');
         setDownloadPageActive(true);
         navigate('/download');
       })
@@ -410,7 +250,18 @@ const UploadVideo = ({defaultFormat}) => {
                 handleOpenPicker={handleOpenPicker} 
                 onSuccess={onSuccess} 
                 onCancel={onCancel} 
-                handleFileSelected={handleFileSelected} />
+                uploadedFiles={uploadedVideos} 
+                setUploadedFiles={setUploadedVideos} 
+                emailVerified={emailVerified} 
+                setOversizedFiles={setOversizedFiles} 
+                setShowErrorMessages={setShowErrorMessages} 
+                setShowUploadForm={setShowUploadForm} 
+                developerKey={developerKey} 
+                defaultFormat={defaultFormat}
+                defaultSettings={defaultSettings}
+                mimeType="video/*"
+                editImage={false}
+                />
             }
           </div>
           {!emailVerified && (
@@ -440,7 +291,18 @@ const UploadVideo = ({defaultFormat}) => {
                 handleOpenPicker={handleOpenPicker} 
                 onSuccess={onSuccess} 
                 onCancel={onCancel} 
-                handleFileSelected={handleFileSelected} />
+                uploadedFiles={uploadedVideos} 
+                setUploadedFiles={setUploadedVideos} 
+                emailVerified={emailVerified} 
+                setOversizedFiles={setOversizedFiles} 
+                setShowErrorMessages={setShowErrorMessages} 
+                setShowUploadForm={setShowUploadForm} 
+                developerKey={developerKey} 
+                defaultFormat={defaultFormat}
+                defaultSettings={defaultSettings}
+                mimeType="video/*"
+                editImage={false}
+                />
           }
           </div>
         </div>
