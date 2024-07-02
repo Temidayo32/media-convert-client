@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { ImOnedrive } from 'react-icons/im';
-import { getAuthenticatedClient } from '../../utils/graphUtils';
+import { getAuthenticatedClient } from '../../deprecated/graphUtils';
 import { Link } from 'react-router-dom';
 
 const OneDrivePicker = ({ onSuccess }) => {

@@ -3,32 +3,32 @@ import AudienceCard from './AudienceCard';
 
 const cardsData = [
   {
-    backgroundImage:'/influencer.jpg', 
+    backgroundImage:'/img/influencer.jpg', 
     title: 'Content Creators and Social Media Influencers',
     description: "Whether you're a YouTuber, vlogger, or social media influencer, our tool ensures your videos are always in the right format and size suitable for your specific platforms."
   },
   {
-    backgroundImage: '/freelancers.jpg',
+    backgroundImage: '/img/freelancers.jpg',
     title: 'Freelancers and Small Business Owners',
     description: 'Our easy-to-use tool supports multiple formats, helping you prepare content for clients or online distribution without breaking the bank.'
   },
   {
-    backgroundImage: '/marketers.jpg',
+    backgroundImage: '/img/marketers.jpg',
     title: 'Marketers and Sales',
     description: "Our powerful conversion tool supports multiple formats and batch processing, saving you time and ensuring your videos are perfect for every platform. Whether it's for social media, email campaigns, or your website, Media Convert helps you deliver high-quality video content that drives engagement."
   },
   {
-    backgroundImage: '/student.jpg',
+    backgroundImage: '/img/student.jpg',
     title: 'Students and Educators',
     description: 'Standardize your educational videos for any LMS and device. With Media Convert, you can ensure high-quality, accessible content that enhances the learning experience for students everywhere.'
   },
   {
-    backgroundImage: '/mediaent.jpg',
+    backgroundImage: '/img/mediaent.jpg',
     title: 'Media and Entertainment Industry',
     description: 'Handle large files and industry-standard formats with ease, ensuring your videos are ready for editing, distribution, and archiving. Our high-capacity tool maintains quality while supporting batch conversions, saving you time and effort.'
   },
   {
-    backgroundImage: '/corporate.jpg',
+    backgroundImage: '/img/corporate.jpg',
     title: 'Corporate and Business Users',
     description: 'From training videos to marketing content, ensure your videos are in the correct format for every device and platform. Our tool offers secure and efficient conversions with batch processing capabilities, ideal for corporate needs.'
   }
