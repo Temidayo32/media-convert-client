@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import { useOpenCv } from "opencv-react";
+import { WorkerPool } from '../../utils/WorkerPool';
 
 import { useData } from '../../DataContext';
 import { imageSettingsConfig } from '../../utils/images';
@@ -44,34 +45,28 @@ const formatMap = {
 };
 
 
-const EditImage = ({defaultFormat}) => {
+const EditImage = ({ defaultFormat }) => {
   const navigate = useNavigate();
   const { format: currentFormat } = useParams();
   const { idToken, uploadedImages, setUploadedImages, emailVerified, setDownloadPageActive, setDisplayType, oversizedFiles, setOversizedFiles, showErrorMessages, setShowErrorMessages, showUploadForm, setShowUploadForm } = useData();
   const [selectedImageId, setSelectedImageId] = useState(uploadedImages.length ? uploadedImages[0].jobId : null);
   const image = selectedImageId ? uploadedImages.find(img => img.jobId === selectedImageId) : null;
   const [imageSettings, setImageSettings] = useState(image ? image.settings : defaultSettings);
+  const [currentImageSettings, setCurrentImageSettings] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [formats, setFormats] = useState([]);
   const [previousFormat, setPreviousFormat] = useState(null);
   const [settingsCollapsed, setSettingsCollapsed] = useState(true);
   const [actionsCollapsed, setActionsCollapsed] = useState(true);
   const canvasRef = useRef(null);
-  const { cv, loaded: cvLoaded } = useOpenCv();
-
-  const [isCropping, setIsCropping] = useState(false);
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null);
-  const [cropStart, setCropStart] = useState(null);
-  const [cropEnd, setCropEnd] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [cropOffset, setCropOffset] = useState(null);
-  const [dragStart, setDragStart] = useState(null);
+  // const { cv, loaded: cvLoaded } = useOpenCv();
 
   const auth = getAuth();
-  const user = auth.currentUser;
+  const user = auth.currentUser
+  
+
+  const workerPool = new WorkerPool(4); // Create a pool of 4 workers
+
 
   useEffect(() => {
     fetch('/conversions.json')
@@ -80,48 +75,27 @@ const EditImage = ({defaultFormat}) => {
       .catch((error) => console.error('Error fetching conversions:', error));
   }, []);
 
-  
-
-  const defaultOption = formats.find((format) => format.format.toLowerCase() === defaultFormat.toLowerCase());
-
-  useEffect(() => {
-    if (currentFormat !== previousFormat) {
-      setPreviousFormat(currentFormat);
-      setUploadedImages([]);
-      }
-
-}, [setUploadedImages, currentFormat, previousFormat]);
-
-
   useEffect(() => {
     setShowUploadForm(uploadedImages.length === 0);
+    console.log(uploadedImages)
   }, [uploadedImages, setShowUploadForm]);
+  
 
   useEffect(() => {
-    if (image) {
-      const updatedImages = uploadedImages.map(img =>
-        img.jobId === selectedImageId ? { ...img, settings: imageSettings } : img
-      );
-      setUploadedImages(updatedImages);
-      // console.log(uploadedImages)
-    }
-  }, [imageSettings, selectedImageId, image, setUploadedImages, uploadedImages]);
-
-  useEffect(() => {
+    let objectUrl = null;
     if (image && canvasRef.current) {
+      console.log(image.format)
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
       const img = new Image();
 
       const loadImage = () => {
         if (image.source === 'local') {
-          const objectUrl = URL.createObjectURL(image.file);
+          objectUrl = URL.createObjectURL(image.file);
           img.src = objectUrl;
-          setImageUrl(objectUrl);
         } else if (image.source === 'dropbox') {
           const fileLink = image.fileLink.replace('dl=0', 'raw=1');
           img.src = fileLink;
-          setImageUrl(fileLink);
         }
 
         img.onload = () => {
@@ -132,16 +106,35 @@ const EditImage = ({defaultFormat}) => {
         };
 
         return () => {
-          if (image.source === 'local') {
-            URL.revokeObjectURL(img.src);
+          if (objectUrl) {
+              URL.revokeObjectURL(objectUrl);
           }
         };
       };
 
       loadImage();
+
+      // Clean up workers when the component unmounts
+    return () => {
+      workerPool.terminateWorkers();
+    };
     }
   }, [image, canvasRef]);
 
+  const updateImageSettings = (imageId, newSettings) => {
+    setUploadedImages(prevImages =>
+      prevImages.map(img =>
+        img.jobId === imageId ? { ...img, settings: newSettings } : img
+      )
+    );
+  };
+
+  const handleImageSettingsChange = (newSettings) => {
+    setCurrentImageSettings(newSettings);
+    if (selectedImageId && uploadedImages) {
+      updateImageSettings(selectedImageId, newSettings);
+    }
+  };
 
   const handleSettingChange = (settingCategory, setting, value) => {
     setImageSettings(prevSettings => ({
@@ -151,6 +144,7 @@ const EditImage = ({defaultFormat}) => {
         [setting]: value
       }
     }));
+    handleImageSettingsChange(imageSettings);
   };
 
   const handleFormatChange = (event) => {
@@ -170,6 +164,7 @@ const EditImage = ({defaultFormat}) => {
       }
     }));
     console.log(angle)
+    handleImageSettingsChange({ ...imageSettings, rotate: { ...imageSettings.rotate, angle: (imageSettings.rotate.angle + angle) % 360 } });
   };
 
   const handleFlip = (axis) => {
@@ -180,202 +175,225 @@ const EditImage = ({defaultFormat}) => {
         [axis]: !prevSettings.flip[axis]
       }
     }));
+    handleImageSettingsChange({ ...imageSettings, flip: { ...imageSettings.flip, [axis]: !imageSettings.flip[axis] } });
   };
 
   const formatCategoryName = (name) => {
     return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
   };
 
-
   const applySettings = (canvas) => {
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    let mat = cv.matFromImageData(imgData);
 
     try {
-        // Apply Brightness and Contrast
-        if (imageSettings.brightness.alpha !== 1.0 || imageSettings.brightness.beta !== 0) {
-            const { alpha, beta } = imageSettings.brightness;
-            mat.convertTo(mat, -1, alpha, beta); // Adjust brightness and contrast
-        }
+        // Get image data from the canvas
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-        // Apply Blur
-        if (imageSettings.blur.type !== 'None') {
-            const { type, kernel_size } = imageSettings.blur;
-            console.log('Applying blur:', type, kernel_size);
-            let blurredMat = new cv.Mat();
-
-            switch (type) {
-                case 'Gaussian':
-                    cv.GaussianBlur(mat, blurredMat, new cv.Size(kernel_size, kernel_size), 0, 0, cv.BORDER_DEFAULT);
-                    break;
-                case 'Median':
-                    if (kernel_size % 2 === 0) throw new Error('Kernel size for median blur must be odd');
-                    cv.medianBlur(mat, blurredMat, kernel_size);
-                    break;
-                case 'Bilateral':
-                    cv.bilateralFilter(mat, blurredMat, kernel_size, kernel_size * 2, kernel_size / 2, cv.BORDER_DEFAULT);
-                    break;
-                default:
-                    blurredMat = mat.clone(); // Fall back to original if invalid type
-                    break;
+        // Pass image data to worker pool for processing
+        workerPool.processImage({ imageData: imgData, imageSettings }, (result) => {
+            if (result.error) {
+                console.error("Error processing:", result.error);
+                return;
             }
 
-            mat.delete();
-            mat = blurredMat;
-        }
-
-        // Resize Image
-        if (imageSettings.resize.width && imageSettings.resize.height) {
-            const { width, height } = imageSettings.resize;
-            let resizedMat = new cv.Mat();
-            cv.resize(mat, resizedMat, new cv.Size(width, height), 0, 0, cv.INTER_AREA);
-            mat.delete();
-            mat = resizedMat;
-        }
-
-        // Apply Rotate
-        if (imageSettings.rotate.angle !== 0) {
-            const { angle } = imageSettings.rotate;
-            console.log('Applying rotation:', angle);
-
-            let center = new cv.Point(mat.cols / 2, mat.rows / 2);
-            let M = cv.getRotationMatrix2D(center, angle, 1);
-
-            // Calculate new bounding box size
-            let cos = Math.abs(M.doubleAt(0, 0));
-            let sin = Math.abs(M.doubleAt(0, 1));
-            let newWidth = Math.floor(mat.rows * sin + mat.cols * cos);
-            let newHeight = Math.floor(mat.rows * cos + mat.cols * sin);
-
-            // Adjust rotation matrix to account for translation
-            M.doublePtr(0, 2)[0] += (newWidth / 2) - center.x;
-            M.doublePtr(1, 2)[0] += (newHeight / 2) - center.y;
-
-            let rotatedMat = new cv.Mat();
-            cv.warpAffine(mat, rotatedMat, M, new cv.Size(newWidth, newHeight), cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar());
-
-            mat.delete();
-            mat = rotatedMat;
-        }
-
-        // Flip Image
-        if (imageSettings.flip.horizontal || imageSettings.flip.vertical) {
-            let flippedMat = new cv.Mat();
-            let flipCode = imageSettings.flip.horizontal && imageSettings.flip.vertical ? -1 : imageSettings.flip.horizontal ? 1 : 0;
-            cv.flip(mat, flippedMat, flipCode);
-            mat.delete();
-            mat = flippedMat;
-        }
-
-       // Convert to Gray for Edge Detection or Histogram Equalization if necessary
-          if (imageSettings.edgeDetection.method !== 'None' || imageSettings.histogramEqualization.enabled) {
-            let grayMat = new cv.Mat();
-            cv.cvtColor(mat, grayMat, cv.COLOR_RGBA2GRAY, 0);
-            mat.delete();
-            mat = grayMat;
-          }
-
-          // Perform Edge Detection
-          if (imageSettings.edgeDetection.method === 'Canny') {
-            let edges = new cv.Mat();
-            cv.Canny(mat, edges, imageSettings.edgeDetection.threshold1, imageSettings.edgeDetection.threshold2, 3, false);
-            mat.delete();
-            mat = edges;
-          } else if (imageSettings.edgeDetection.method === 'Sobel') {
-            let gradX = new cv.Mat();
-            let gradY = new cv.Mat();
-            let absGradX = new cv.Mat();
-            let absGradY = new cv.Mat();
-            let edges = new cv.Mat();
-            cv.Sobel(mat, gradX, cv.CV_16S, 1, 0);
-            cv.convertScaleAbs(gradX, absGradX);
-            cv.Sobel(mat, gradY, cv.CV_16S, 0, 1);
-            cv.convertScaleAbs(gradY, absGradY);
-            cv.addWeighted(absGradX, 0.5, absGradY, 0.5, 0, edges);
-            mat.delete();
-            gradX.delete();
-            gradY.delete();
-            absGradX.delete();
-            absGradY.delete();
-            mat = edges;
-          }
-
-          // Apply Histogram Equalization
-          if (imageSettings.histogramEqualization.enabled) {
-            let equalizedMat = new cv.Mat();
-            cv.equalizeHist(mat, equalizedMat);
-            mat.delete();
-            mat = equalizedMat;
-          }
-
-
-        // Convert Color Space
-        if (imageSettings.colorSpace.conversion !== 'None') {
-            let convertedMat = new cv.Mat();
-            switch (imageSettings.colorSpace.conversion) {
-                case 'GRAY':
-                    cv.cvtColor(mat, convertedMat, cv.COLOR_RGBA2GRAY, 0);
-                    break;
-                case 'HSV':
-                    cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2HSV, 0);
-                    break;
-                case 'HLS':
-                    cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2HLS);
-                    break;
-                case 'LAB':
-                    cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2Lab, 0);
-                    break;
-                case 'BGR':
-                    cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2BGR);
-                    break;
-                case 'Luv':
-                    cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2Luv, 0);
-                    break;
-                case 'YCrCb':
-                    cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2YCrCb);
-                    break;
-                case 'YUV':
-                    cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2YUV);
-                    break;
-                case 'XYZ':
-                    cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2XYZ);
-                    break;
-                // Add other color space conversions as needed
-                default:
-                    convertedMat = mat.clone(); // No conversion needed
-                    break;
-            }
-            mat.delete(); // Clean up original Mat
-            mat = convertedMat; // Update mat to the converted Mat
-        }
-
-
-        // Apply Color Manipulation (Saturation, Hue, Contrast)
-        const { saturation, hue, contrast } = imageSettings.colorManipulation;
-        if (saturation !== 1.0 || hue !== 0 || contrast !== 1.0) {
-            mat.convertTo(mat, -1, contrast, 0);
-            cv.cvtColor(mat, mat, cv.COLOR_RGB2HSV);
-            for (let i = 0; i < mat.rows; i++) {
-                for (let j = 0; j < mat.cols; j++) {
-                    let pixel = mat.ucharPtr(i, j);
-                    pixel[1] = Math.max(0, Math.min(pixel[1] * saturation, 255));
-                    pixel[0] = (pixel[0] + hue) % 180;
-                }
-            }
-            cv.cvtColor(mat, mat, cv.COLOR_HSV2RGB);
-        }
-
-        // Display the processed image on canvas
-        cv.imshow(canvas, mat);
-
+            // Display processed image data on the original canvas
+            console.log(result)
+            ctx.putImageData(result.processedImageData, 0, 0);
+        });
     } catch (error) {
-        console.error("Error applying settings:", error);
-    } finally {
-        // Clean up resources
-        mat.delete();
+        console.error("Error in applySettings:", error);
     }
-  }
+};
+
+  // const applySettings = (canvas) => {
+  //   const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  //   let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  //   let mat = cv.matFromImageData(imgData);
+
+  //   try {
+  //       // Apply Brightness and Contrast
+  //       if (imageSettings.brightness.alpha !== 1.0 || imageSettings.brightness.beta !== 0) {
+  //           const { alpha, beta } = imageSettings.brightness;
+  //           mat.convertTo(mat, -1, alpha, beta); // Adjust brightness and contrast
+  //       }
+
+  //       // Apply Blur
+  //       if (imageSettings.blur.type !== 'None') {
+  //           const { type, kernel_size } = imageSettings.blur;
+  //           console.log('Applying blur:', type, kernel_size);
+  //           let blurredMat = new cv.Mat();
+
+  //           switch (type) {
+  //               case 'Gaussian':
+  //                   cv.GaussianBlur(mat, blurredMat, new cv.Size(kernel_size, kernel_size), 0, 0, cv.BORDER_DEFAULT);
+  //                   break;
+  //               case 'Median':
+  //                   if (kernel_size % 2 === 0) throw new Error('Kernel size for median blur must be odd');
+  //                   cv.medianBlur(mat, blurredMat, kernel_size);
+  //                   break;
+  //               case 'Bilateral':
+  //                   cv.bilateralFilter(mat, blurredMat, kernel_size, kernel_size * 2, kernel_size / 2, cv.BORDER_DEFAULT);
+  //                   break;
+  //               default:
+  //                   blurredMat = mat.clone(); // Fall back to original if invalid type
+  //                   break;
+  //           }
+
+  //           mat.delete();
+  //           mat = blurredMat;
+  //       }
+
+  //       // Resize Image
+  //       if (imageSettings.resize.width && imageSettings.resize.height) {
+  //           const { width, height } = imageSettings.resize;
+  //           let resizedMat = new cv.Mat();
+  //           cv.resize(mat, resizedMat, new cv.Size(width, height), 0, 0, cv.INTER_AREA);
+  //           mat.delete();
+  //           mat = resizedMat;
+  //       }
+
+  //       // Apply Rotate
+  //       if (imageSettings.rotate.angle !== 0) {
+  //           const { angle } = imageSettings.rotate;
+  //           console.log('Applying rotation:', angle);
+
+  //           let center = new cv.Point(mat.cols / 2, mat.rows / 2);
+  //           let M = cv.getRotationMatrix2D(center, angle, 1);
+
+  //           // Calculate new bounding box size
+  //           let cos = Math.abs(M.doubleAt(0, 0));
+  //           let sin = Math.abs(M.doubleAt(0, 1));
+  //           let newWidth = Math.floor(mat.rows * sin + mat.cols * cos);
+  //           let newHeight = Math.floor(mat.rows * cos + mat.cols * sin);
+
+  //           // Adjust rotation matrix to account for translation
+  //           M.doublePtr(0, 2)[0] += (newWidth / 2) - center.x;
+  //           M.doublePtr(1, 2)[0] += (newHeight / 2) - center.y;
+
+  //           let rotatedMat = new cv.Mat();
+  //           cv.warpAffine(mat, rotatedMat, M, new cv.Size(newWidth, newHeight), cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar());
+
+  //           mat.delete();
+  //           mat = rotatedMat;
+  //       }
+
+  //       // Flip Image
+  //       if (imageSettings.flip.horizontal || imageSettings.flip.vertical) {
+  //           let flippedMat = new cv.Mat();
+  //           let flipCode = imageSettings.flip.horizontal && imageSettings.flip.vertical ? -1 : imageSettings.flip.horizontal ? 1 : 0;
+  //           cv.flip(mat, flippedMat, flipCode);
+  //           mat.delete();
+  //           mat = flippedMat;
+  //       }
+
+  //      // Convert to Gray for Edge Detection or Histogram Equalization if necessary
+  //         if (imageSettings.edgeDetection.method !== 'None' || imageSettings.histogramEqualization.enabled) {
+  //           let grayMat = new cv.Mat();
+  //           cv.cvtColor(mat, grayMat, cv.COLOR_RGBA2GRAY, 0);
+  //           mat.delete();
+  //           mat = grayMat;
+  //         }
+
+  //         // Perform Edge Detection
+  //         if (imageSettings.edgeDetection.method === 'Canny') {
+  //           let edges = new cv.Mat();
+  //           cv.Canny(mat, edges, imageSettings.edgeDetection.threshold1, imageSettings.edgeDetection.threshold2, 3, false);
+  //           mat.delete();
+  //           mat = edges;
+  //         } else if (imageSettings.edgeDetection.method === 'Sobel') {
+  //           let gradX = new cv.Mat();
+  //           let gradY = new cv.Mat();
+  //           let absGradX = new cv.Mat();
+  //           let absGradY = new cv.Mat();
+  //           let edges = new cv.Mat();
+  //           cv.Sobel(mat, gradX, cv.CV_16S, 1, 0);
+  //           cv.convertScaleAbs(gradX, absGradX);
+  //           cv.Sobel(mat, gradY, cv.CV_16S, 0, 1);
+  //           cv.convertScaleAbs(gradY, absGradY);
+  //           cv.addWeighted(absGradX, 0.5, absGradY, 0.5, 0, edges);
+  //           mat.delete();
+  //           gradX.delete();
+  //           gradY.delete();
+  //           absGradX.delete();
+  //           absGradY.delete();
+  //           mat = edges;
+  //         }
+
+  //         // Apply Histogram Equalization
+  //         if (imageSettings.histogramEqualization.enabled) {
+  //           let equalizedMat = new cv.Mat();
+  //           cv.equalizeHist(mat, equalizedMat);
+  //           mat.delete();
+  //           mat = equalizedMat;
+  //         }
+
+
+  //       // Convert Color Space
+  //       if (imageSettings.colorSpace.conversion !== 'None') {
+  //           let convertedMat = new cv.Mat();
+  //           switch (imageSettings.colorSpace.conversion) {
+  //               case 'GRAY':
+  //                   cv.cvtColor(mat, convertedMat, cv.COLOR_RGBA2GRAY, 0);
+  //                   break;
+  //               case 'HSV':
+  //                   cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2HSV, 0);
+  //                   break;
+  //               case 'HLS':
+  //                   cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2HLS);
+  //                   break;
+  //               case 'LAB':
+  //                   cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2Lab, 0);
+  //                   break;
+  //               case 'BGR':
+  //                   cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2BGR);
+  //                   break;
+  //               case 'Luv':
+  //                   cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2Luv, 0);
+  //                   break;
+  //               case 'YCrCb':
+  //                   cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2YCrCb);
+  //                   break;
+  //               case 'YUV':
+  //                   cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2YUV);
+  //                   break;
+  //               case 'XYZ':
+  //                   cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2XYZ);
+  //                   break;
+  //               // Add other color space conversions as needed
+  //               default:
+  //                   convertedMat = mat.clone(); // No conversion needed
+  //                   break;
+  //           }
+  //           mat.delete(); // Clean up original Mat
+  //           mat = convertedMat; // Update mat to the converted Mat
+  //       }
+
+
+  //       // Apply Color Manipulation (Saturation, Hue, Contrast)
+  //       const { saturation, hue, contrast } = imageSettings.colorManipulation;
+  //       if (saturation !== 1.0 || hue !== 0 || contrast !== 1.0) {
+  //           mat.convertTo(mat, -1, contrast, 0);
+  //           cv.cvtColor(mat, mat, cv.COLOR_RGB2HSV);
+  //           for (let i = 0; i < mat.rows; i++) {
+  //               for (let j = 0; j < mat.cols; j++) {
+  //                   let pixel = mat.ucharPtr(i, j);
+  //                   pixel[1] = Math.max(0, Math.min(pixel[1] * saturation, 255));
+  //                   pixel[0] = (pixel[0] + hue) % 180;
+  //               }
+  //           }
+  //           cv.cvtColor(mat, mat, cv.COLOR_HSV2RGB);
+  //       }
+
+  //       // Display the processed image on canvas
+  //       cv.imshow(canvas, mat);
+
+  //   } catch (error) {
+  //       console.error("Error applying settings:", error);
+  //   } finally {
+  //       // Clean up resources
+  //       mat.delete();
+  //   }
+  // }
 
   return (
     <div className="flex h-screen relative">
@@ -460,16 +478,14 @@ const EditImage = ({defaultFormat}) => {
                           )}
                           {setting.type === 'icon' && setting.key === 'angle' && (
                             <div className="flex items-center mr-4" key={setting.label}>
-                              <InputLabel className="mr-2">{setting.label}</InputLabel>
-                              {setting.label === 'Left' && (
-                                <div onClick={() => handleRotateClick(setting.options[1].value)} className="mr-2">
+                                <div onClick={() => handleRotateClick(setting.options[1].value)} className="mr-2 flex items-center cursor-pointer">
+                                  <InputLabel className="mr-2">Left</InputLabel>
                                   <RotateLeftIcon className="transform transition-transform duration-300 hover:scale-110" />
                                 </div>
-                              )}
-                              {setting.label === 'Right' && (
-                                <div onClick={() => handleRotateClick(setting.options[1].value)} className="mr-2">
+                                <div onClick={() => handleRotateClick(setting.options[2].value)} className="mr-2 flex items-center cursor-pointer">
+                                  <InputLabel className="mr-2">Right</InputLabel>
                                   <RotateRightIcon className="transform transition-transform duration-300 hover:scale-110" />
-                                </div>)}
+                                </div>
                             </div>
                           )}
                           {setting.key === 'horizontal' && (
@@ -589,6 +605,7 @@ const EditImage = ({defaultFormat}) => {
               
               {/* Push the button to the bottom */}
               <div className="flex-grow"></div>
+              <button onClick={() => handleImageSettingsChange(imageSettings)}>Apply Settings</button>
 
               {/* Convert Button */}
               <button
