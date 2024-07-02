@@ -21,7 +21,7 @@ const Footer = () => {
         <div className="flex flex-col sm:flex-row gap-6 justify-between text-center">
           {/* Company Logo and Name Section */}
           <div className="w-full sm:w-2/6 lg:w-1/3 flex items-center sm:items-start justify-center sm:justify-normal mb-4 lg:mb-0">
-            <img src="/medialogo.svg" alt="Company Logo" className="w-8 h-8 lg:w-12 lg:h-12 mr-2 mb-4" />
+            <img src="/img/icons/medialogo.svg" alt="Company Logo" className="w-8 h-8 lg:w-12 lg:h-12 mr-2 mb-4" />
             <span className="text-base lg:text-lg font-bold text-teal-400 mb-4 sm:mt-1 lg:mt-2">Media Convert</span>
           </div>
 

@@ -1,0 +1,15 @@
+{
+    "env": {
+      "browser": true,
+      "worker": true
+    },
+    "globals": {
+        "cv": true, // Define 'cv' as a global variable
+        "self": "readonly", // Allow read-only use of 'self' in web workers
+        "importScripts": "readonly"
+      },
+    "rules": {
+        "no-restricted-globals": ["error"] // Restrict other globals except 'self' in web workers
+    }
+  }
+  

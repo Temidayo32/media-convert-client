@@ -14,9 +14,9 @@ const onLoaded = (cv) => {
 
 root.render(
   <React.StrictMode>
-     <OpenCvProvider onLoad={onLoaded}>
+     {/* <OpenCvProvider onLoad={onLoaded}> */}
       <App />
-    </OpenCvProvider>
+    {/* </OpenCvProvider> */}
   </React.StrictMode>
 );
 

@@ -50,7 +50,7 @@ export const imageSettingsConfig = [
           options: [
             { value: 0, label: '0°' },
             { value: 45, label: '45°' },
-            { value: 90, label: '90°' },
+            { value: -45, label: '45°' },
             { value: 135, label: '135°' },
             { value: 180, label: '180°' },
             { value: 225, label: '225°' },
@@ -59,7 +59,7 @@ export const imageSettingsConfig = [
           ],
         },
         {
-          key: 'angle',
+          key: 'degree',
           label: 'Right',
           type: 'icon',
           options: [
