@@ -305,3 +305,51 @@ export const getCroppedImg = (imageSrc, crop, format = 'image/jpeg', canvasRef) 
 
     return getCroppedImg(imageSrc, crop, format, canvasRef);
 };
+
+import {Canvg} from 'canvg';
+const renderSVG = async () => {
+  if (!image || !canvasRef.current) return;
+  
+  const canvas = canvasRef.current;
+  const ctx = canvas.getContext('2d');
+  let v = null;
+
+  try {
+    const adjustCanvasDimensions = (width, height) => {
+      canvas.width = width;
+      canvas.height = height;
+    };
+
+    if (image.source === 'local') {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          v = await Canvg.from(ctx, reader.result);
+          adjustCanvasDimensions(v.document.width, v.document.height);
+          v.start();
+          applySettings(canvas);
+        } catch (canvgError) {
+          console.error('Error in Canvg:', canvgError);
+        }
+      };
+      reader.readAsText(image.file);
+    } else if (image.source === 'dropbox') {
+      const response = await fetch(image.fileLink.replace('dl=0', 'raw=1'), { mode: 'cors' });
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`);
+      }
+      const svgText = await response.text();
+      try {
+        v = await Canvg.from(ctx, svgText);
+        adjustCanvasDimensions(v.document.width, v.document.height);
+        v.start();
+        applySettings(canvas);
+      } catch (canvgError) {
+        console.error('Error in Canvg:', canvgError);
+      }
+    }
+  } catch (error) {
+    console.error('Error rendering SVG:', error);
+  }
+};
+
