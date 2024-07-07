@@ -11,7 +11,7 @@ function HeroSection() {
     };
 
     return (
-        <div className="mt-16 mb-24 flex flex-col lg:flex-row items-center justify-between">
+        <div className="mt-28 mb-24 flex flex-col lg:flex-row items-center justify-between">
            <div className="w-full lg:w-1/2 px-6 lg:px-20 mr-0 lg:mr-24 mb-8 lg:mb-0 text-center lg:text-left">
                 <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold text-teal-800 mb-4">
                 Your #1 All-In-One Media Conversion Tool

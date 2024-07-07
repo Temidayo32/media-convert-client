@@ -27,7 +27,7 @@ const UploadOptions = ({
   }) => {
     
   return (
-    <div className={`absolute ${editImage ? 'text-base': 'text-sm sm:text-base lg:text-xl xl:text-2xl'} top-full left-0 w-full bg-teal-500 text-center text-white rounded-lg my-px shadow-lg`}>
+    <div className={`absolute ${editImage ? 'text-base bg-gray-800': 'text-sm sm:text-base lg:text-xl xl:text-2xl bg-teal-500 '} top-full left-0 w-full text-center text-white rounded-lg my-px shadow-lg`}>
       <ul>
         <label htmlFor="upload-file" className="cursor-pointer">
           <li className={`p-4 ${editImage ? '' : 'pl-8'} hover:bg-teal-600 flex items-center transition-colors duration-300`}>

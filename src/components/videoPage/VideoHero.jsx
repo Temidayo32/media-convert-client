@@ -2,7 +2,7 @@ import React from 'react';
 
 const VideoHero = () => {
   return (
-    <div className="bg-teal-500 py-20 px-4 sm:px-6 lg:px-8">
+    <div className="mt-16 bg-teal-500 py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center">
           <h1 className="text-3xl md:text-4xl lg:text-7xl font-bold text-orange-200 leading-tight mb-6">
@@ -17,7 +17,7 @@ const VideoHero = () => {
           </p>
         </div>
         <img 
-          src="/videoHero.svg" 
+          src="/img/icons/videoHero.svg" 
           alt="Video Converter" 
           className="mt-8 mx-auto max-w-2xl"
         />

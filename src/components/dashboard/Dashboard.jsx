@@ -22,7 +22,7 @@ const Dashboard = () => {
   return (
     <div className="flex h-screen">
         {isSidebarOpen ? (
-          <aside className={`relative z-40 sm:z-auto top-0 left-0 sm:top-auto sm:left-auto transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full sm:-translate-x-0'} transition-transform duration-300 ${isSidebarOpen ? 'w-1/3 ': 'hidden'} sm:w-1/5 h-screen bg-white shadow-lg text-gray-700`}>
+          <aside className={`relative mt-20 z-40 sm:z-auto top-0 left-0 sm:top-auto sm:left-auto transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full sm:-translate-x-0'} transition-transform duration-300 ${isSidebarOpen ? 'w-1/3 ': 'hidden'} sm:w-1/5 h-screen bg-white shadow-lg text-gray-700`}>
             <nav className="flex flex-col p-2 sm:p-4 space-y-8">
               <CgPushLeft onClick={toggleSidebar} className='text-lg sm:text-xl md:text-2xl'/> 
               <h2 className="text-sm md:text-lg lg:text-xl font-bold">User Dashboard</h2>
@@ -49,7 +49,7 @@ const Dashboard = () => {
           </nav>
         </aside>
         ) : (
-          <aside className="w-16 sm:w-20 h-screen bg-white shadow-lg text-gray-700">
+          <aside className="w-16 mt-10 sm:w-20 h-screen bg-white shadow-lg text-gray-700">
             <nav className="flex flex-col mt-8 ml-2 p-2 sm:p-4 space-y-8">
               <CgPushRight onClick={toggleSidebar} className='text-lg sm:text-xl md:text-2xl' />
               <Link to="profile" onClick={() => setActiveLink('profile')} className={`relative group ${activeLink === 'profile' ? 'text-green-600' : 'text-gray-700'}`}>
@@ -70,7 +70,7 @@ const Dashboard = () => {
           </nav>
         </aside>
         )}
-      <main className="ml-1/4 w-full">
+      <main className="ml-1/4 w-full mt-16">
         <Routes>
           <Route path="profile" element={<Profile/>} />
           <Route path="recent-tasks" element={<RecentTasks />} />

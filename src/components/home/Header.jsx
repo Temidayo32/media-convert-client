@@ -116,7 +116,7 @@ function Header() {
               userCredentials={userCredentials}
             />
           )}
-        <header className="bg-white py-4 border-b border-gray-200 shadow-sm">
+        <header className="bg-white py-2 border-b border-gray-200 shadow-xl w-full fixed z-50 top-0">
           <div className="mx-4 sm:mx-6 flex justify-between items-center">
             <div className="flex items-center gap-12">
               <div className='flex items-center'>

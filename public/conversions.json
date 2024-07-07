@@ -28,7 +28,6 @@
   { "format": "EPS", "icon": "/img/icons/eps.svg", "description": "Convert your images to Encapsulated PostScript format easily and quickly." },
   { "format": "HPGL", "icon": "/hpgl.svg", "description": "Convert your images to HP Graphics Language plot file format easily and quickly." },
   { "format": "PDF", "icon": "/img/icons/pdf.svg", "description": "Convert your images to Portable Document Format easily and quickly." },
-  { "format": "PDF", "icon": "/img/icons/pdf.svg", "description": "Convert your images to Portable Document Format easily and quickly." },
   { "format": "PS", "icon": "/img/icons/ps.svg", "description": "Convert your images to PostScript format easily and quickly." },
   { "format": "SVG", "icon": "/img/icons/svg.svg", "description": "Convert your images to Scalable Vector Graphic format easily and quickly." },
   { "format": "SVGZ", "icon": "/img/icons/svgz.svg", "description": "Convert your images to Compressed Inkscape SVG format easily and quickly." },

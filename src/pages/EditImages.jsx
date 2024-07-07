@@ -15,7 +15,7 @@ function EditImages() {
 
 
   return (
-    <div key={key}>
+    <div key={key} className='mt-16'>
        <EditImage defaultFormat={format}/>
     </div>
   )

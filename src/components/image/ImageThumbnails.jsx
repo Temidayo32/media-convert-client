@@ -14,7 +14,7 @@ const ImageThumbnails = ({ uploadedImages, selectedImageId, setSelectedImageId }
   };
 
   return (
-    <div className="p-4 h-48 w-3/5 mx-auto flex items-center justify-center relative">
+    <div className="p-4 h-48 w-2/5 mx-auto flex items-center justify-center relative">
       {uploadedImages.length > 0 && (
         <button
           className="absolute left-0 z-10 p-2 bg-gray-200 rounded-full shadow-md hover:bg-gray-300"

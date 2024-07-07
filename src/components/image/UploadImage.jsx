@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import io from 'socket.io-client';
 import { getAuth } from 'firebase/auth';
 import { handleOpenPicker, onCancel, onSuccess, handleFileUpload } from '../../utils/uploadFiles';
-import { handleConvertImages } from '../../utils/images';
+import { handleConvertImages, defaultSettings } from '../../utils/images';
 
 import { FaFileImage } from 'react-icons/fa';
 import { IoIosArrowDropdownCircle } from 'react-icons/io';
@@ -14,22 +14,7 @@ import { FaEdit } from "react-icons/fa";
 
 import { clientId, developerKey, azureClientId } from '../../config/key';
 import UploadOptions from '../video/UploadOptions';
-// import AdvancedOptions from './AdvancedOptions';
 import { useData } from '../../DataContext';
-
-const defaultSettings = {
-  brightness: { alpha: 1.0, beta: 0 }, // No change in brightness
-  blur: { type: "None", kernel_size: [0, 0] }, // No blur
-  resize: { width: null, height: null }, // No resizing
-  rotate: { angle: 0 }, // No rotation
-  crop: { x: 0, y: 0, width: null, height: null }, // No cropping
-  flip: { horizontal: false, vertical: false },
-  edgeDetection: { method: "None", threshold1: 0, threshold2: 0 }, // No edge detection
-  colorSpace: { conversion: "None" }, // No color space conversion
-  histogramEqualization: false, // No histogram equalization
-  colorManipulation: { saturation: 1.0, hue: 0, contrast: 1.0 }, // No color manipulation
-  imageFiltering: { filterType: "None", kernel_size: [0, 0] } // No image fi ltering
-};
 
 
 const socket = io('http://localhost:8000');
@@ -161,16 +146,7 @@ const UploadImage = ({ defaultFormat }) => {
           ))}
         </div>
       )}
-      {/* {currentImageId !== null && (
-        <AdvancedOptions
-          onClose={closeModal}
-          formData={uploadedImages.find((image) => image.jobId === currentImageId).settings}
-          fileName={uploadedImages.find((image) => image.jobId === currentImageId).name}
-          fileSize={uploadedImages.find((image) => image.jobId === currentImageId).size}
-          onChange={(newSettings) => updateImageSettings(currentImageId, newSettings)}
-          resetData={() => resetImageSettings(currentImageId)}
-        />
-      )} */}
+  
       {showUploadForm ? (
         <div className="flex flex-col items-center justify-center w-3/4 sm:w-2/3 h-48 md:h-64 mx-auto bg-teal-50 p-8 rounded-lg border-dashed border-4 border-teal-400">
           <div

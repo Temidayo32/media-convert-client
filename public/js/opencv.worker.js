@@ -2,7 +2,7 @@
 importScripts("./loadOpenCV.js");
 
 // importScripts('https://docs.opencv.org/4.10.0/opencv.js'); 
-async function processImage(imageData, imageSettings) {
+async function processImage(imageData, imageSettings, canvasWidth, canvasHeight) {
     console.log('Processing image in worker:', imageData, imageSettings);
     await loadOpenCV();
     await new Promise((resolve) => waitForOpencvMat(resolve));
@@ -36,7 +36,14 @@ async function processImage(imageData, imageSettings) {
         // Apply Rotate
         if (imageSettings.rotate.angle !== 0) {
             const { angle } = imageSettings.rotate;
-            mat = rotateImage(cv, mat, angle);
+            mat = rotateImage(cv, mat, angle, canvasWidth, canvasHeight);
+            // Calculate the scaling factor
+            const scaleFactor = Math.min(canvasWidth / mat.cols, canvasHeight / mat.rows);
+
+            // Calculate new dimensions
+            const newWidth = mat.cols * scaleFactor;
+            const newHeight = mat.rows * scaleFactor;
+            mat = resizeImage(cv, mat, newWidth, newHeight)
         }
 
         // Flip Image
@@ -157,11 +164,24 @@ function resizeImage(cv, mat, width, height) {
 function rotateImage(cv, mat, angle) {
     let center = new cv.Point(mat.cols / 2, mat.rows / 2);
     let M = cv.getRotationMatrix2D(center, angle, 1);
+
+    // Calculate new bounding box size
+    let cos = Math.abs(M.doubleAt(0, 0));
+    let sin = Math.abs(M.doubleAt(0, 1));
+    let newWidth = Math.floor(mat.rows * sin + mat.cols * cos);
+    let newHeight = Math.floor(mat.rows * cos + mat.cols * sin);
+
+    // Adjust rotation matrix to account for translation
+    M.doublePtr(0, 2)[0] += (newWidth / 2) - center.x;
+    M.doublePtr(1, 2)[0] += (newHeight / 2) - center.y;
+
     let rotatedMat = new cv.Mat();
-    cv.warpAffine(mat, rotatedMat, M, new cv.Size(mat.cols, mat.rows), cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar());
+    cv.warpAffine(mat, rotatedMat, M, new cv.Size(newWidth, newHeight), cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar());
+
     mat.delete();
     return rotatedMat;
 }
+
 
 function flipImage(cv, mat, horizontal, vertical) {
     let flipCode = horizontal && vertical ? -1 : horizontal ? 1 : 0;
@@ -265,14 +285,14 @@ function applyColorManipulation(cv, mat, saturation, hue, contrast) {
 
 
 self.onmessage = async function(event) {
-    const { imageData, imageSettings } = event.data;
+    const { imageData, imageSettings, canvasWidth, canvasHeight } = event.data;
 
     try {
         await loadOpenCV();
         waitForOpencvMat((cvMatReady) => {
             if (cvMatReady) {
                 // console.log(cvMatReady)
-                processImage(imageData, imageSettings)
+                processImage(imageData, imageSettings, canvasWidth, canvasHeight)
                     .then((processedImageData) => {
                         self.postMessage({ processedImageData });
                     })

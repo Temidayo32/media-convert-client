@@ -1,5 +1,5 @@
 import { gapi } from 'gapi-script';
-import { clientId, API_KEY } from '../config/key';
+import { clientId, API_KEY, developerKey } from '../config/key';
 import { dropboxAppKey } from '../config/key';
 import { DropboxAuth } from 'dropbox';
 
@@ -17,7 +17,7 @@ export const initGoogleAPI = () => {
         gapi.load('client:auth2', {
           callback: () => {
             gapi.client.init({
-              apiKey: API_KEY,
+              apiKey: developerKey,
               clientId: clientId,
               discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
               scope: SCOPES
@@ -44,21 +44,31 @@ export const initGoogleAPI = () => {
   };
 
 export const handleGoogleAuth = async () => {
-    try {    
-        console.log('Attempting Google authentication...');
-        await initGoogleAPI();
-        const authResult = await gapi.auth2.getAuthInstance().signIn();
-        if (authResult && authResult.xc.access_token) {
-            return authResult.xc.access_token;
-        } else {
-            console.error('Google authentication failed or did not return a valid access token:', authResult);
-            return null;
-        }
-    } catch (error) {
-        console.error('Error during Google authentication:', error);
+    try {
+      console.log('Attempting Google authentication...');
+      await initGoogleAPI();
+      const authInstance = gapi.auth2.getAuthInstance();
+      const authResult = await authInstance.signIn();
+      
+      // Check if the token has the required scopes
+      const currentUser = authInstance.currentUser.get();
+      const grantedScopes = currentUser.getGrantedScopes();
+      // console.log('Granted Scopes:', grantedScopes);
+      
+      if (!grantedScopes.includes(SCOPES)) {
+        console.error('Required scopes not granted.');
         return null;
+      }
+  
+      const token = authResult.xc.access_token;
+      console.log('OAuth Token:', token);
+      return token;
+    } catch (error) {
+      console.error('Error during Google authentication:', error);
+      return null;
     }
-};
+  };
+  
 
 export const handleDropboxAuth = async () => {
   const dbx = new DropboxAuth({ clientId: DROPBOX_CLIENT_ID });

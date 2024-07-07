@@ -90,7 +90,11 @@ export function onSuccess(files, defaultFormat, defaultSettings, uploadedFiles, 
   //function for upload from Google Drive
 export async function handleOpenPicker(developerKey, uploadedFiles, setUploadedFiles, defaultFormat, defaultSettings, emailVerified, setOversizedFiles, setShowErrorMessages, setShowUploadForm, mimeTypePrefix) {
     const accessToken = await handleGoogleAuth();
-    console.log(accessToken);
+    if (!accessToken) {
+      console.error('No access token obtained. Cannot proceed with Google Picker.');
+      return;
+    }
+    // console.log(accessToken);
   
     gapi.load('picker', {
       callback: () => {

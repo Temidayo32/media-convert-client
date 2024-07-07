@@ -1,6 +1,20 @@
 import axios from 'axios';
 
 
+export const defaultSettings = {
+  brightness: { alpha: 1.0, beta: 0 },
+  blur: { type: 'None', kernel_size: 1 },
+  resize: { width: null, height: null },
+  rotate: { angle: 0 },
+  crop: { x: 0, y: 0, width: null, height: null },
+  edgeDetection: { method: 'None', threshold1: 0, threshold2: 0 },
+  colorSpace: { conversion: 'None' },
+  histogramEqualization: false,
+  colorManipulation: { saturation: 1.0, hue: 0, contrast: 1.0 },
+  flip: { horizontal: false, vertical: false }
+};
+
+
 export const imageSettingsConfig = [
     {
       category: 'brightness',
@@ -90,7 +104,7 @@ export const imageSettingsConfig = [
         {
           key: 'horizontal',
           label: 'Flip Horizontal',
-          type: 'icon',
+          type: 'flip',
           options: [
             { value: true, label: 'Flip Horizontal' },
           ],
@@ -98,7 +112,7 @@ export const imageSettingsConfig = [
         {
           key: 'vertical',
           label: 'Flip Vertical',
-          type: 'icon',
+          type: 'flip',
           options: [
             { value: true, label: 'Flip Vertical' },
           ],
@@ -215,6 +229,7 @@ const convertImage = async (image, user, emailVerified, idToken) => {
   };
   
 export const handleConvertImages = async (uploadedImages, user, emailVerified, idToken, navigate, setDisplayType, setDownloadPageActive) => {
+    console.log(uploadedImages)
     const conversionPromises = uploadedImages.map((image) =>
       convertImage(image, user, emailVerified, idToken)
     );

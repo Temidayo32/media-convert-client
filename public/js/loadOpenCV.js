@@ -1,4 +1,3 @@
-// Function to load OpenCV.js and ensure cv.Mat is ready
 let cvReady = false;
 let cvLoadingPromise = null;
 
@@ -15,6 +14,7 @@ async function loadOpenCV() {
         if (typeof cv !== 'undefined') {
             if (cv.hasOwnProperty('onRuntimeInitialized')) {
                 cv['onRuntimeInitialized'] = () => {
+                    console.log('yes')
                     cvReady = true;
                     resolve();
                 };
@@ -22,18 +22,32 @@ async function loadOpenCV() {
                 resolve();
             }
         } else {
-            importScripts('./opencv.js');
-            if (typeof cv !== 'undefined') {
-                cv['onRuntimeInitialized'] = () => {
-                    cvReady = true;
-                    resolve();
-                };
-            } else {
-                reject(new Error('Failed to load OpenCV.js'));
-            }
+            importScripts('./opencv.js'); // Ensure the path is correct
+            const checkInterval = setInterval(() => {
+                if (typeof cv !== 'undefined') {
+                    if (cv.hasOwnProperty('onRuntimeInitialized')) {
+                        cv['onRuntimeInitialized'] = () => {
+                            clearInterval(checkInterval);
+                            cvReady = true;
+                            resolve();
+                        };
+                    } else {
+                        clearInterval(checkInterval);
+                        cvReady = true;
+                        resolve();
+                    }
+                }
+            }, 50);
+
+            setTimeout(() => {
+                clearInterval(checkInterval);
+                if (!cvReady) {
+                    reject(new Error('Failed to load OpenCV.js'));
+                }
+            }, 10000); // Timeout after 10 seconds
         }
     });
-
+    
     return cvLoadingPromise;
 }
 

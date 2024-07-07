@@ -2,46 +2,41 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import { useOpenCv } from "opencv-react";
+
 import { WorkerPool } from '../../utils/WorkerPool';
+import { InvalidKernelSizeError, InvalidColorSpaceError, UnsupportedImageFormatError } from '../../utils/error';
 
 import { useData } from '../../DataContext';
-import { imageSettingsConfig } from '../../utils/images';
+import { imageSettingsConfig, defaultSettings } from '../../utils/images';
 import ImageThumbnails from './ImageThumbnails';
 import { handleOpenPicker, onCancel, onSuccess, handleFileUpload } from '../../utils/uploadFiles';
 import { handleConvertImages } from '../../utils/images';
 import { developerKey } from '../../config/key';
 import UploadOptions from '../video/UploadOptions';
+import { renderSettingControl } from '../../composables/imageSettings';
 
-import { Tooltip, Slider, Select, MenuItem, InputLabel, FormControl, Checkbox, FormControlLabel } from '@mui/material';
-import RotateLeftIcon from '@mui/icons-material/RotateLeft';
-import RotateRightIcon from '@mui/icons-material/RotateRight';
-import FlipIcon from '@mui/icons-material/Flip';
-import { GiEmptyMetalBucketHandle } from "react-icons/gi";
+import { Tooltip, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
+import { GiEmptyMetalBucketHandle, GiHistogram  } from "react-icons/gi";
 import { FaArrowRight } from 'react-icons/fa';
-import { CgPushLeft,  CgPushRight } from "react-icons/cg";
+import { CgSpinner } from "react-icons/cg";
+import { CiBrightnessUp, CiSquareInfo } from "react-icons/ci";
+import { MdBlurOn, MdOutlineCropRotate } from "react-icons/md";
+import { IoResizeOutline } from "react-icons/io5";
+import { LuFlipVertical2 } from "react-icons/lu";
+import { PiDetectiveFill } from "react-icons/pi";
+import { IoIosColorFilter, IoMdContrast } from "react-icons/io";
 
 
-const defaultSettings = {
-  brightness: { alpha: 1.0, beta: 0 },
-  blur: { type: 'None', kernel_size: 1 },
-  resize: { width: null, height: null },
-  rotate: { angle: 0 },
-  crop: { x: 0, y: 0, width: null, height: null },
-  edgeDetection: { method: 'None', threshold1: 0, threshold2: 0 },
-  colorSpace: { conversion: 'None' },
-  histogramEqualization: false,
-  colorManipulation: { saturation: 1.0, hue: 0, contrast: 1.0 },
-  flip: { horizontal: false, vertical: false }
-};
-
-const formatMap = {
-  png: 'image/png',
-  jpeg: 'image/jpeg',
-  bmp: 'image/bmp',
-  tiff: 'image/tiff',
-  pdf: 'application/pdf',
-  svg: 'image/svg+xml',
-  // Add other mappings as needed
+const categoryIcons = {
+  brightness: <CiBrightnessUp />,
+  blur: <MdBlurOn />,
+  resize: <IoResizeOutline />,
+  rotate: <MdOutlineCropRotate />,
+  flip: <LuFlipVertical2 />,
+  edgeDetection: <PiDetectiveFill />,
+  colorSpace: <IoIosColorFilter />,
+  histogramEqualization: <GiHistogram />,
+  colorManipulation: <IoMdContrast />,
 };
 
 
@@ -55,17 +50,22 @@ const EditImage = ({ defaultFormat }) => {
   const [currentImageSettings, setCurrentImageSettings] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [formats, setFormats] = useState([]);
-  const [previousFormat, setPreviousFormat] = useState(null);
-  const [settingsCollapsed, setSettingsCollapsed] = useState(true);
-  const [actionsCollapsed, setActionsCollapsed] = useState(true);
   const canvasRef = useRef(null);
   // const { cv, loaded: cvLoaded } = useOpenCv();
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [ isLoading, setIsLoading ] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleCategoryClick = (category) => {
+    setActiveCategory(category === activeCategory ? null : category);
+  };
+
 
   const auth = getAuth();
   const user = auth.currentUser
   
 
-  const workerPool = new WorkerPool(4); // Create a pool of 4 workers
+  const workerPool = new WorkerPool(2); // Create a pool of 2 workers
 
 
   useEffect(() => {
@@ -82,71 +82,72 @@ const EditImage = ({ defaultFormat }) => {
   
 
   useEffect(() => {
-    let objectUrl = null;
-    if (image && canvasRef.current) {
-      console.log(image.format)
+    const loadImage = async () => {
+      if (!image || !canvasRef.current) return;
+      
+      const supportedFormats = ['jpeg', 'jpg', 'png', 'bmp', 'svg'];
+      const fileFormat = image.name.split('.').pop().toLowerCase();
+      
+      if (!supportedFormats.includes(fileFormat)) {
+        setUploadedImages(uploadedImages.filter(img => img !== image));
+        throw new UnsupportedImageFormatError('Unsupported image format. Supported formats are: jpeg, jpg, png, bmp, svg.');
+      }
+
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
       const img = new Image();
+      let objectUrl = null;
 
-      const loadImage = () => {
+      try {
         if (image.source === 'local') {
           objectUrl = URL.createObjectURL(image.file);
           img.src = objectUrl;
         } else if (image.source === 'dropbox') {
-          const fileLink = image.fileLink.replace('dl=0', 'raw=1');
-          img.src = fileLink;
+          const response = await fetch(image.fileLink.replace('dl=0', 'raw=1'), { mode: 'cors' });
+
+          if (!response.ok) {
+            throw new Error(`Failed to fetch image: ${response.statusText}`);
+          }
+
+          const blob = await response.blob();
+          objectUrl = URL.createObjectURL(blob);
+          img.src = objectUrl;
         }
 
         img.onload = () => {
           canvas.width = img.width;
           canvas.height = img.height;
           ctx.drawImage(img, 0, 0, img.width, img.height);
-          applySettings(canvas)
+          applySettings(canvas);
         };
+      } catch (error) {
+        console.error('Error loading image:', error);
+        setErrorMessage(error.message);
+      }
 
-        return () => {
-          if (objectUrl) {
-              URL.revokeObjectURL(objectUrl);
-          }
-        };
+      return () => {
+        if (objectUrl) {
+          URL.revokeObjectURL(objectUrl);
+        }
       };
+    };
 
-      loadImage();
+    loadImage().catch((error) => {
+      if (error instanceof UnsupportedImageFormatError) {
+        setShowErrorMessages(true)
+        setErrorMessage(error.message);
+      } else {
+        console.error('An unexpected error occurred:', error);
+      }
+    });
 
-      // Clean up workers when the component unmounts
+    // Clean up workers when the component unmounts
     return () => {
       workerPool.terminateWorkers();
     };
-    }
-  }, [image, canvasRef]);
+  }, [image, canvasRef, setUploadedImages, uploadedImages]);
 
-  const updateImageSettings = (imageId, newSettings) => {
-    setUploadedImages(prevImages =>
-      prevImages.map(img =>
-        img.jobId === imageId ? { ...img, settings: newSettings } : img
-      )
-    );
-  };
-
-  const handleImageSettingsChange = (newSettings) => {
-    setCurrentImageSettings(newSettings);
-    if (selectedImageId && uploadedImages) {
-      updateImageSettings(selectedImageId, newSettings);
-    }
-  };
-
-  const handleSettingChange = (settingCategory, setting, value) => {
-    setImageSettings(prevSettings => ({
-      ...prevSettings,
-      [settingCategory]: {
-        ...prevSettings[settingCategory],
-        [setting]: value
-      }
-    }));
-    handleImageSettingsChange(imageSettings);
-  };
-
+  
   const handleFormatChange = (event) => {
     const newFormat = event.target.value;
     const newImages = uploadedImages.map(img => 
@@ -154,6 +155,96 @@ const EditImage = ({ defaultFormat }) => {
     );
     setUploadedImages(newImages);
   };
+
+  const formatCategoryName = (name) => {
+    return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+  };
+
+  const applySettings = (canvas) => {
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    setIsLoading(true);
+
+    try {
+        // Get image data from the canvas
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        // Example validation checks
+        if (imageSettings.blur) {
+          const { kernel_size } = imageSettings.blur;
+          console.log(kernel_size)
+          if (kernel_size % 2 === 0) {
+            throw new InvalidKernelSizeError('Kernel size for blur must be an odd number.');
+          }
+        }
+
+        if (imageSettings.edgeDetection.method !== "None" || imageSettings.histogramEqualization.enabled) {
+          if (imageSettings.colorSpace.conversion !== "None") {
+              throw new InvalidColorSpaceError('Histogram equalization or edge detection requires the image to be in RGBA color space.');
+          }
+      }
+
+        // Pass image data to worker pool for processing
+        workerPool.processImage(
+          { imageData: imgData, 
+            imageSettings, 
+            canvasWidth: canvas.width,
+            canvasHeight: canvas.height, 
+          }, (result) => {
+
+            try {
+
+                if (result.error) {
+                  console.error("Error processing:", result.error);
+                  return;
+                }
+
+                // Clear the canvas before drawing the processed image
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Ensure result.processedImageData exists
+                if (!result.processedImageData) {
+                  throw new Error("Processed image data is undefined");
+                }
+
+                // Calculate the position to center the image
+                const x = (canvas.width - result.processedImageData.width) / 2;
+                const y = (canvas.height - result.processedImageData.height) / 2;
+
+                // Display processed image data on the original canvas
+                // console.log(result)
+                setIsLoading(false); 
+                ctx.putImageData(result.processedImageData, x, y);
+            } catch (callbackError) {
+                console.error("Error in callback:", callbackError);
+                setShowErrorMessages(true);
+                setErrorMessage('An error occurred while applying filter.');
+          }
+
+        });
+
+    } catch (error) {
+      if (error instanceof InvalidKernelSizeError) {
+        console.error('Invalid kernel size:', error.message);
+        setShowErrorMessages(true);
+        setErrorMessage(error.message);
+      } else if (error instanceof InvalidColorSpaceError) {
+        console.error('Invalid color space:', error.message);
+        setShowErrorMessages(true);
+        setErrorMessage(error.message);
+      } else {
+        console.error('Error in applySettings:', error);
+        setShowErrorMessages(true);
+        setErrorMessage('An error occurred while applying filter.');
+      }
+      setIsLoading(false);
+    }
+  };
+
+  if (showErrorMessages) {
+    setTimeout(() => {
+      setShowErrorMessages(false);
+    }, 5000); // 5 seconds timeout
+  }
 
   const handleRotateClick = (angle) => {
     setImageSettings(prevSettings => ({
@@ -166,7 +257,7 @@ const EditImage = ({ defaultFormat }) => {
     console.log(angle)
     handleImageSettingsChange({ ...imageSettings, rotate: { ...imageSettings.rotate, angle: (imageSettings.rotate.angle + angle) % 360 } });
   };
-
+  
   const handleFlip = (axis) => {
     setImageSettings(prevSettings => ({
       ...prevSettings,
@@ -177,33 +268,32 @@ const EditImage = ({ defaultFormat }) => {
     }));
     handleImageSettingsChange({ ...imageSettings, flip: { ...imageSettings.flip, [axis]: !imageSettings.flip[axis] } });
   };
-
-  const formatCategoryName = (name) => {
-    return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+  
+  const handleSettingChange = (settingCategory, setting, value) => {
+    setImageSettings(prevSettings => ({
+      ...prevSettings,
+      [settingCategory]: {
+        ...prevSettings[settingCategory],
+        [setting]: value
+      }
+    }));
+    handleImageSettingsChange(imageSettings);
   };
 
-  const applySettings = (canvas) => {
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-
-    try {
-        // Get image data from the canvas
-        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-        // Pass image data to worker pool for processing
-        workerPool.processImage({ imageData: imgData, imageSettings }, (result) => {
-            if (result.error) {
-                console.error("Error processing:", result.error);
-                return;
-            }
-
-            // Display processed image data on the original canvas
-            console.log(result)
-            ctx.putImageData(result.processedImageData, 0, 0);
-        });
-    } catch (error) {
-        console.error("Error in applySettings:", error);
+  const updateImageSettings = (imageId, newSettings) => {
+    setUploadedImages(prevImages =>
+      prevImages.map(img =>
+        img.jobId === imageId ? { ...img, settings: newSettings } : img
+      )
+    );
+  };
+  
+  const handleImageSettingsChange = (newSettings) => {
+    setCurrentImageSettings(newSettings);
+    if (selectedImageId && uploadedImages) {
+      updateImageSettings(selectedImageId, newSettings);
     }
-};
+  };
 
   // const applySettings = (canvas) => {
   //   const ctx = canvas.getContext('2d', { willReadFrequently: true });
@@ -396,165 +486,146 @@ const EditImage = ({ defaultFormat }) => {
   // }
 
   return (
-    <div className="flex h-screen relative">
+    <div className="flex h-screen">
       <div className="flex-grow flex">
+
+        {/* {error section} */}
+        {showErrorMessages && (
+          <div
+            className={`fixed flex items-center bottom-24 left-1/3 transform -translate-x-1/2 bg-red-500 text-sm p-2 text-white rounded-lg shadow-lg z-50 ${
+              showErrorMessages ? 'slide-up' : ''
+            }`}
+          >
+            <CiSquareInfo className='mr-1 size-8' /> {errorMessage}
+          </div>
+        )}
+          
         {/* Settings Section */}
-        <aside className={`relative overflow-y-auto hide-scrollbar z-40 sm:z-auto top-0 left-0 sm:top-auto sm:left-auto transform ${settingsCollapsed ? 'w-1/3 -translate-x-full sm:-translate-x-0' : 'hidden translate-x-0'} transition-transform duration-300 h-screen bg-orange-100 shadow-lg text-gray-700`}>
-          <nav className="flex flex-col p-2 sm:p-4 space-y-8">
-          <CgPushLeft onClick={() => setSettingsCollapsed(!settingsCollapsed)} className='text-lg sm:text-xl md:text-2xl' />
-            {settingsCollapsed && (
-              imageSettingsConfig.map(category => (
-                <div key={category.category} className="mb-6">
-                  <h4
-                    id={`category-${category.category}`}
-                    className="text-md font-bold mb-2 capitalize"
-                  >
-                    {formatCategoryName(category.category)}
-                  </h4>
-                  {category.settings.map(setting => (
-                    <div key={setting.key} className="mb-4" aria-labelledby={`category-${category.category}`}>
-                      <Tooltip title={setting.label} arrow placement="top">
-                        <div>
-                          {setting.type === 'range' && (
-                            <div className="flex items-center">
-                              <InputLabel className="mr-2 text-xs">{setting.label}</InputLabel>
-                              <Slider
-                                value={imageSettings[category.category][setting.key]}
-                                min={setting.min}
-                                max={setting.max}
-                                step={setting.step}
-                                onChange={(e, newValue) =>
-                                  handleSettingChange(category.category, setting.key, newValue)
-                                }
-                                className="flex-grow"
-                              />
-                            </div>
-                          )}
-                          {setting.type === 'select' && (
-                            <FormControl fullWidth>
-                              <InputLabel>{setting.label}</InputLabel>
-                              <Select
-                                value={imageSettings[category.category][setting.key]}
-                                onChange={(e) =>
-                                  handleSettingChange(category.category, setting.key, e.target.value)
-                                }
-                              >
-                                {setting.options.map(option => (
-                                  <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                  </MenuItem>
-                                ))}
-                              </Select>
-                            </FormControl>
-                          )}
-                          {setting.type === 'number' && (
-                            <div className="flex items-center">
-                              <InputLabel className="mr-2">{setting.label}</InputLabel>
-                              <input
-                                type="number"
-                                value={imageSettings[category.category][setting.key]}
-                                min={setting.min}
-                                max={setting.max}
-                                step={setting.step}
-                                onChange={(e) =>
-                                  handleSettingChange(category.category, setting.key, parseInt(e.target.value))
-                                }
-                                className="border border-gray-300 p-1 rounded w-full"
-                              />
-                            </div>
-                          )}
-                          {setting.type === 'checkbox' && (
-                            <FormControlLabel
-                              control={
-                                <Checkbox
-                                  checked={imageSettings[category.category][setting.key]}
-                                  onChange={(e) =>
-                                    handleSettingChange(category.category, setting.key, e.target.checked)
-                                  }
-                                />
-                              }
-                              label={setting.label}
-                            />
-                          )}
-                          {setting.type === 'icon' && setting.key === 'angle' && (
-                            <div className="flex items-center mr-4" key={setting.label}>
-                                <div onClick={() => handleRotateClick(setting.options[1].value)} className="mr-2 flex items-center cursor-pointer">
-                                  <InputLabel className="mr-2">Left</InputLabel>
-                                  <RotateLeftIcon className="transform transition-transform duration-300 hover:scale-110" />
-                                </div>
-                                <div onClick={() => handleRotateClick(setting.options[2].value)} className="mr-2 flex items-center cursor-pointer">
-                                  <InputLabel className="mr-2">Right</InputLabel>
-                                  <RotateRightIcon className="transform transition-transform duration-300 hover:scale-110" />
-                                </div>
-                            </div>
-                          )}
-                          {setting.key === 'horizontal' && (
-                            <div className="flex justify-between mb-4">
-                              <div className="flex items-center cursor-pointer" onClick={() => handleFlip('horizontal')}>
-                                <FlipIcon sx={{ transform: imageSettings.flip.horizontal ? 'scaleX(-1)' : 'scaleX(1)' }} />
-                                <InputLabel className="ml-2">Flip Horizontal</InputLabel>
-                              </div>
-                              <div className="flex items-center cursor-pointer" onClick={() => handleFlip('vertical')}>
-                                <FlipIcon sx={{
-                                  transform: `rotate(90deg) ${imageSettings.flip.vertical ? 'scaleX(-1)' : 'scaleX(1)'}`,
-                                }} />
-                                <InputLabel className="ml-2">Flip Vertical</InputLabel>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </Tooltip>
-                    </div>
-                  ))
+        <div className="relative h-screen">
+          <aside className="absolute left-6 rounded-full top-96 hover:shadow-2xl transform -translate-y-1/2 flex flex-col space-y-4 p-2 bg-gray-800 shadow-lg text-white">
+              {imageSettingsConfig.map(category => (
+              <Tooltip key={category.category} title={category.category} arrow placement="right">
+                <div
+                  className={`cursor-pointer p-2 rounded-full hover:bg-orange-200 transition ${activeCategory === category.category ? 'bg-orange-200' : ''}`}
+                  onClick={() => handleCategoryClick(category.category)}
+                >
+                  {/* Icon representing the category, use a default icon for simplicity */}
+                  {categoryIcons[category.category]}
+                </div>
+              </Tooltip>
+            ))}
+          </aside>
+
+          {activeCategory && (
+            <div className="absolute w-72 left-24 top-64 transform -translate-y-1/2 px-8 py-4 bg-gray-800 shadow-2xl rounded-lg z-20">
+              <h4 className="text-md font-bold mb-4 capitalize text-white">{formatCategoryName(activeCategory)}</h4>
+              {imageSettingsConfig.find(category => category.category === activeCategory)?.settings.map(setting => (
+                <div key={setting.key} className="mb-4">
+                  {
+                    renderSettingControl(activeCategory, setting, imageSettings, handleSettingChange, handleFlip, handleRotateClick)
                   }
                 </div>
-              ))
-            )}
-            </nav>
-        </aside>
-
-        {!settingsCollapsed && (
-        <div className="p-2 absolute left-0 top-1/2 transform -translate-y-1/2 bg-white rounded-full shadow-lg flex items-center justify-center">
-          <CgPushRight onClick={() => setSettingsCollapsed(!settingsCollapsed)} className='text-lg sm:text-xl md:text-2xl'/>
-        </div>
-      )}
-      
-           {/* Image Display Section */}
-           <div className="w-full p-4 bg-gray-300">
-            <h2 className="text-xl text-center text-orange-500 font-bold mb-4">
-              Image Editor
-            </h2>
-            <div className="p-4 w-full h-4/6 overflow-y-auto flex items-center justify-center">
-            {image ? (
-
-                  <canvas
-                    ref={canvasRef}
-                    className="max-h-full mx-auto"
-                  ></canvas>
-            
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full text-center text-gray-500">
-                  <GiEmptyMetalBucketHandle className="size-32 sm:size-48 lg:size-60 transform rotate-45" />
-                  <p className="text-xs sm:text-sm lg:text-base">No image selected</p>
-                </div>
-              )}
+              ))}
             </div>
-
-          {/* Image Thumbnails Section */}
-          <ImageThumbnails
-           uploadedImages={uploadedImages}
-           selectedImageId={selectedImageId}
-           setSelectedImageId={setSelectedImageId}
-          />
+          )}
         </div>
+      
+        {/* Image Display Section */}
+        <div className="w-full h-full p-4 bg-gray-200">
+          <div className="relative ml-16 p-4 w-11/12 h-4/6 overflow-y-auto flex items-center justify-center mt-28">
+          {image ? (
+
+                <canvas
+                  ref={canvasRef}
+                  className="max-h-full mx-auto"
+                ></canvas>
+          
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full text-center text-gray-500">
+                <GiEmptyMetalBucketHandle className="size-32 sm:size-48 lg:size-60 transform rotate-45" />
+                <p className="text-xs sm:text-sm lg:text-base">No image selected</p>
+              </div>
+            )}
+            {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-10">
+              <CgSpinner className="animate-spin size-4 md:size-6 text-white" />
+            </div>
+            )}
+          </div>
+
+        {/* Image Thumbnails Section */}
+        <ImageThumbnails
+          uploadedImages={uploadedImages}
+          selectedImageId={selectedImageId}
+          setSelectedImageId={setSelectedImageId}
+        />
+      </div>
 
       {/* Action Section */}
-      <aside className={`relative z-40 sm:z-auto top-0 right-0 sm:top-auto sm:right-auto transform ${actionsCollapsed ? 'w-1/4 translate-x-full sm:translate-x-0' : 'hidden translate-x-0'} transition-transform duration-300 h-screen bg-orange-100 shadow-lg text-gray-700`}>
-        <nav className="flex flex-col p-2 sm:p-4 space-y-8 h-full">
+      <div className="absolute top-24 right-24 w-2/5 shadow-2xl justify-between items-center rounded-lg py-2 px-4 flex">
+          {/* Upload Options */}
+          <div
+            className="relative z-20 text-center bg-gray-800 rounded-lg flex items-center px-1"
+            onMouseEnter={() => setShowDropdown(true)}
+            onMouseLeave={() => setShowDropdown(false)}
+          >
+            <span className="text-white text-xs md:text-sm font-bold py-4 px-6">Add More Photos</span>
+            {showDropdown && (
+              <UploadOptions
+                handleFileUpload={handleFileUpload}
+                handleOpenPicker={handleOpenPicker}
+                onSuccess={onSuccess}
+                onCancel={onCancel}
+                uploadedFiles={uploadedImages}
+                setUploadedFiles={setUploadedImages}
+                emailVerified={emailVerified}
+                setOversizedFiles={setOversizedFiles}
+                setShowErrorMessages={setShowErrorMessages}
+                setShowUploadForm={setShowUploadForm}
+                developerKey={developerKey}
+                defaultFormat={defaultFormat}
+                defaultSettings={defaultSettings}
+                mimeType="image/*"
+                editImage={true}
+              />
+            )}
+          </div>
+            
+          {/* Format Selection Dropdowns */}
+          {image && (
+            <div className='flex items-center'>
+              <p className='text-xs md:text-sm pr-2 text-gray-500'>Output Format:</p>
+              <FormControl fullWidth>
+                <InputLabel id="format-select-label">Format</InputLabel>
+                <Select
+                  labelId="format-select-label"
+                  value={image.format || ''}
+                  onChange={handleFormatChange}
+                >
+                  {formats.map(format => (
+                    <MenuItem key={format.format} value={format.format.toLowerCase()}>
+                      {format.format}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+          )}
+          {/* Convert Button */}
+          <button
+            className="bg-gray-900 flex justify-center items-center hover:bg-gray-600 text-white text-xs md:text-sm font-bold py-4 px-4"
+            onClick={() => handleConvertImages(uploadedImages, user, emailVerified, idToken, navigate, setDisplayType, setDownloadPageActive)}
+          >
+            Convert <FaArrowRight className="ml-4"/>
+          </button>
+      </div>
+
+      {/* <aside className={`relative z-40 sm:z-auto top-0 right-0 sm:top-auto sm:right-auto transform ${actionsCollapsed ? 'w-1/4 translate-x-full sm:translate-x-0' : 'hidden translate-x-0'} transition-transform duration-300 h-screen bg-orange-100 shadow-lg text-gray-700`}>
+        <nav className="flex flex-col p-2 sm:p-4 space-y-8 h-full mt-4">
           <CgPushRight onClick={() => setActionsCollapsed(!actionsCollapsed)} className='text-lg sm:text-xl md:text-2xl' />
           {actionsCollapsed && (
             <div className="flex flex-col items-center h-full">
-              {/* Upload Options */}
+              Upload Options
               <div
                 className="relative w-4/5 z-20 text-center bg-teal-500 rounded-lg shadow-lg flex items-center justify-between px-6"
                 onMouseEnter={() => setShowDropdown(true)}
@@ -582,7 +653,7 @@ const EditImage = ({ defaultFormat }) => {
                 )}
               </div>
 
-              {/* Format Selection Dropdowns */}
+              Format Selection Dropdowns
               {image && (
                 <div className='flex items-center mt-8'>
                   <p className='text-xs md:text-sm lg:text-base pr-2 text-gray-500'>Output Format:</p>
@@ -603,11 +674,10 @@ const EditImage = ({ defaultFormat }) => {
                 </div>
               )}
               
-              {/* Push the button to the bottom */}
+              Push the button to the bottom
               <div className="flex-grow"></div>
-              <button onClick={() => handleImageSettingsChange(imageSettings)}>Apply Settings</button>
 
-              {/* Convert Button */}
+              Convert Button
               <button
                 className="bg-teal-500 flex justify-center items-center hover:bg-teal-600 text-white text-xs md:text-sm lg:text-lg font-bold py-4 px-4 lg:px-8 mt-4"
                 onClick={() => handleConvertImages(uploadedImages, user, emailVerified, idToken, navigate, setDisplayType, setDownloadPageActive)}
@@ -617,12 +687,7 @@ const EditImage = ({ defaultFormat }) => {
             </div>
           )}
         </nav>
-      </aside>
-      {!actionsCollapsed && (
-        <div className="p-2 absolute right-0 top-1/2 transform -translate-y-1/2 bg-white rounded-full shadow-lg flex items-center justify-center">
-          <CgPushLeft onClick={() => setActionsCollapsed(!actionsCollapsed)} className='text-lg sm:text-xl md:text-2xl'/>
-        </div>
-      )}
+      </aside> */}
       </div>
     </div>
   );
