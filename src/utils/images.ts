@@ -1,7 +1,9 @@
 import axios from 'axios';
+import { ImageFilter, FileDetails } from '../typings/types';
+import { UserImpl } from '../typings/user';
+import { useNavigate } from 'react-router-dom';
 
-
-export const defaultSettings = {
+export const defaultSettings: ImageFilter = {
   brightness: { alpha: 1.0, beta: 0 },
   blur: { type: 'None', kernel_size: 1 },
   resize: { width: null, height: null },
@@ -13,7 +15,6 @@ export const defaultSettings = {
   colorManipulation: { saturation: 1.0, hue: 0, contrast: 1.0 },
   flip: { horizontal: false, vertical: false }
 };
-
 
 export const imageSettingsConfig = [
     {
@@ -89,15 +90,26 @@ export const imageSettingsConfig = [
         },
       ],
     },
-    // {
-    //   category: 'crop',
-    //   settings: [
-    //     { key: 'x', label: 'X', type: 'number', min: 0, max: 5000, step: 1 },
-    //     { key: 'y', label: 'Y', type: 'number', min: 0, max: 5000, step: 1 },
-    //     { key: 'width', label: 'Width', type: 'number', min: 0, max: 5000, step: 1 },
-    //     { key: 'height', label: 'Height', type: 'number', min: 0, max: 5000, step: 1 },
-    //   ],
-    // },
+    {
+      category: 'crop',
+      settings: [
+        {
+          key: 'presets',
+          label: 'Crop Presets',
+          type: 'preset',
+          presets: [
+            { label: 'None', width: 300, height: 300 }, 
+            { label: '4:3', width: 400, height: 300 },
+            { label: '16:9', width: 640, height: 360 },
+            { label: '1:1', width: 300, height: 300 },
+            { label: '3:2', width: 450, height: 300 },
+            { label: '2:3', width: 300, height: 450 },
+            { label: '5:4', width: 400, height: 320 },
+            { label: '5:7', width: 500, height: 700 },
+          ],
+        },
+      ],
+    },
     {
       category: 'flip',
       settings: [
@@ -178,17 +190,21 @@ export const imageSettingsConfig = [
     },
   ];  
 
-const convertImage = async (image, user, emailVerified, idToken) => {
+const convertImage = async (image: FileDetails, user: UserImpl, emailVerified: boolean, idToken: string | undefined): Promise<{ success: boolean; data?: any; error?: any }> => {
     const fileNameWithoutExtension = image.name.split('.')[0];
     const fileExtension = image.name.split('.')[1];
   
     const formData = new FormData();
     formData.append('mimeType', 'image');
     formData.append('source', image.source);
-    formData.append('image', image.file);
-    formData.append('imageId', image.fileId);
+    if (image.file instanceof File) {
+      formData.append('image', image.file);
+    } 
+    formData.append('imageId', image.fileId || '');
     formData.append('jobId', image.jobId);
-    formData.append('dropboxPath', image.fileLink);
+    if (image.fileLink) {
+      formData.append('dropboxPath', image.fileLink);
+    }
     formData.append('imageName', fileNameWithoutExtension);
     formData.append('imageExt', fileExtension);
     formData.append('imageSize', image.size);
@@ -212,9 +228,10 @@ const convertImage = async (image, user, emailVerified, idToken) => {
     }
   
     // Set up headers
-    const headers = {
+    const headers: { [key: string]: string } = {
       'Content-Type': 'multipart/form-data',
     };
+  
   
     if (idToken && emailVerified) {
       headers['Authorization'] = `Bearer ${idToken}`;
@@ -228,15 +245,24 @@ const convertImage = async (image, user, emailVerified, idToken) => {
       .catch((error) => ({ success: false, error }));
   };
   
-export const handleConvertImages = async (uploadedImages, user, emailVerified, idToken, navigate, setDisplayType, setDownloadPageActive) => {
-    console.log(uploadedImages)
+  export const handleConvertImages = async (
+    uploadedImages: FileDetails[],
+    user: UserImpl,
+    emailVerified: boolean,
+    idToken: string | undefined,
+    navigate: ReturnType<typeof useNavigate>,
+    setDisplayType: (type: string) => void,
+    setDownloadPageActive: (active: boolean) => void
+  ): Promise<void> => {
+    console.log(uploadedImages);
+  
     const conversionPromises = uploadedImages.map((image) =>
       convertImage(image, user, emailVerified, idToken)
     );
   
     try {
       const results = await Promise.all(conversionPromises);
-      const successfulConversions = results.filter(result => result.success);
+      const successfulConversions = results.filter((result) => result.success);
       console.log(successfulConversions);
   
       if (successfulConversions.length > 0) {
@@ -248,5 +274,4 @@ export const handleConvertImages = async (uploadedImages, user, emailVerified, i
       console.error('Error converting images:', error);
     }
   };
-
 

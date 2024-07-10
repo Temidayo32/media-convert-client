@@ -1,21 +1,42 @@
 // the utility functions are for uploading files
+import React, { Dispatch, SetStateAction } from 'react';
 import { gapi } from 'gapi-script';
-import { handleGoogleAuth } from './goggleAuth';
+import { handleGoogleAuth } from './auth';
+import { FileDetails, ImageFilter, VideoSettings } from '../typings/types';
+
+declare global {
+  interface Window {
+    google: any; // Define 'google' as any to avoid type errors
+  }
+}
+
+
 const MAX_FILE_SIZE = 1 * 1024 * 1024 * 1024;
 
-function formatFileSize(bytes) {
-    const mbSize = bytes / (1024 * 1024);
-    if (mbSize < 1024) {
-      return mbSize.toFixed(2) + ' MB';
-    } else {
-      const gbSize = mbSize / 1024;
-      return gbSize.toFixed(2) + ' GB';
-    }
+function formatFileSize(bytes: number): string {
+  const mbSize = bytes / (1024 * 1024);
+  if (mbSize < 1024) {
+    return mbSize.toFixed(2) + ' MB';
+  } else {
+    const gbSize = mbSize / 1024;
+    return gbSize.toFixed(2) + ' GB';
   }
+}
+
 
 //upload for local device
-export function handleFileUpload(e, defaultFormat, defaultSettings, uploadedFiles, setUploadedFiles, emailVerified, setOversizedFiles, setShowErrorMessages, setShowUploadForm) {
-    const files = e.target.files;
+export function handleFileUpload(
+  e: React.ChangeEvent<HTMLInputElement>,
+  defaultFormat: string,
+  defaultSettings: VideoSettings | ImageFilter, // Adjust the type of defaultSettings as per your actual settings structure
+  uploadedFiles: FileDetails[],
+  setUploadedFiles: Dispatch<SetStateAction<FileDetails[]>>,
+  emailVerified: boolean,
+  setOversizedFiles: Dispatch<SetStateAction<string[]>>,
+  setShowErrorMessages: Dispatch<SetStateAction<boolean>>,
+  setShowUploadForm: Dispatch<SetStateAction<boolean>>
+): void {
+    const files = e.target.files!;
     const newFiles = [...uploadedFiles];
     const oversizedFiles = [];
   
@@ -35,7 +56,8 @@ export function handleFileUpload(e, defaultFormat, defaultSettings, uploadedFile
         settings: { ...defaultSettings },
       });
     }
-  
+
+    console.log(newFiles)
     setUploadedFiles(newFiles);
     setOversizedFiles(oversizedFiles);
   
@@ -50,7 +72,17 @@ export function handleFileUpload(e, defaultFormat, defaultSettings, uploadedFile
 }
 
 //upload for dropbox
-export function onSuccess(files, defaultFormat, defaultSettings, uploadedFiles, setUploadedFiles, emailVerified, setOversizedFiles, setShowErrorMessages, setShowUploadForm) {
+export function onSuccess(
+  files: any[], // Replace `any[]` with a more specific type if available
+  defaultFormat: string,
+  defaultSettings: VideoSettings | ImageFilter,
+  uploadedFiles: FileDetails[],
+  setUploadedFiles: Dispatch<SetStateAction<FileDetails[]>>,
+  emailVerified: boolean,
+  setOversizedFiles: Dispatch<SetStateAction<string[]>>,
+  setShowErrorMessages: Dispatch<SetStateAction<boolean>>,
+  setShowUploadForm: Dispatch<SetStateAction<boolean>>
+): void {
     const newFiles = [...uploadedFiles];
     const oversizedFiles = [];
   
@@ -72,7 +104,7 @@ export function onSuccess(files, defaultFormat, defaultSettings, uploadedFiles, 
       });
     }
   
-    console.log(files);
+    console.log(newFiles);
     setUploadedFiles(newFiles);
     setOversizedFiles(oversizedFiles);
   
@@ -88,7 +120,18 @@ export function onSuccess(files, defaultFormat, defaultSettings, uploadedFiles, 
 
 
   //function for upload from Google Drive
-export async function handleOpenPicker(developerKey, uploadedFiles, setUploadedFiles, defaultFormat, defaultSettings, emailVerified, setOversizedFiles, setShowErrorMessages, setShowUploadForm, mimeTypePrefix) {
+  export async function handleOpenPicker(
+    developerKey: string,
+    uploadedFiles: FileDetails[],
+    setUploadedFiles: Dispatch<SetStateAction<FileDetails[]>>,
+    defaultFormat: string,
+    defaultSettings: VideoSettings | ImageFilter, // Adjust the type as per your default settings type
+    emailVerified: boolean,
+    setOversizedFiles: Dispatch<SetStateAction<string[]>>,
+    setShowErrorMessages: Dispatch<SetStateAction<boolean>>,
+    setShowUploadForm: Dispatch<SetStateAction<boolean>>,
+    mimeTypePrefix: string
+  ): Promise<void> {
     const accessToken = await handleGoogleAuth();
     if (!accessToken) {
       console.error('No access token obtained. Cannot proceed with Google Picker.');
@@ -107,11 +150,11 @@ export async function handleOpenPicker(developerKey, uploadedFiles, setUploadedF
             .setOAuthToken(accessToken)
             .setDeveloperKey(developerKey)
             .addView(new window.google.picker.DocsUploadView())
-            .setCallback((data) => {
+            .setCallback((data: any) => {
               if (data.action === window.google.picker.Action.CANCEL) {
                 console.log('User clicked cancel/close button');
               } else if (data.docs) {
-                const selectedFiles = data.docs.filter(doc => doc.mimeType.startsWith(mimeTypePrefix));
+                const selectedFiles = data.docs.filter((doc: any) => doc.mimeType.startsWith(mimeTypePrefix));
                 const newFiles = [...uploadedFiles];
                 const oversizedFiles = [];
   
@@ -153,7 +196,7 @@ export async function handleOpenPicker(developerKey, uploadedFiles, setUploadedF
           console.error('Error occurred during Google Picker operation:', error);
         }
       },
-      onerror: (error) => {
+      onerror: (error: any) => {
         console.error('Error loading Google Picker API:', error);
       }
     });
