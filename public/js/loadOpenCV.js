@@ -22,7 +22,7 @@ async function loadOpenCV() {
                 resolve();
             }
         } else {
-            importScripts('./opencv.js'); // Ensure the path is correct
+            importScripts('./libs/opencv.js'); // Ensure the path is correct
             const checkInterval = setInterval(() => {
                 if (typeof cv !== 'undefined') {
                     if (cv.hasOwnProperty('onRuntimeInitialized')) {

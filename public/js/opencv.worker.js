@@ -1,13 +1,44 @@
 /* global cv, importScripts */
-importScripts("./loadOpenCV.js");
+function loadScriptsWithRetry(scripts, retryCount = 3, retryDelay = 1000) {
+    function loadScripts() {
+        try {
+            importScripts(...scripts);
+            console.log('Scripts loaded successfully');
+        } catch (error) {
+            console.error('Error loading scripts:', error);
+            if (retryCount > 0) {
+                console.log(`Retrying in ${retryDelay} ms... (${retryCount} retries left)`);
+                setTimeout(() => {
+                    loadScriptsWithRetry(scripts, retryCount - 1, retryDelay);
+                }, retryDelay);
+            } else {
+                console.error('Failed to load scripts after multiple attempts');
+                // Handle the error or notify the main thread about the failure
+                self.postMessage({ type: 'error', message: 'Failed to load scripts after multiple attempts' });
+            }
+        }
+    }
+    loadScripts();
+}
 
-// importScripts('https://docs.opencv.org/4.10.0/opencv.js'); 
+// List of scripts to load
+const scriptsToLoad = [
+    "./loadOpenCV.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/jimp/0.22.12/jimp.min.js",
+    './ImageProcessor.js'
+];
+
+// Start loading scripts with retry logic
+loadScriptsWithRetry(scriptsToLoad);
+
+
+ 
 async function processImage(imageData, imageSettings, canvasWidth, canvasHeight) {
-    console.log('Processing image in worker:', imageData, imageSettings);
+    // console.log('Processing image in worker:', imageData, imageSettings);
     await loadOpenCV();
     await new Promise((resolve) => waitForOpencvMat(resolve));
 
-//   console.log(cv)
+    const processor = new ImageProcessor(cv, Jimp);
     let initialMat = cv.matFromImageData(imageData);
     let mat = initialMat.clone(); // Create a snapshot
 
@@ -15,68 +46,81 @@ async function processImage(imageData, imageSettings, canvasWidth, canvasHeight)
     try {
         console.log(`Initial mat: cols=${mat.cols}, rows=${mat.rows}, channels=${mat.channels()}`);
 
+         // Crop Image with Jimp
+         if (imageSettings.crop.width && imageSettings.crop.height) {
+            const { x, y, width, height } = imageSettings.crop;
+            if (x >= 0 && y >= 0 && x + width <= mat.cols && y + height <= mat.rows) {
+                const base64 = await processor.cropImageWithJimp(imageData, x, y, width, height);
+                imageData = await processor.loadImageDataFromBase64(base64);
+                mat.delete();
+                mat = cv.matFromImageData(new ImageData(new Uint8ClampedArray(imageData.data), imageData.width, imageData.height));
+            } else {
+                console.error('Invalid crop dimensions.');
+            }
+        }
+
         // Apply Brightness and Contrast
         if (imageSettings.brightness.alpha !== 1.0 || imageSettings.brightness.beta !== 0) {
             const { alpha, beta } = imageSettings.brightness;
-            mat = applyBrightnessContrast(cv, mat, alpha, beta);
+            mat = processor.applyBrightnessContrast(mat, alpha, beta);
         }
 
         // Apply Blur
         if (imageSettings.blur.type !== 'None') {
             const { type, kernel_size } = imageSettings.blur;
-            mat = applyBlur(cv, mat, type, kernel_size);
+            mat = processor.applyBlur(mat, type, kernel_size);
         }
 
         // Resize Image
         if (imageSettings.resize.width && imageSettings.resize.height) {
             const { width, height } = imageSettings.resize;
-            mat = resizeImage(cv, mat, width, height);
+            mat = processor.resizeImage(mat, width, height);
         }
 
         // Apply Rotate
         if (imageSettings.rotate.angle !== 0) {
             const { angle } = imageSettings.rotate;
-            mat = rotateImage(cv, mat, angle, canvasWidth, canvasHeight);
+            mat = processor.rotateImage(mat, angle, canvasWidth, canvasHeight);
             // Calculate the scaling factor
             const scaleFactor = Math.min(canvasWidth / mat.cols, canvasHeight / mat.rows);
 
             // Calculate new dimensions
             const newWidth = mat.cols * scaleFactor;
             const newHeight = mat.rows * scaleFactor;
-            mat = resizeImage(cv, mat, newWidth, newHeight)
+            mat = processor.resizeImage(mat, newWidth, newHeight)
         }
 
         // Flip Image
         if (imageSettings.flip.horizontal || imageSettings.flip.vertical) {
-            mat = flipImage(cv, mat, imageSettings.flip.horizontal, imageSettings.flip.vertical);
+            mat = processor.flipImage(mat, imageSettings.flip.horizontal, imageSettings.flip.vertical);
         }
 
         // Convert to Gray for Edge Detection or Histogram Equalization if necessary
         if (imageSettings.edgeDetection.method !== 'None' || imageSettings.histogramEqualization.enabled) {
-            mat = convertToGray(cv, mat);
+            mat = processor.convertToGray(mat);
         }
 
         // Perform Edge Detection
         if (imageSettings.edgeDetection.method === 'Canny') {
-            mat = applyCannyEdgeDetection(cv, mat, imageSettings.edgeDetection.threshold1, imageSettings.edgeDetection.threshold2);
+            mat = processor.applyCannyEdgeDetection(mat, imageSettings.edgeDetection.threshold1, imageSettings.edgeDetection.threshold2);
         } else if (imageSettings.edgeDetection.method === 'Sobel') {
-            mat = applySobelEdgeDetection(cv, mat);
+            mat = processor.applySobelEdgeDetection(mat);
         }
 
         // Apply Histogram Equalization
         if (imageSettings.histogramEqualization.enabled) {
-            mat = applyHistogramEqualization(cv, mat);
+            mat = processor.applyHistogramEqualization(mat);
         }
 
         // Convert Color Space
         if (imageSettings.colorSpace.conversion !== 'None') {
-            mat = convertColorSpace(cv, mat, imageSettings.colorSpace.conversion);
+            mat = processor.convertColorSpace(mat, imageSettings.colorSpace.conversion);
         }
 
         // Apply Color Manipulation (Saturation, Hue, Contrast)
         const { saturation, hue, contrast } = imageSettings.colorManipulation;
         if (saturation !== 1.0 || hue !== 0 || contrast !== 1.0) {
-            mat = applyColorManipulation(cv, mat, saturation, hue, contrast);
+            mat = processor.applyColorManipulation(mat, saturation, hue, contrast);
         }
 
          // Convert back to RGBA format for rendering
@@ -123,164 +167,6 @@ async function processImage(imageData, imageSettings, canvasWidth, canvasHeight)
         initialMat.delete(); // Clean up initial snapshot
         mat.delete(); // Clean up final processed mat
     }
-}
-
-
-function applyBrightnessContrast(cv, mat, alpha, beta) {
-    let resultMat = new cv.Mat();
-    mat.convertTo(resultMat, -1, alpha, beta);
-    mat.delete();
-    return resultMat;
-}
-
-function applyBlur(cv, mat, type, kernel_size) {
-    let blurredMat = new cv.Mat();
-    switch (type) {
-        case 'Gaussian':
-            cv.GaussianBlur(mat, blurredMat, new cv.Size(kernel_size, kernel_size), 0, 0, cv.BORDER_DEFAULT);
-            break;
-        case 'Median':
-            if (kernel_size % 2 === 0) throw new Error('Kernel size for median blur must be odd');
-            cv.medianBlur(mat, blurredMat, kernel_size);
-            break;
-        case 'Bilateral':
-            cv.bilateralFilter(mat, blurredMat, kernel_size, kernel_size * 2, kernel_size / 2, cv.BORDER_DEFAULT);
-            break;
-        default:
-            blurredMat = mat.clone();
-            break;
-    }
-    mat.delete();
-    return blurredMat;
-}
-
-function resizeImage(cv, mat, width, height) {
-    let resizedMat = new cv.Mat();
-    cv.resize(mat, resizedMat, new cv.Size(width, height), 0, 0, cv.INTER_AREA);
-    mat.delete();
-    return resizedMat;
-}
-
-function rotateImage(cv, mat, angle) {
-    let center = new cv.Point(mat.cols / 2, mat.rows / 2);
-    let M = cv.getRotationMatrix2D(center, angle, 1);
-
-    // Calculate new bounding box size
-    let cos = Math.abs(M.doubleAt(0, 0));
-    let sin = Math.abs(M.doubleAt(0, 1));
-    let newWidth = Math.floor(mat.rows * sin + mat.cols * cos);
-    let newHeight = Math.floor(mat.rows * cos + mat.cols * sin);
-
-    // Adjust rotation matrix to account for translation
-    M.doublePtr(0, 2)[0] += (newWidth / 2) - center.x;
-    M.doublePtr(1, 2)[0] += (newHeight / 2) - center.y;
-
-    let rotatedMat = new cv.Mat();
-    cv.warpAffine(mat, rotatedMat, M, new cv.Size(newWidth, newHeight), cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar());
-
-    mat.delete();
-    return rotatedMat;
-}
-
-
-function flipImage(cv, mat, horizontal, vertical) {
-    let flipCode = horizontal && vertical ? -1 : horizontal ? 1 : 0;
-    let flippedMat = new cv.Mat();
-    cv.flip(mat, flippedMat, flipCode);
-    mat.delete();
-    return flippedMat;
-}
-
-function convertToGray(cv, mat) {
-    let grayMat = new cv.Mat();
-    cv.cvtColor(mat, grayMat, cv.COLOR_RGBA2GRAY, 0);
-    mat.delete();
-    return grayMat;
-}
-
-function applyCannyEdgeDetection(cv, mat, threshold1, threshold2) {
-    let edges = new cv.Mat();
-    cv.Canny(mat, edges, threshold1, threshold2, 3, false);
-    mat.delete();
-    return edges;
-}
-
-function applySobelEdgeDetection(cv, mat) {
-    let gradX = new cv.Mat();
-    let gradY = new cv.Mat();
-    let absGradX = new cv.Mat();
-    let absGradY = new cv.Mat();
-    let edges = new cv.Mat();
-    cv.Sobel(mat, gradX, cv.CV_16S, 1, 0);
-    cv.convertScaleAbs(gradX, absGradX);
-    cv.Sobel(mat, gradY, cv.CV_16S, 0, 1);
-    cv.convertScaleAbs(gradY, absGradY);
-    cv.addWeighted(absGradX, 0.5, absGradY, 0.5, 0, edges);
-    mat.delete();
-    gradX.delete();
-    gradY.delete();
-    absGradX.delete();
-    absGradY.delete();
-    return edges;
-}
-
-function applyHistogramEqualization(cv, mat) {
-    let equalizedMat = new cv.Mat();
-    cv.equalizeHist(mat, equalizedMat);
-    mat.delete();
-    return equalizedMat;
-}
-
-function convertColorSpace(cv, mat, conversion) {
-    let convertedMat = new cv.Mat();
-    switch (conversion) {
-        case 'GRAY':
-            cv.cvtColor(mat, convertedMat, cv.COLOR_RGBA2GRAY, 0);
-            break;
-        case 'HSV':
-            cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2HSV, 0);
-            break;
-        case 'HLS':
-            cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2HLS);
-            break;
-        case 'LAB':
-            cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2Lab, 0);
-            break;
-        case 'BGR':
-            cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2BGR);
-            break;
-        case 'Luv':
-            cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2Luv, 0);
-            break;
-        case 'YCrCb':
-            cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2YCrCb);
-            break;
-        case 'YUV':
-            cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2YUV);
-            break;
-        case 'XYZ':
-            cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2XYZ);
-            break;
-        default:
-            convertedMat = mat.clone();
-            break;
-    }
-    mat.delete();
-    return convertedMat;
-}
-
-function applyColorManipulation(cv, mat, saturation, hue, contrast) {
-    mat.convertTo(mat, -1, contrast, 0);
-    cv.cvtColor(mat, mat, cv.COLOR_RGB2HSV);
-    for (let i = 0; i < mat.rows; i++) {
-        for (let j = 0; j < mat.cols; j++) {
-            let pixel = mat.ucharPtr(i, j);
-            pixel[1] = Math.max(0, Math.min(pixel[1] * saturation, 255));
-            pixel[0] = (pixel[0] + hue) % 180;
-        }
-    }
-    cv.cvtColor(mat, mat, cv.COLOR_HSV2RGB);
-    return mat;
 }
 
 
