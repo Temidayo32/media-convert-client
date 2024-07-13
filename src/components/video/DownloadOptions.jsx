@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { gapi } from 'gapi-script';
 import { Dropbox, DropboxAuth } from 'dropbox';
 import { dropboxAppKey } from '../../config/key';
-import { handleGoogleAuth, handleDropboxAuth } from '../../utils/goggleAuth';
+import { handleGoogleAuth, handleDropboxAuth } from '../../utils/auth';
  
 import { IoIosArrowDropdownCircle } from 'react-icons/io';
 import { IoIosFolderOpen } from 'react-icons/io';

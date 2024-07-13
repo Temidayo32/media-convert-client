@@ -12,6 +12,7 @@ Check out [Media Convert (backend)](https://github.com/Temidayo32/media-convert-
 ## Features
 
 - **Upload Media Files**: Users can upload video, image and document files from their device, Dropbox, or Google Drive.
+- **Editing Media Files**: Users can use a minimalistic image editor to edit images before conversion.
 - **Convert Media Files**: The app supports converting videos, image and document files to various formats.
 - **Download Converted Files**: Users can download the converted files to their device.
 
@@ -20,14 +21,22 @@ Check out [Media Convert (backend)](https://github.com/Temidayo32/media-convert-
 - **Frontend**:
   - React.js
   - Tailwind CSS
+  - OpenCV (Image Editing)
+  - 
 
 - **Backend**:
   - Node.js
   - Express.js
   - FFmpeg (for video conversion)
+  - Jimp
+  - Inkscape
 
 - **Authentication**:
   - Firebase Authentication
+
+- **Database and Cloud Storage**
+  - AWS S3
+  - Firestore
 
 ## Roadmap
 

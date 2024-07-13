@@ -353,3 +353,71 @@ const renderSVG = async () => {
   }
 };
 
+ {/* <aside className={`relative z-40 sm:z-auto top-0 right-0 sm:top-auto sm:right-auto transform ${actionsCollapsed ? 'w-1/4 translate-x-full sm:translate-x-0' : 'hidden translate-x-0'} transition-transform duration-300 h-screen bg-orange-100 shadow-lg text-gray-700`}>
+        <nav className="flex flex-col p-2 sm:p-4 space-y-8 h-full mt-4">
+          <CgPushRight onClick={() => setActionsCollapsed(!actionsCollapsed)} className='text-lg sm:text-xl md:text-2xl' />
+          {actionsCollapsed && (
+            <div className="flex flex-col items-center h-full">
+              Upload Options
+              <div
+                className="relative w-4/5 z-20 text-center bg-teal-500 rounded-lg shadow-lg flex items-center justify-between px-6"
+                onMouseEnter={() => setShowDropdown(true)}
+                onMouseLeave={() => setShowDropdown(false)}
+              >
+                <span className="text-white text-xs md:text-sm lg:text-base font-bold py-4 px-2">Add More Photos</span>
+                {showDropdown && (
+                  <UploadOptions
+                    handleFileUpload={handleFileUpload}
+                    handleOpenPicker={handleOpenPicker}
+                    onSuccess={onSuccess}
+                    onCancel={onCancel}
+                    uploadedFiles={uploadedImages}
+                    setUploadedFiles={setUploadedImages}
+                    emailVerified={emailVerified}
+                    setOversizedFiles={setOversizedFiles}
+                    setShowErrorMessages={setShowErrorMessages}
+                    setShowUploadForm={setShowUploadForm}
+                    developerKey={developerKey}
+                    defaultFormat={defaultFormat}
+                    defaultSettings={defaultSettings}
+                    mimeType="image/*"
+                    editImage={true}
+                  />
+                )}
+              </div>
+
+              Format Selection Dropdowns
+              {image && (
+                <div className='flex items-center mt-8'>
+                  <p className='text-xs md:text-sm lg:text-base pr-2 text-gray-500'>Output Format:</p>
+                  <FormControl fullWidth>
+                    <InputLabel id="format-select-label">Format</InputLabel>
+                    <Select
+                      labelId="format-select-label"
+                      value={image.format || ''}
+                      onChange={handleFormatChange}
+                    >
+                      {formats.map(format => (
+                        <MenuItem key={format.format} value={format.format.toLowerCase()}>
+                          {format.format}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </div>
+              )}
+              
+              Push the button to the bottom
+              <div className="flex-grow"></div>
+
+              Convert Button
+              <button
+                className="bg-teal-500 flex justify-center items-center hover:bg-teal-600 text-white text-xs md:text-sm lg:text-lg font-bold py-4 px-4 lg:px-8 mt-4"
+                onClick={() => handleConvertImages(uploadedImages, user, emailVerified, idToken, navigate, setDisplayType, setDownloadPageActive)}
+              >
+                Convert <FaArrowRight className="ml-4"/>
+              </button>
+            </div>
+          )}
+        </nav>
+      </aside> */}

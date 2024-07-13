@@ -14,13 +14,14 @@ import { handleConvertImages } from '../../utils/images';
 import { developerKey } from '../../config/key';
 import UploadOptions from '../video/UploadOptions';
 import { renderSettingControl } from '../../composables/imageSettings';
+import CropImage from './CropImage';
 
 import { Tooltip, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 import { GiEmptyMetalBucketHandle, GiHistogram  } from "react-icons/gi";
 import { FaArrowRight } from 'react-icons/fa';
-import { CgSpinner } from "react-icons/cg";
+import { CgSpinner, CgUndo, CgRedo } from "react-icons/cg";
 import { CiBrightnessUp, CiSquareInfo } from "react-icons/ci";
-import { MdBlurOn, MdOutlineCropRotate } from "react-icons/md";
+import { MdBlurOn, MdOutlineCropRotate, MdCropFree } from "react-icons/md";
 import { IoResizeOutline } from "react-icons/io5";
 import { LuFlipVertical2 } from "react-icons/lu";
 import { PiDetectiveFill } from "react-icons/pi";
@@ -35,6 +36,7 @@ const categoryIcons = {
   flip: <LuFlipVertical2 />,
   edgeDetection: <PiDetectiveFill />,
   colorSpace: <IoIosColorFilter />,
+  crop: <MdCropFree />,
   histogramEqualization: <GiHistogram />,
   colorManipulation: <IoMdContrast />,
 };
@@ -42,15 +44,23 @@ const categoryIcons = {
 
 const EditImage = ({ defaultFormat }) => {
   const navigate = useNavigate();
-  const { format: currentFormat } = useParams();
   const { idToken, uploadedImages, setUploadedImages, emailVerified, setDownloadPageActive, setDisplayType, oversizedFiles, setOversizedFiles, showErrorMessages, setShowErrorMessages, showUploadForm, setShowUploadForm } = useData();
   const [selectedImageId, setSelectedImageId] = useState(uploadedImages.length ? uploadedImages[0].jobId : null);
   const image = selectedImageId ? uploadedImages.find(img => img.jobId === selectedImageId) : null;
   const [imageSettings, setImageSettings] = useState(image ? image.settings : defaultSettings);
+  const [imageHistories, setImageHistories] = useState({});
+  const [currentSteps, setCurrentSteps] = useState({});
+  const [imageDataUrl, setImageDataUrl] = useState('');
+  const [triggerCrop, setTriggerCrop] = useState(false);
+  const [applyCrop, setApplyCrop] = useState(false);
+  const [currentBlob, setCurrentBlob] = useState(null);
+  const [updateComplete, setUpdateComplete] = useState(false);
+  const [selectedPreset, setSelectedPreset] = useState(null);
   const [currentImageSettings, setCurrentImageSettings] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [formats, setFormats] = useState([]);
   const canvasRef = useRef(null);
+  const prevBlobRef = useRef(null);
   // const { cv, loaded: cvLoaded } = useOpenCv();
   const [activeCategory, setActiveCategory] = useState(null);
   const [ isLoading, setIsLoading ] = useState(false);
@@ -77,8 +87,40 @@ const EditImage = ({ defaultFormat }) => {
 
   useEffect(() => {
     setShowUploadForm(uploadedImages.length === 0);
-    console.log(uploadedImages)
+    // console.log(uploadedImages)
   }, [uploadedImages, setShowUploadForm]);
+
+  useEffect(() => {
+    if (!imageHistories[selectedImageId]) {
+      setImageHistories({
+        ...imageHistories,
+        [selectedImageId]: [imageSettings],
+      });
+      setCurrentSteps({
+        ...currentSteps,
+        [selectedImageId]: 0,
+      });
+    }
+  }, [selectedImageId]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.ctrlKey || event.metaKey) {
+        if (event.key === 'z') {
+          event.preventDefault();
+          undo();
+        } else if (event.key === 'y') {
+          event.preventDefault();
+          redo();
+        }
+      }
+    };
+  
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedImageId, currentSteps, imageHistories]);
   
 
   useEffect(() => {
@@ -119,6 +161,15 @@ const EditImage = ({ defaultFormat }) => {
           canvas.height = img.height;
           ctx.drawImage(img, 0, 0, img.width, img.height);
           applySettings(canvas);
+
+          const dataUrl = canvas.toDataURL();
+          setImageDataUrl(dataUrl);
+
+          canvas.toBlob((blob) => {
+            if(blob) {
+              console.log(blob)
+            }
+          })
         };
       } catch (error) {
         console.error('Error loading image:', error);
@@ -145,8 +196,84 @@ const EditImage = ({ defaultFormat }) => {
     return () => {
       workerPool.terminateWorkers();
     };
-  }, [image, canvasRef, setUploadedImages, uploadedImages]);
+  }, [image, canvasRef, imageSettings, selectedPreset]);
 
+  useEffect(() => {
+    if (updateComplete) {
+      handleConvertImages(uploadedImages, user, emailVerified, idToken, navigate, setDisplayType, setDownloadPageActive);
+      setUpdateComplete(false);  // Reset the flag
+    }
+  }, [updateComplete, uploadedImages, user, emailVerified, idToken, navigate, setDisplayType, setDownloadPageActive]);
+
+  const updateImageInState = (jobId, blob) => {
+    return new Promise((resolve) => {
+      setUploadedImages(prevImages => {
+        const updatedImages = prevImages.map(img =>
+          img.jobId === jobId ? { ...img, file: blob } : img
+        );
+        resolve(updatedImages);  // Resolve with the updated images
+        return updatedImages;
+      });
+    });
+  };
+
+  const handleButtonClick = () => {
+    updateImageInState(image.jobId, currentBlob).then((updatedImages) => {
+      setUploadedImages(updatedImages);  // Ensure state is updated with the latest images
+      setUpdateComplete(true);  // Trigger the effect to call handleConvertImages
+    });
+  };
+
+  function imageDataToBlob(imageData) {
+    return new Promise((resolve, reject) => {
+      try {
+        const offscreenCanvas = new OffscreenCanvas(imageData.width, imageData.height);
+        const offscreenCtx = offscreenCanvas.getContext('2d');
+  
+        offscreenCtx.putImageData(imageData, 0, 0);
+  
+        offscreenCanvas.convertToBlob().then((blob) => {
+          if (blob) {
+            console.log(blob)
+            resolve(blob);
+          } else {
+            reject(new Error('Failed to convert canvas to blob.'));
+          }
+        }).catch(reject);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+  
+  const handleCropComplete = async (croppedArea, croppedAreaPixels) => {
+    if (applyCrop && croppedAreaPixels) {
+      try {
+        setSelectedPreset(null);
+
+        const updatedSettings = {
+          ...imageSettings,
+          crop: {
+            x: croppedAreaPixels.x,
+            y: croppedAreaPixels.y,
+            width: croppedAreaPixels.width,
+            height: croppedAreaPixels.height
+          }
+        };
+
+        setImageSettings(updatedSettings);
+        handleImageSettingsChange(updatedSettings);
+        setApplyCrop(false);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  const handleApplyCrop = () => {
+    setApplyCrop(true);
+    setTriggerCrop(true);
+  };
   
   const handleFormatChange = (event) => {
     const newFormat = event.target.value;
@@ -163,7 +290,7 @@ const EditImage = ({ defaultFormat }) => {
   const applySettings = (canvas) => {
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     setIsLoading(true);
-
+  
     try {
         // Get image data from the canvas
         const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -189,7 +316,8 @@ const EditImage = ({ defaultFormat }) => {
             imageSettings, 
             canvasWidth: canvas.width,
             canvasHeight: canvas.height, 
-          }, (result) => {
+          }, 
+          async (result) => {
 
             try {
 
@@ -211,9 +339,12 @@ const EditImage = ({ defaultFormat }) => {
                 const y = (canvas.height - result.processedImageData.height) / 2;
 
                 // Display processed image data on the original canvas
-                // console.log(result)
-                setIsLoading(false); 
                 ctx.putImageData(result.processedImageData, x, y);
+                setIsLoading(false);
+                 
+                const newBlob = await imageDataToBlob(result.processedImageData)
+                setCurrentBlob(newBlob)
+                
             } catch (callbackError) {
                 console.error("Error in callback:", callbackError);
                 setShowErrorMessages(true);
@@ -281,11 +412,26 @@ const EditImage = ({ defaultFormat }) => {
   };
 
   const updateImageSettings = (imageId, newSettings) => {
-    setUploadedImages(prevImages =>
-      prevImages.map(img =>
-        img.jobId === imageId ? { ...img, settings: newSettings } : img
-      )
+    if (!imageId) return;
+
+    const newHistory = (imageHistories[imageId] || []).slice(0, currentSteps[imageId] + 1);
+    newHistory.push(newSettings);
+
+    setImageHistories({
+      ...imageHistories,
+      [imageId]: newHistory,
+    });
+
+    setCurrentSteps({
+      ...currentSteps,
+      [imageId]: newHistory.length - 1,
+    });
+
+    // Update settings for the current image in uploadedImages
+    const updatedImages = uploadedImages.map(img =>
+      img.jobId === imageId ? { ...img, settings: newSettings } : img
     );
+    setUploadedImages(updatedImages);
   };
   
   const handleImageSettingsChange = (newSettings) => {
@@ -295,200 +441,33 @@ const EditImage = ({ defaultFormat }) => {
     }
   };
 
-  // const applySettings = (canvas) => {
-  //   const ctx = canvas.getContext('2d', { willReadFrequently: true });
-  //   let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  //   let mat = cv.matFromImageData(imgData);
+  const undo = () => {
+    const imageId = selectedImageId;
+    if (!imageId || currentSteps[imageId] <= 0) return;
 
-  //   try {
-  //       // Apply Brightness and Contrast
-  //       if (imageSettings.brightness.alpha !== 1.0 || imageSettings.brightness.beta !== 0) {
-  //           const { alpha, beta } = imageSettings.brightness;
-  //           mat.convertTo(mat, -1, alpha, beta); // Adjust brightness and contrast
-  //       }
+    const newStep = currentSteps[imageId] - 1;
+    setCurrentSteps({
+      ...currentSteps,
+      [imageId]: newStep,
+    });
+    setImageSettings(imageHistories[imageId][newStep]);
+  };
 
-  //       // Apply Blur
-  //       if (imageSettings.blur.type !== 'None') {
-  //           const { type, kernel_size } = imageSettings.blur;
-  //           console.log('Applying blur:', type, kernel_size);
-  //           let blurredMat = new cv.Mat();
+  const redo = () => {
+    const imageId = selectedImageId;
+    if (!imageId || currentSteps[imageId] >= imageHistories[imageId].length - 1) return;
 
-  //           switch (type) {
-  //               case 'Gaussian':
-  //                   cv.GaussianBlur(mat, blurredMat, new cv.Size(kernel_size, kernel_size), 0, 0, cv.BORDER_DEFAULT);
-  //                   break;
-  //               case 'Median':
-  //                   if (kernel_size % 2 === 0) throw new Error('Kernel size for median blur must be odd');
-  //                   cv.medianBlur(mat, blurredMat, kernel_size);
-  //                   break;
-  //               case 'Bilateral':
-  //                   cv.bilateralFilter(mat, blurredMat, kernel_size, kernel_size * 2, kernel_size / 2, cv.BORDER_DEFAULT);
-  //                   break;
-  //               default:
-  //                   blurredMat = mat.clone(); // Fall back to original if invalid type
-  //                   break;
-  //           }
-
-  //           mat.delete();
-  //           mat = blurredMat;
-  //       }
-
-  //       // Resize Image
-  //       if (imageSettings.resize.width && imageSettings.resize.height) {
-  //           const { width, height } = imageSettings.resize;
-  //           let resizedMat = new cv.Mat();
-  //           cv.resize(mat, resizedMat, new cv.Size(width, height), 0, 0, cv.INTER_AREA);
-  //           mat.delete();
-  //           mat = resizedMat;
-  //       }
-
-  //       // Apply Rotate
-  //       if (imageSettings.rotate.angle !== 0) {
-  //           const { angle } = imageSettings.rotate;
-  //           console.log('Applying rotation:', angle);
-
-  //           let center = new cv.Point(mat.cols / 2, mat.rows / 2);
-  //           let M = cv.getRotationMatrix2D(center, angle, 1);
-
-  //           // Calculate new bounding box size
-  //           let cos = Math.abs(M.doubleAt(0, 0));
-  //           let sin = Math.abs(M.doubleAt(0, 1));
-  //           let newWidth = Math.floor(mat.rows * sin + mat.cols * cos);
-  //           let newHeight = Math.floor(mat.rows * cos + mat.cols * sin);
-
-  //           // Adjust rotation matrix to account for translation
-  //           M.doublePtr(0, 2)[0] += (newWidth / 2) - center.x;
-  //           M.doublePtr(1, 2)[0] += (newHeight / 2) - center.y;
-
-  //           let rotatedMat = new cv.Mat();
-  //           cv.warpAffine(mat, rotatedMat, M, new cv.Size(newWidth, newHeight), cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar());
-
-  //           mat.delete();
-  //           mat = rotatedMat;
-  //       }
-
-  //       // Flip Image
-  //       if (imageSettings.flip.horizontal || imageSettings.flip.vertical) {
-  //           let flippedMat = new cv.Mat();
-  //           let flipCode = imageSettings.flip.horizontal && imageSettings.flip.vertical ? -1 : imageSettings.flip.horizontal ? 1 : 0;
-  //           cv.flip(mat, flippedMat, flipCode);
-  //           mat.delete();
-  //           mat = flippedMat;
-  //       }
-
-  //      // Convert to Gray for Edge Detection or Histogram Equalization if necessary
-  //         if (imageSettings.edgeDetection.method !== 'None' || imageSettings.histogramEqualization.enabled) {
-  //           let grayMat = new cv.Mat();
-  //           cv.cvtColor(mat, grayMat, cv.COLOR_RGBA2GRAY, 0);
-  //           mat.delete();
-  //           mat = grayMat;
-  //         }
-
-  //         // Perform Edge Detection
-  //         if (imageSettings.edgeDetection.method === 'Canny') {
-  //           let edges = new cv.Mat();
-  //           cv.Canny(mat, edges, imageSettings.edgeDetection.threshold1, imageSettings.edgeDetection.threshold2, 3, false);
-  //           mat.delete();
-  //           mat = edges;
-  //         } else if (imageSettings.edgeDetection.method === 'Sobel') {
-  //           let gradX = new cv.Mat();
-  //           let gradY = new cv.Mat();
-  //           let absGradX = new cv.Mat();
-  //           let absGradY = new cv.Mat();
-  //           let edges = new cv.Mat();
-  //           cv.Sobel(mat, gradX, cv.CV_16S, 1, 0);
-  //           cv.convertScaleAbs(gradX, absGradX);
-  //           cv.Sobel(mat, gradY, cv.CV_16S, 0, 1);
-  //           cv.convertScaleAbs(gradY, absGradY);
-  //           cv.addWeighted(absGradX, 0.5, absGradY, 0.5, 0, edges);
-  //           mat.delete();
-  //           gradX.delete();
-  //           gradY.delete();
-  //           absGradX.delete();
-  //           absGradY.delete();
-  //           mat = edges;
-  //         }
-
-  //         // Apply Histogram Equalization
-  //         if (imageSettings.histogramEqualization.enabled) {
-  //           let equalizedMat = new cv.Mat();
-  //           cv.equalizeHist(mat, equalizedMat);
-  //           mat.delete();
-  //           mat = equalizedMat;
-  //         }
-
-
-  //       // Convert Color Space
-  //       if (imageSettings.colorSpace.conversion !== 'None') {
-  //           let convertedMat = new cv.Mat();
-  //           switch (imageSettings.colorSpace.conversion) {
-  //               case 'GRAY':
-  //                   cv.cvtColor(mat, convertedMat, cv.COLOR_RGBA2GRAY, 0);
-  //                   break;
-  //               case 'HSV':
-  //                   cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2HSV, 0);
-  //                   break;
-  //               case 'HLS':
-  //                   cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2HLS);
-  //                   break;
-  //               case 'LAB':
-  //                   cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2Lab, 0);
-  //                   break;
-  //               case 'BGR':
-  //                   cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2BGR);
-  //                   break;
-  //               case 'Luv':
-  //                   cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2Luv, 0);
-  //                   break;
-  //               case 'YCrCb':
-  //                   cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2YCrCb);
-  //                   break;
-  //               case 'YUV':
-  //                   cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2YUV);
-  //                   break;
-  //               case 'XYZ':
-  //                   cv.cvtColor(mat, convertedMat, cv.COLOR_RGB2XYZ);
-  //                   break;
-  //               // Add other color space conversions as needed
-  //               default:
-  //                   convertedMat = mat.clone(); // No conversion needed
-  //                   break;
-  //           }
-  //           mat.delete(); // Clean up original Mat
-  //           mat = convertedMat; // Update mat to the converted Mat
-  //       }
-
-
-  //       // Apply Color Manipulation (Saturation, Hue, Contrast)
-  //       const { saturation, hue, contrast } = imageSettings.colorManipulation;
-  //       if (saturation !== 1.0 || hue !== 0 || contrast !== 1.0) {
-  //           mat.convertTo(mat, -1, contrast, 0);
-  //           cv.cvtColor(mat, mat, cv.COLOR_RGB2HSV);
-  //           for (let i = 0; i < mat.rows; i++) {
-  //               for (let j = 0; j < mat.cols; j++) {
-  //                   let pixel = mat.ucharPtr(i, j);
-  //                   pixel[1] = Math.max(0, Math.min(pixel[1] * saturation, 255));
-  //                   pixel[0] = (pixel[0] + hue) % 180;
-  //               }
-  //           }
-  //           cv.cvtColor(mat, mat, cv.COLOR_HSV2RGB);
-  //       }
-
-  //       // Display the processed image on canvas
-  //       cv.imshow(canvas, mat);
-
-  //   } catch (error) {
-  //       console.error("Error applying settings:", error);
-  //   } finally {
-  //       // Clean up resources
-  //       mat.delete();
-  //   }
-  // }
+    const newStep = currentSteps[imageId] + 1;
+    setCurrentSteps({
+      ...currentSteps,
+      [imageId]: newStep,
+    });
+    setImageSettings(imageHistories[imageId][newStep]);
+  };
 
   return (
     <div className="flex h-screen">
       <div className="flex-grow flex">
-
         {/* {error section} */}
         {showErrorMessages && (
           <div
@@ -517,12 +496,12 @@ const EditImage = ({ defaultFormat }) => {
           </aside>
 
           {activeCategory && (
-            <div className="absolute w-72 left-24 top-64 transform -translate-y-1/2 px-8 py-4 bg-gray-800 shadow-2xl rounded-lg z-20">
+            <div className="absolute w-80 left-24 top-80 transform -translate-y-1/2 px-8 py-4 bg-gray-800 shadow-2xl rounded-lg z-20">
               <h4 className="text-md font-bold mb-4 capitalize text-white">{formatCategoryName(activeCategory)}</h4>
               {imageSettingsConfig.find(category => category.category === activeCategory)?.settings.map(setting => (
                 <div key={setting.key} className="mb-4">
                   {
-                    renderSettingControl(activeCategory, setting, imageSettings, handleSettingChange, handleFlip, handleRotateClick)
+                    renderSettingControl(activeCategory, setting, imageSettings, selectedPreset, setSelectedPreset, handleApplyCrop, handleSettingChange, handleFlip, handleRotateClick)
                   }
                 </div>
               ))}
@@ -533,13 +512,18 @@ const EditImage = ({ defaultFormat }) => {
         {/* Image Display Section */}
         <div className="w-full h-full p-4 bg-gray-200">
           <div className="relative ml-16 p-4 w-11/12 h-4/6 overflow-y-auto flex items-center justify-center mt-28">
-          {image ? (
-
-                <canvas
-                  ref={canvasRef}
-                  className="max-h-full mx-auto"
-                ></canvas>
-          
+            { selectedPreset && 
+              <CropImage
+                imageDataUrl={imageDataUrl} // Replace with the actual imageDataUrl prop
+                aspect={selectedPreset.width / selectedPreset.height}
+                onCropComplete={handleCropComplete}
+                triggerCrop={triggerCrop}
+              />}
+            {image ? ( 
+              <canvas
+                ref={canvasRef}
+                className={`max-h-full mx-auto ${selectedPreset ? 'hidden' : ''}`}
+              ></canvas>  
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-center text-gray-500">
                 <GiEmptyMetalBucketHandle className="size-32 sm:size-48 lg:size-60 transform rotate-45" />
@@ -553,12 +537,31 @@ const EditImage = ({ defaultFormat }) => {
             )}
           </div>
 
-        {/* Image Thumbnails Section */}
-        <ImageThumbnails
-          uploadedImages={uploadedImages}
-          selectedImageId={selectedImageId}
-          setSelectedImageId={setSelectedImageId}
-        />
+          {/* Image Thumbnails Section */}
+          <ImageThumbnails
+            uploadedImages={uploadedImages}
+            selectedImageId={selectedImageId}
+            setSelectedImageId={setSelectedImageId}
+          />
+      </div>
+
+      {/* undo and redo button */}
+      <div className="absolute top-28 left-24 w-1/12 gap-2 items-center justify-center flex bg-gray-200 shadow-lg rounded-lg cursor-pointer">
+      <button 
+          onClick={undo} 
+          disabled={!selectedImageId || currentSteps[selectedImageId] === 0}
+          className={`${!selectedImageId || currentSteps[selectedImageId] === 0 ? 'text-gray-400 cursor-not-allowed': 'text-black cursor-pointer'}`}
+        >
+          <CgUndo className='size-12' />
+        </button>
+        <div className="h-12 w-0.5 md:block hidden bg-gray-400"></div>
+        <button 
+          onClick={redo} 
+          disabled={!selectedImageId || currentSteps[selectedImageId] >= (imageHistories[selectedImageId]?.length - 1)} 
+          className={`${!selectedImageId || currentSteps[selectedImageId] >= (imageHistories[selectedImageId]?.length - 1) ? 'text-gray-400 cursor-not-allowed': 'text-black cursor-pointer'}`}
+        >
+          <CgRedo className='size-12' />
+        </button>
       </div>
 
       {/* Action Section */}
@@ -614,80 +617,11 @@ const EditImage = ({ defaultFormat }) => {
           {/* Convert Button */}
           <button
             className="bg-gray-900 flex justify-center items-center hover:bg-gray-600 text-white text-xs md:text-sm font-bold py-4 px-4"
-            onClick={() => handleConvertImages(uploadedImages, user, emailVerified, idToken, navigate, setDisplayType, setDownloadPageActive)}
+            onClick={handleButtonClick}
           >
             Convert <FaArrowRight className="ml-4"/>
           </button>
       </div>
-
-      {/* <aside className={`relative z-40 sm:z-auto top-0 right-0 sm:top-auto sm:right-auto transform ${actionsCollapsed ? 'w-1/4 translate-x-full sm:translate-x-0' : 'hidden translate-x-0'} transition-transform duration-300 h-screen bg-orange-100 shadow-lg text-gray-700`}>
-        <nav className="flex flex-col p-2 sm:p-4 space-y-8 h-full mt-4">
-          <CgPushRight onClick={() => setActionsCollapsed(!actionsCollapsed)} className='text-lg sm:text-xl md:text-2xl' />
-          {actionsCollapsed && (
-            <div className="flex flex-col items-center h-full">
-              Upload Options
-              <div
-                className="relative w-4/5 z-20 text-center bg-teal-500 rounded-lg shadow-lg flex items-center justify-between px-6"
-                onMouseEnter={() => setShowDropdown(true)}
-                onMouseLeave={() => setShowDropdown(false)}
-              >
-                <span className="text-white text-xs md:text-sm lg:text-base font-bold py-4 px-2">Add More Photos</span>
-                {showDropdown && (
-                  <UploadOptions
-                    handleFileUpload={handleFileUpload}
-                    handleOpenPicker={handleOpenPicker}
-                    onSuccess={onSuccess}
-                    onCancel={onCancel}
-                    uploadedFiles={uploadedImages}
-                    setUploadedFiles={setUploadedImages}
-                    emailVerified={emailVerified}
-                    setOversizedFiles={setOversizedFiles}
-                    setShowErrorMessages={setShowErrorMessages}
-                    setShowUploadForm={setShowUploadForm}
-                    developerKey={developerKey}
-                    defaultFormat={defaultFormat}
-                    defaultSettings={defaultSettings}
-                    mimeType="image/*"
-                    editImage={true}
-                  />
-                )}
-              </div>
-
-              Format Selection Dropdowns
-              {image && (
-                <div className='flex items-center mt-8'>
-                  <p className='text-xs md:text-sm lg:text-base pr-2 text-gray-500'>Output Format:</p>
-                  <FormControl fullWidth>
-                    <InputLabel id="format-select-label">Format</InputLabel>
-                    <Select
-                      labelId="format-select-label"
-                      value={image.format || ''}
-                      onChange={handleFormatChange}
-                    >
-                      {formats.map(format => (
-                        <MenuItem key={format.format} value={format.format.toLowerCase()}>
-                          {format.format}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </div>
-              )}
-              
-              Push the button to the bottom
-              <div className="flex-grow"></div>
-
-              Convert Button
-              <button
-                className="bg-teal-500 flex justify-center items-center hover:bg-teal-600 text-white text-xs md:text-sm lg:text-lg font-bold py-4 px-4 lg:px-8 mt-4"
-                onClick={() => handleConvertImages(uploadedImages, user, emailVerified, idToken, navigate, setDisplayType, setDownloadPageActive)}
-              >
-                Convert <FaArrowRight className="ml-4"/>
-              </button>
-            </div>
-          )}
-        </nav>
-      </aside> */}
       </div>
     </div>
   );

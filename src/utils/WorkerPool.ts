@@ -1,5 +1,7 @@
+import { ImageDataProps } from "../typings/types";
+
 export interface WorkerTask {
-  data: any; // Define your task data type appropriately
+  data: ImageDataProps;
   callback: (result: any) => void;
 }
 
@@ -39,7 +41,7 @@ export class WorkerPool {
     if (workerObj) {
       workerObj.busy = false;
     }
-    const task = workerObj?.task;
+    const task = workerObj?.worker.task;
 
     if (task && task.callback) {
       task.callback(e.data);
@@ -63,7 +65,7 @@ export class WorkerPool {
     console.error('Worker error:', e);
 
     // Retry the task or handle the error
-    const task = worker.task;
+    const task = workerObj?.worker.task;
     if (task && task.callback) {
       task.callback({ error: e.message });
     }

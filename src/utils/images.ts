@@ -35,7 +35,7 @@ export const imageSettingsConfig = [
             { value: 'None', label: 'None' },
             { value: 'Gaussian', label: 'Gaussian' },
             { value: 'Median', label: 'Median' },
-            { value: 'Bilateral', label: 'Bilateral' },
+            // { value: 'Bilateral', label: 'Bilateral' },
           ],
         },
         {
@@ -43,7 +43,7 @@ export const imageSettingsConfig = [
           label: 'Kernel Size',
           type: 'number',
           min: 1,
-          max: 31,
+          max: 101,
           step: 2,
         },
       ],
@@ -197,7 +197,7 @@ const convertImage = async (image: FileDetails, user: UserImpl, emailVerified: b
     const formData = new FormData();
     formData.append('mimeType', 'image');
     formData.append('source', image.source);
-    if (image.file instanceof File) {
+    if (image.file instanceof File || image.file instanceof Blob) {
       formData.append('image', image.file);
     } 
     formData.append('imageId', image.fileId || '');

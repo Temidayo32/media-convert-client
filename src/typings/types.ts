@@ -1,3 +1,13 @@
+export type ImageDataProps = {
+    canvasHeight: number;
+    canvasWidth: number;
+    imageData: ImageData;
+    colorSpace: string;
+    height: number;
+    width: number;
+    imageSettings: ImageFilter;
+}
+
 interface DropboxFile {
     bytes: number;
     icon: string;

@@ -15,12 +15,36 @@ export const DataProvider = ({ children }) => {
   const [showErrorMessages, setShowErrorMessages] = useState(false);
   const [showUploadForm, setShowUploadForm] = useState(true);
   
-
   return (
-    <DataContext.Provider value={{ showSignUpOptions, setShowSignUpOptions, uploadedVideos, setUploadedVideos, uploadedImages, setUploadedImages, downloadPageActive, displayType, setDisplayType, setDownloadPageActive, idToken, setIdToken, emailVerified, setEmailVerified, userCredentials, setUserCredentials, oversizedFiles, setOversizedFiles, showErrorMessages, setShowErrorMessages, showUploadForm, setShowUploadForm }}>
+    <DataContext.Provider value={{
+      showSignUpOptions,
+      setShowSignUpOptions,
+      uploadedVideos,
+      setUploadedVideos,
+      uploadedImages,
+      setUploadedImages,
+      downloadPageActive,
+      setDownloadPageActive,
+      displayType,
+      setDisplayType,
+      idToken,
+      setIdToken,
+      emailVerified,
+      setEmailVerified,
+      userCredentials,
+      setUserCredentials,
+      oversizedFiles,
+      setOversizedFiles,
+      showErrorMessages,
+      setShowErrorMessages,
+      showUploadForm,
+      setShowUploadForm
+    }}>
       {children}
     </DataContext.Provider>
   );
-};
+
+}
+  
 
 export const useData = () => useContext(DataContext);

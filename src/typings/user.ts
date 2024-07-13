@@ -31,7 +31,7 @@ interface ProviderUserInfo {
     displayName: string;
     email: string;
     federatedId: string;
-    photoUrl: string;
+    photoUrl: string | null;
     providerId: string;
     rawId: string;
     validSince: string;

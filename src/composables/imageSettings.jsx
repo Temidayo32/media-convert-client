@@ -3,7 +3,7 @@ import RotateLeftIcon from '@mui/icons-material/RotateLeft';
 import RotateRightIcon from '@mui/icons-material/RotateRight';
 import FlipIcon from '@mui/icons-material/Flip';
 
-export const renderSettingControl = (category, setting, imageSettings, handleSettingChange, handleFlip, handleRotateClick) => {
+export const renderSettingControl = (category, setting, imageSettings, selectedPreset, setSelectedPreset, handleApplyCrop, handleSettingChange, handleFlip, handleRotateClick) => {
     if (!setting) return null;
 
     switch (setting.type) {
@@ -103,6 +103,34 @@ export const renderSettingControl = (category, setting, imageSettings, handleSet
             label={setting.label}
           />
         );
+      case 'preset':
+          return (
+            <div className="mt-4">
+              <div className="mt-1 grid grid-cols-2 gap-4">
+                {setting.presets.map((preset, index) => (
+                 <div key={`${preset.label}-${index}`} className="flex items-center justify-center p-2"> 
+                  <button
+                      onClick={() => setSelectedPreset(preset.label === 'None' ? null : preset)}
+                      className="flex flex-col items-center justify-center p-2 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      style={{ width: `${preset.width/ 5}px`, height: `${preset.height/5}px` }}
+                    >
+                      <div className="text-sm text-gray-500">{preset.label}</div>
+                    </button>
+                  </div>
+                ))}
+                {selectedPreset && (
+                  <div className="mt-4 flex justify-center">
+                    <button
+                      onClick={handleApplyCrop}
+                      className="px-4 py-2 bg-gray-500 text-white font-bold rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    >
+                      Apply Crop
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
       case 'icon':
         if (setting.key === 'angle') {
           return (

@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import io from 'socket.io-client';
 import { getAuth } from 'firebase/auth';
-import { initGoogleAPI, handleGoogleAuth } from '../../utils/goggleAuth';
+import { initGoogleAPI, handleGoogleAuth } from '../../utils/auth';
 import { handleOpenPicker, onCancel, onSuccess, handleFileUpload } from '../../utils/uploadFiles';
 
 
@@ -55,6 +55,8 @@ const UploadVideo = ({defaultFormat}) => {
   const { idToken, showErrorMessages, setShowErrorMessages } = useData();
   const auth = getAuth();
   const user = auth.currentUser
+
+  console.log(user)
 
   useEffect(() => {
     fetch('/conversions.json')
