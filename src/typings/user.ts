@@ -28,8 +28,8 @@ interface ProviderData {
   }
   
 interface ProviderUserInfo {
-    displayName: string;
-    email: string;
+    displayName: string | null;
+    email: string | null;
     federatedId: string;
     photoUrl: string | null;
     providerId: string;
@@ -54,8 +54,8 @@ export interface UserImpl {
     reloadListener: null; // Adjust type if reloadListener has a specific type
     uid: string;
     accessToken: string;
-    displayName: string;
-    email: string;
+    displayName: string | null;
+    email: string | null;
     emailVerified: boolean;
     isAnonymous: boolean;
     metadata: UserMetadata;

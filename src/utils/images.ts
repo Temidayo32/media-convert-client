@@ -211,7 +211,7 @@ const convertImage = async (image: FileDetails, user: UserImpl, emailVerified: b
     formData.append('imageFormat', image.format);
     formData.append('imageSettings', JSON.stringify(image.settings));
   
-    if (user && user.uid) {
+    if (user) {
       formData.append('userId', user.uid);
     }
   
@@ -233,8 +233,10 @@ const convertImage = async (image: FileDetails, user: UserImpl, emailVerified: b
     };
   
   
-    if (idToken && emailVerified) {
+    if (idToken) {
       headers['Authorization'] = `Bearer ${idToken}`;
+      headers['User-Id'] = user.uid;
+      headers['Is-Anonymous'] = user.isAnonymous.toString();
     }
   
     const requestURL = endpoint;

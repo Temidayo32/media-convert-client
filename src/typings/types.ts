@@ -93,3 +93,13 @@ export interface ImageFilter {
     };
   }
   
+export interface Task {
+  completedAt?: string;
+  fileUrl?: string;
+  format: string;
+  mimeType: string;
+  name: string;
+  progress: string;
+  userId: string;
+  [key: string]: any;
+}

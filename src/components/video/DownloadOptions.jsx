@@ -29,7 +29,7 @@ const DownloadOptions = ({ item, downloadUrl, progress }) => {
           return;
         }
 
-        const dbx = new Dropbox({ accessToken: token.result.access_token });
+        const dbx = new Dropbox({ accessToken: token });
         const response = await fetch(downloadUrl);
         if (!response.ok) {
           throw new Error(`Failed to fetch file: ${response.statusText}`);
@@ -100,7 +100,7 @@ const DownloadOptions = ({ item, downloadUrl, progress }) => {
     
   const handleUploadToGoogleDrive = async () => {  
     const accessToken = await handleGoogleAuth();
-    // console.log(accessToken)
+    console.log(accessToken)
 
     if (!accessToken) {
       console.error('Access token not available.');

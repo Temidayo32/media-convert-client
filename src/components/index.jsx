@@ -13,6 +13,7 @@ export {default as EmailVerification} from "./home/EmailVerification";
 export {default as EmailVerificationRedirect} from './home/EmailVerificationRedirect';
 export { default as Menu } from './home/Menu';
 export {default as EmailVerificationMenu} from './home/EmailVerificationMenu';
+export { default as EmailAdminVerication } from './home/EmailAdminVerication';
 export {default as VideoSection} from './home/VideoSection';
 export {default as Footer} from './Footer';
 export {default as Signupmodal} from './home/Signupmodal'

@@ -1,8 +1,14 @@
 import { doc, deleteDoc, getDoc } from 'firebase/firestore';
 import { db } from '../config/firebase_config';
+import { Task } from '../typings/types';
+import { User } from 'firebase/auth';
 
 //for recentTasks.jsx
-export const handleRemoveTask = async (user, jobId, setTasks) => {
+export const handleRemoveTask = async ( 
+    user: User, 
+    jobId: string, 
+    setTasks: React.Dispatch<React.SetStateAction<Task[]>>
+  ): Promise<void> =>  {
     try {
         const userId = user.uid;
         const taskRef = doc(db, 'tasks', jobId);

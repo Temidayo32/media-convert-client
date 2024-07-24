@@ -140,7 +140,7 @@ const UploadVideo = ({defaultFormat}) => {
       formData.append('videoSize', video.size);
       formData.append('videoFormat', video.format);
       formData.append('videoSettings', JSON.stringify(video.settings))
-      if (user && user.uid) {
+      if (user) {
         formData.append('userId', user.uid);
       }
       // for (const [key, value] of formData.entries()) {
@@ -160,8 +160,10 @@ const UploadVideo = ({defaultFormat}) => {
       'Content-Type': 'multipart/form-data'
     };
 
-    if (idToken && emailVerified) {
+    if (idToken) {
       headers['Authorization'] = `Bearer ${idToken}`;
+      headers['User-Id'] = user.uid;
+      headers['Is-Anonymous'] = user.isAnonymous.toString();
     }
 
     

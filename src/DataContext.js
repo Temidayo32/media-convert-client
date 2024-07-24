@@ -14,6 +14,8 @@ export const DataProvider = ({ children }) => {
   const [oversizedFiles, setOversizedFiles] = useState([]);
   const [showErrorMessages, setShowErrorMessages] = useState(false);
   const [showUploadForm, setShowUploadForm] = useState(true);
+  const [showUser, setShowUser ] = useState(false);
+  const [open, setOpen] = useState(false);
   
   return (
     <DataContext.Provider value={{
@@ -27,6 +29,8 @@ export const DataProvider = ({ children }) => {
       setDownloadPageActive,
       displayType,
       setDisplayType,
+      showUser,
+      setShowUser,
       idToken,
       setIdToken,
       emailVerified,
@@ -38,7 +42,9 @@ export const DataProvider = ({ children }) => {
       showErrorMessages,
       setShowErrorMessages,
       showUploadForm,
-      setShowUploadForm
+      setShowUploadForm,
+      open,
+      setOpen,
     }}>
       {children}
     </DataContext.Provider>
