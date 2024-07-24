@@ -23,7 +23,7 @@ function Signup({ showLogin, show, onClose, setUserCredentials, closeSignUpAndSh
           >
             <div
               ref={signUpRef}
-              className="bg-white p-8 sm:p-12 h-8/12 md:h-1/2 w-11/12 lg:h-fit md:w-2/3 lg:w-1/2 xl:w-2/5 rounded-lg shadow-xl"
+              className="bg-white p-8 sm:p-12 w-11/12 h-fit md:w-2/3 lg:w-1/2 xl:w-2/5 rounded-lg shadow-xl"
             >
               <div className="mb-8 sm:mb-12 text-center">
                 <p className="font-bold text-lg md:text-2xl mb-0">Create your account</p>

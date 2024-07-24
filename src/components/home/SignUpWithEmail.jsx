@@ -5,7 +5,8 @@ import { CgSpinner } from "react-icons/cg";
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth,linkWithCredential, EmailAuthProvider } from "firebase/auth";
+import { validateEmail, validatePassword } from '../../utils/auth';
 
 function SignUpWithEmail({setUserCredentials, closeSignUpAndShowSuccess}) {
   const [email, setEmail] = useState('');
@@ -16,15 +17,8 @@ function SignUpWithEmail({setUserCredentials, closeSignUpAndShowSuccess}) {
   const [passwordError, setPasswordError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const validateEmail = (email) => {
-    const re = /\S+@\S+\.\S+/;
-    return re.test(email);
-  };
-
-  const validatePassword = (password) => {
-    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
-    return passwordRegex.test(password);
-  };
+  const auth = getAuth();
+  const user = auth.currentUser;
 
   const handleEmailChange = (e) => {
     const { value } = e.target;
@@ -77,17 +71,39 @@ function SignUpWithEmail({setUserCredentials, closeSignUpAndShowSuccess}) {
     setPasswordsMatch(true);
     setIsLoading(true);
 
-    firebase.auth().createUserWithEmailAndPassword(email, password).then((userCredential) => {
-        setUserCredentials(userCredential.user);
-        closeSignUpAndShowSuccess();
-    })
-    .catch((error) => {
-      console.error(error);
-    })
-    .finally(() => {
-      setIsLoading(false);
-    })
+    try {
+      if (user && user.isAnonymous) {
+        const credential = EmailAuthProvider.credential(email, password);
+
+        linkWithCredential(user, credential)
+          .then((userCredentials) => {
+            setShowUser(true);
+            setShowSignUpOptions(false)
+            setLocalStorageItem('userCredentials', userCredentials);
+            closeSignUpAndShowSuccess();
+            // setIdToken(userCredentials.credential.idToken);
+            console.log("Anonymous account successfully upgraded");
+          }).catch((error) => {
+            console.log("Error upgrading anonymous account", error);
+          });
+      } else {
+        firebase.auth().createUserWithEmailAndPassword(email, password).then((userCredential) => {
+          setUserCredentials(userCredential.user);
+          closeSignUpAndShowSuccess();
+          })
+          .catch((error) => {
+            console.error(error);
+          })
+      }
+
+  } catch(error) {
+    console.error(error)
+  } finally {
+    setIsLoading(false);
   };
+}
+
+
 
   return (
     <div className="flex flex-col mt-4">

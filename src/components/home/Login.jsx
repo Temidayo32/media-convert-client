@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useData } from '../../DataContext';
 import SignUpWithGoogle from './SignUpWithGoogle';
 import LoginWithEmail from './LoginWithEmail';
 
 function Login({onForgotPasswordClick, show, onClose, showSignUp }) {
     const loginRef = useRef(null);
+    const {open} = useData()
 
   //   useEffect(() => {
   //     function closeModal(event) {
@@ -26,12 +28,16 @@ function Login({onForgotPasswordClick, show, onClose, showSignUp }) {
         onClose();
       }
     };
+
+    if(open) {
+      onClose();
+    }
   
     return (
       <div>
         {show && (
         <div id='closeLogin' class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-20" onClick={handleClick}>
-            <div ref={loginRef} className="bg-white p-8 sm:p-12 h-8/12 md:h-1/2 w-10/12 lg:h-fit md:w-2/3 lg:w-1/2 xl:w-2/5 rounded-lg shadow-xl">
+            <div ref={loginRef} className="bg-white p-8 sm:p-12 w-10/12 h-fit md:w-2/3 lg:w-1/2 xl:w-2/5 rounded-lg shadow-xl">
             <div class="mb-12 text-center"><p className="font-weight-bold text-lg md:text-2xl mb-0">Log In</p></div>
             <div class="mb-4 w-100 text-center">
                 <SignUpWithGoogle />

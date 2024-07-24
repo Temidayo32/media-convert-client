@@ -35,7 +35,7 @@ function EmailVerificationMenu({ emailVerified, userCredentials }) {
 
 
   return (
-    <div className="bg-orange-700 py-2 px-2 flex flex-col items-center md:flex-row lg:justify-between lg:items-center">
+    <div className="bg-orange-700 py-2 px-2 flex flex-col items-center md:flex-row lg:justify-between lg:items-center w-full absolute top-0">
       <p className="text-white text-xs lg:text-sm text-center lg:text-left">
         Please verify your email address. Your account is limited without verifying your email address.
       </p>

@@ -1,9 +1,11 @@
 import React, {useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Login, PasswordReset, Signup, AccountSuccess, EmailVerification, EmailVerificationMenu, Menu, HeaderOptions } from '..';
+import { Login, PasswordReset, Signup, AccountSuccess, EmailVerification, EmailAdminVerication, EmailVerificationMenu, Menu, HeaderOptions } from '..';
 import { getLocalStorageItem, setLocalStorageItem, removeLocalStorageItem } from '../../utils/localStorage';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 import { useData } from '../../DataContext';
+import { GoogleAuthProvider } from "firebase/auth";
+
 
 import { FaBars, FaTimes } from 'react-icons/fa';
 
@@ -12,24 +14,24 @@ function Header() {
     const [showLogin, setShowLogin] = useState(true);
     const [showSignUp, setShowSignUp] = useState(true);
     const [showLoginOptions, setShowLoginOptions] = useState(false);
-    const {showSignUpOptions, setShowSignUpOptions}  = useData();
+    const {showSignUpOptions, setShowSignUpOptions, showUser, setShowUser }  = useData();
     const {idToken, setIdToken} = useData();
     const [showPasswordReset, setShowPasswordReset] = useState(false);
     const { userCredentials, setUserCredentials } = useData();
     const [showEmailVerification, setShowEmailVerification] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
-    const [showUser, setShowUser ] = useState(false);
     const {emailVerified, setEmailVerified} = useData(); 
     const [menuOpen, setMenuOpen] = useState(false);
 
     const auth = getAuth();
     // console.log(auth.currentUser)
+    
 
     useEffect(() => {
       const storedUser = getLocalStorageItem('userCredentials');
       const storedToken = getLocalStorageItem('idToken');
       
-      if (storedUser) {
+      if (!storedUser.isAnonymous) {
         setUserCredentials(storedUser);
         setShowUser(true);
         setEmailVerified(storedUser.emailVerified);
@@ -41,7 +43,7 @@ function Header() {
       }
   
       const unsubscribe = onAuthStateChanged(auth, (user) => {
-        if (user) {
+        if (user && !user.isAnonymous) {
           setUserCredentials(user);
           setShowUser(true);
           setEmailVerified(user.emailVerified);
@@ -58,6 +60,25 @@ function Header() {
           setShowMenu(false);
           removeLocalStorageItem('userCredentials');
           removeLocalStorageItem('idToken');
+
+          // Sign in anonymously if no user is found
+        signInAnonymously(auth)
+        .then((userCredentials) => {
+          const user = userCredentials.user;
+          setUserCredentials(user);
+          setShowUser(false);
+          setEmailVerified(user.emailVerified);
+          setShowLogin(false);
+          setLocalStorageItem('userCredentials', user);
+
+          user.getIdToken(true).then((token) => {
+            setIdToken(token);
+            setLocalStorageItem('idToken', token);
+          });
+        })
+        .catch((error) => {
+          console.error('Anonymous sign-in failed:', error);
+        });
         }
       });
   
@@ -106,17 +127,19 @@ function Header() {
       };
 
     const handleMenuItemClick = () => setMenuOpen(false);
+    console.log(userCredentials)
     
 
     return (
         <>
-        {!emailVerified && userCredentials && (
+        <EmailAdminVerication/>
+        {!emailVerified && userCredentials && !userCredentials.isAnonymous && (
             <EmailVerificationMenu
               emailVerified={emailVerified}
               userCredentials={userCredentials}
             />
           )}
-        <header className="bg-white py-2 border-b border-gray-200 shadow-xl w-full fixed z-50 top-0">
+        <header className="bg-white py-2 border-b border-gray-200 shadow-xl w-full z-50 top-0 fixed">
           <div className="mx-4 sm:mx-6 flex justify-between items-center">
             <div className="flex items-center gap-12">
               <div className='flex items-center'>
@@ -169,7 +192,7 @@ function Header() {
             </div>
           )}
           {showLogin && (
-            <Login showSignUp={toggleSignUpOptions} onForgotPasswordClick={togglePasswordReset} show={showLoginOptions} onClose={() => setShowLoginOptions(false)} />
+            <Login showSignUp={toggleSignUpOptions} onForgotPasswordClick={togglePasswordReset} show={showLoginOptions} onClose={() => setShowLoginOptions(false)}/>
           )}
           {showPasswordReset && (
             <PasswordReset handleLogIn={toggleLogInOptions} show={showPasswordReset} onClose={togglePasswordReset} />

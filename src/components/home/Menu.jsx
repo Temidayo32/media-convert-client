@@ -15,7 +15,7 @@ function Menu() {
   const email = userCredentials.email;
 
   let displayName = userCredentials.displayName || '';
-    if (!displayName) {
+    if (!displayName && email) {
     const username = email.split('@')[0];
     displayName = username.charAt(0).toUpperCase() + username.slice(1);
     }
