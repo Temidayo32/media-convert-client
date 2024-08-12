@@ -1,0 +1,14 @@
+# Exclude all test files and directories
+src/tests
+src/__tests__/
+src/**/*.test.js
+src/**/*.spec.js
+
+babel.config.js
+jest.config.js
+.gitignore
+
+
+# Ignore build directories
+build/
+dist/
