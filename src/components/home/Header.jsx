@@ -30,8 +30,8 @@ function Header() {
     useEffect(() => {
       const storedUser = getLocalStorageItem('userCredentials');
       const storedToken = getLocalStorageItem('idToken');
-      
-      if (!storedUser.isAnonymous) {
+
+      if (storedUser && !storedUser.isAnonymous) {
         setUserCredentials(storedUser);
         setShowUser(true);
         setEmailVerified(storedUser.emailVerified);
