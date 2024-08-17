@@ -3,6 +3,8 @@ import { ImageFilter, FileDetails } from '../typings/types';
 import { UserImpl } from '../typings/user';
 import { useNavigate } from 'react-router-dom';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL
+
 export const defaultSettings: ImageFilter = {
   brightness: { alpha: 1.0, beta: 0 },
   blur: { type: 'None', kernel_size: 1 },
@@ -238,8 +240,8 @@ const convertImage = async (image: FileDetails, user: UserImpl, emailVerified: b
       headers['User-Id'] = user.uid;
       headers['Is-Anonymous'] = user.isAnonymous.toString();
     }
-  
-    const requestURL = endpoint;
+
+    const requestURL = `${BASE_URL}${endpoint}`;
   
     return axios
       .post(requestURL, formData, { headers, withCredentials: true })

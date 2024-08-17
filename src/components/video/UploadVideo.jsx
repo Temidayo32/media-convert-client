@@ -7,6 +7,7 @@ import { getAuth } from 'firebase/auth';
 import { initGoogleAPI, handleGoogleAuth } from '../../utils/auth';
 import { handleOpenPicker, onCancel, onSuccess, handleFileUpload } from '../../utils/uploadFiles';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL
 
 import { FaFileCirclePlus } from "react-icons/fa6";
 import { IoIosArrowDropdownCircle } from 'react-icons/io';
@@ -166,8 +167,8 @@ const UploadVideo = ({defaultFormat}) => {
       headers['Is-Anonymous'] = user.isAnonymous.toString();
     }
 
-    
-    const requestURL = endpoint;
+
+    const requestURL = `${BASE_URL}${endpoint}`;
 
     axios.post(requestURL, formData, { headers, withCredentials: true })
       .then(data => console.log(data))

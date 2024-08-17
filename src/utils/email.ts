@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { Dispatch, SetStateAction } from 'react';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL
+
 export async function emailVerification(
     email: string, 
     setErrorMessage: Dispatch<SetStateAction<string | null>>, 
@@ -18,7 +20,7 @@ export async function emailVerification(
       };
 
       try {
-        const response = await axios.post("/email/sendEmail", formData, { headers, withCredentials: true });
+        const response = await axios.post(`${BASE_URL}/email/sendEmail`, formData, { headers, withCredentials: true });
         setSuccessMessage(response.data.message || 'Verification email sent successfully');
         setErrorMessage(null); // Clear any previous error message
         return { success: true, data: response.data };
