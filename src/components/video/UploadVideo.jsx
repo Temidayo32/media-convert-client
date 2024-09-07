@@ -35,7 +35,7 @@ const defaultSettings = {
   noAudio: false,
 };
 
-const socket = io('http://localhost:8000'); 
+const socket = io(`${BASE_URL}`);  //'http://localhost:8000'
 
 const UploadVideo = ({defaultFormat}) => {
   const navigate = useNavigate();

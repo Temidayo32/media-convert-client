@@ -17,7 +17,8 @@ import UploadOptions from '../video/UploadOptions';
 import { useData } from '../../DataContext';
 
 
-const socket = io('http://localhost:8000');
+const BASE_URL = process.env.REACT_APP_BASE_URL
+const socket = io(`${BASE_URL}`);
 
 const UploadImage = ({ defaultFormat }) => {
   const navigate = useNavigate();

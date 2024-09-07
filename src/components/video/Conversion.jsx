@@ -8,7 +8,8 @@ import io from 'socket.io-client';
 import { MdDelete } from "react-icons/md";
 import DownloadOptions from './DownloadOptions';
 
-const socket = io('http://localhost:8000');
+const BASE_URL = process.env.REACT_APP_BASE_URL
+const socket = io(`${BASE_URL}`);
 
 const Conversion = () => {
   const { uploadedVideos, uploadedImages, setUploadedVideos, setUploadedImages, displayType } = useData();
