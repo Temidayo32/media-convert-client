@@ -59,7 +59,7 @@ const UploadVideo = ({defaultFormat}) => {
   const auth = getAuth();
   const user = auth.currentUser
 
-  console.log(user)
+  // console.log(user)
 
   useEffect(() => {
     fetch('/conversions.json')

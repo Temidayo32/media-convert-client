@@ -41,7 +41,7 @@ const UploadImage = ({ defaultFormat }) => {
   const auth = getAuth();
   const user = auth.currentUser;
 
-  console.log(uploadedImages)
+  // console.log(uploadedImages)
 
   useEffect(() => {
     fetch('/conversions.json')

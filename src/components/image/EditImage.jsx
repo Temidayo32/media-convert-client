@@ -168,7 +168,7 @@ const EditImage = ({ defaultFormat }) => {
 
           canvas.toBlob((blob) => {
             if(blob) {
-              console.log(blob)
+              // console.log(blob)
             }
           })
         };
@@ -235,7 +235,7 @@ const EditImage = ({ defaultFormat }) => {
   
         offscreenCanvas.convertToBlob().then((blob) => {
           if (blob) {
-            console.log(blob)
+            // console.log(blob)
             resolve(blob);
           } else {
             reject(new Error('Failed to convert canvas to blob.'));
@@ -299,7 +299,7 @@ const EditImage = ({ defaultFormat }) => {
         // Example validation checks
         if (imageSettings.blur) {
           const { kernel_size } = imageSettings.blur;
-          console.log(kernel_size)
+          // console.log(kernel_size)
           if (kernel_size % 2 === 0) {
             throw new InvalidKernelSizeError('Kernel size for blur must be an odd number.');
           }
@@ -386,7 +386,7 @@ const EditImage = ({ defaultFormat }) => {
         angle: (prevSettings.rotate.angle + angle) % 360
       }
     }));
-    console.log(angle)
+    // console.log(angle)
     handleImageSettingsChange({ ...imageSettings, rotate: { ...imageSettings.rotate, angle: (imageSettings.rotate.angle + angle) % 360 } });
   };
   
