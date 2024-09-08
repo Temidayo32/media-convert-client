@@ -13,6 +13,7 @@ import { FaFileCirclePlus } from "react-icons/fa6";
 import { IoIosArrowDropdownCircle } from 'react-icons/io';
 import { BsGearFill } from 'react-icons/bs';
 import { MdDelete } from "react-icons/md";
+import { CgSpinner } from "react-icons/cg";
 
 import { clientId, developerKey, azureClientId } from '../../config/key';
 import UploadOptions from './UploadOptions';
@@ -42,6 +43,7 @@ const UploadVideo = ({defaultFormat}) => {
   const { format: currentFormat } = useParams();
   const { uploadedVideos, setUploadedVideos, setDownloadPageActive, setDisplayType, oversizedFiles, setOversizedFiles } = useData();
   const { showSignUpOptions, setShowSignUpOptions, emailVerified } = useData();
+  const [isLoading, setIsLoading] = useState(false)
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [showUploadForm, setShowUploadForm] = useState(true);
@@ -124,6 +126,7 @@ const UploadVideo = ({defaultFormat}) => {
   };
 
   const handleConvertVideos = () => {
+    setIsLoading(true);
     // Convert uploaded video
     uploadedVideos.forEach((video) => {
       const fileNameWithoutExtension = video.name.split('.')[0];
@@ -289,7 +292,7 @@ const UploadVideo = ({defaultFormat}) => {
             <FaFileCirclePlus className="text-white hidden sm:block sm:text-xl md:text-2xl lg:text-4xl" />
             <span className="uploaded uploads text-white text-center text-sm py-4 md:py-0 sm:text-lg lg:text-2xl ml-4 lg:ml-0 font-semibold cursor-pointer">Add More Files</span>
             <div className="h-20 w-0.5 md:block hidden bg-teal-400"></div>
-            <IoIosArrowDropdownCircle className="text-white hidden sm:block sm:text-xl md:text-2xl lg:text-4xl cursor-pointer" />
+            <IoIosArrowDropdownCircle className="text-white hidden sm:block sm:text-xl md:text-2xl lg:text-4xl -pointer" />
             { showDropdown && 
               <UploadOptions 
                 handleFileUpload={handleFileUpload} 
@@ -351,9 +354,10 @@ const UploadVideo = ({defaultFormat}) => {
         <div className="flex justify-between items-center mt-8">
           <span className="text-gray-600 text-xs md:text-sm lg:text-lg">{uploadedVideos.length} videos uploaded</span>
           {!emailVerified && (<p className='text-center text-gray-500 mt-auto text-xs'>*Limit 5 conversions/day</p>)}
-          <button className="bg-teal-800 hover:bg-teal-600 text-white text-xs md:text-sm lg:text-lg font-bold py-2 px-4 lg:px-8"
-            onClick={handleConvertVideos}>
-            Convert
+          <button className={`bg-teal-800 ${isLoading ? 'bg-teal-600 cursor-not-allowed' : 'hover:bg-teal-600'} text-white text-xs md:text-sm lg:text-lg font-bold py-2 px-4 lg:px-8`}
+            onClick={handleConvertVideos}
+            disabled={isLoading}>
+              {isLoading ? <CgSpinner className="animate-spin mr-2 size-6" /> : 'Convert'}
           </button>
         </div>
       </div>

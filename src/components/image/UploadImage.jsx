@@ -11,6 +11,7 @@ import { IoIosArrowDropdownCircle } from 'react-icons/io';
 import { BsGearFill } from 'react-icons/bs';
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
+import { CgSpinner } from "react-icons/cg";
 
 import { clientId, developerKey, azureClientId } from '../../config/key';
 import UploadOptions from '../video/UploadOptions';
@@ -25,6 +26,7 @@ const UploadImage = ({ defaultFormat }) => {
   const { format: currentFormat } = useParams();
   const { uploadedImages, setUploadedImages, setDownloadPageActive, setDisplayType, oversizedFiles, setOversizedFiles } = useData();
   const { showSignUpOptions, setShowSignUpOptions, emailVerified } = useData();
+  const [isLoading, setIsLoading] = useState(false);
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [formats, setFormats] = useState([]);
@@ -264,9 +266,10 @@ const UploadImage = ({ defaultFormat }) => {
                 <Link to={`/edit-images/${defaultFormat.toLowerCase()}`} className="flex items-center justify-center bg-orange-800 hover:bg-orange-600 text-white text-xs md:text-sm lg:text-lg font-bold py-2 px-4 lg:px-8">
                   <FaEdit className="mr-2" /> Edit and Convert
                 </Link>
-                <button className="bg-teal-800 hover:bg-teal-600 text-white text-xs md:text-sm lg:text-lg font-bold py-2 px-4 lg:px-8"
-                onClick={() => handleConvertImages(uploadedImages, user, emailVerified, idToken, navigate, setDisplayType, setDownloadPageActive)}>
-                Convert
+                <button className={`bg-teal-800 ${isLoading ? 'bg-teal-600 cursor-not-allowed' : 'hover:bg-teal-600'} text-white text-xs md:text-sm lg:text-lg font-bold py-2 px-4 lg:px-8`}
+                onClick={() => handleConvertImages(uploadedImages, user, emailVerified, idToken, navigate, setDisplayType ,setDownloadPageActive, setIsLoading)}
+                disabled={isLoading}>
+                  {isLoading ? <CgSpinner className="animate-spin mr-2 size-6" /> : 'Convert'}
                 </button>
             </div>
           </div>

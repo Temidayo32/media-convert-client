@@ -22,7 +22,7 @@ const Footer = () => {
           {/* Company Logo and Name Section */}
           <div className="w-full sm:w-2/6 lg:w-1/3 flex items-center sm:items-start justify-center sm:justify-normal mb-4 lg:mb-0">
             <img src="/img/icons/medialogo.svg" alt="Company Logo" className="w-8 h-8 lg:w-12 lg:h-12 mr-2 mb-4" />
-            <span className="text-base lg:text-lg font-bold text-teal-400 mb-4 sm:mt-1 lg:mt-2">Media Convert</span>
+            <span className="text-base lg:text-lg font-bold text-teal-400 mb-4 sm:mt-1 lg:mt-2">Convert Quickly</span>
           </div>
 
           {/* Product Features and Conversion Tools Section */}
@@ -65,7 +65,7 @@ const Footer = () => {
         </div>
 
         {/* Copyright Section */}
-        <p className="text-sm text-center text-gray-400 mt-6">&copy; 2024 Media Convert. All Rights Reserved.</p>
+        <p className="text-sm text-center text-gray-400 mt-6">&copy; 2024 Convert Quickly. All Rights Reserved.</p>
       </div>
     </footer>
   );

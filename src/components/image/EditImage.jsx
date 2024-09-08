@@ -64,6 +64,7 @@ const EditImage = ({ defaultFormat }) => {
   // const { cv, loaded: cvLoaded } = useOpenCv();
   const [activeCategory, setActiveCategory] = useState(null);
   const [ isLoading, setIsLoading ] = useState(false);
+  const [ isImageLoading, setIsImageLoading ] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleCategoryClick = (category) => {
@@ -200,7 +201,7 @@ const EditImage = ({ defaultFormat }) => {
 
   useEffect(() => {
     if (updateComplete) {
-      handleConvertImages(uploadedImages, user, emailVerified, idToken, navigate, setDisplayType, setDownloadPageActive);
+      handleConvertImages(uploadedImages, user, emailVerified, idToken, navigate, setDisplayType, setDownloadPageActive, setIsImageLoading);
       setUpdateComplete(false);  // Reset the flag
     }
   }, [updateComplete, uploadedImages, user, emailVerified, idToken, navigate, setDisplayType, setDownloadPageActive]);
@@ -616,10 +617,11 @@ const EditImage = ({ defaultFormat }) => {
           )}
           {/* Convert Button */}
           <button
-            className="bg-gray-900 flex justify-center items-center hover:bg-gray-600 text-white text-xs md:text-sm font-bold py-4 px-4"
+            className={`bg-gray-900 flex justify-center items-center ${isLoading ? 'bg-gray-600 cursor-not-allowed' : 'hover:bg-gray-600'}  text-white text-xs md:text-sm font-bold py-4 px-4`}
             onClick={handleButtonClick}
+            disabled={isImageLoading}
           >
-            Convert <FaArrowRight className="ml-4"/>
+             {isLoading ? <CgSpinner className="animate-spin mr-2 size-6" /> : 'Convert'} <FaArrowRight className="ml-4"/>
           </button>
       </div>
       </div>

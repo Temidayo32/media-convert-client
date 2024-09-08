@@ -1,8 +1,8 @@
-# Media Convert (frontend)
+# Convert Quickly (frontend) (formerly Media Convert)
 
-**Media Convert** is a web application that allows users to upload media files, convert them to different formats, and download the converted files.
+**Convert Quickly** is a web application that allows users to upload media files, convert them to different formats, and download the converted files.
 
-Check out [Media Convert (backend)](https://github.com/Temidayo32/media-convert-backend)
+Check out [Convert Quickly (backend)](https://github.com/Temidayo32/media-convert-backend)
 
 ## Video Demo
 

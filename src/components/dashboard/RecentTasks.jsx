@@ -45,13 +45,13 @@ const RecentTasks = () => {
           }));
     
           setTasks(tasksData);
-          console.log(tasks);
+          // console.log(tasks);
         } catch (error) {
           console.error('Error fetching tasks:', error);
         }
       }
     };
-    
+
   
     fetchTasks();
   }, [user]);

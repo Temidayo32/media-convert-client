@@ -35,7 +35,7 @@ function AccountSuccess({ openEmailVerification }) {
             <p className="font-weight-bold text-lg md:text-2xl mb-0">Account Created!</p>
           </div>
           <div className="mb-4 text-center text-sm md:text-base py-2">
-            Thank you for signing up to Media Convert, you are the best!
+            Thank you for signing up to Convert Quickly, you are the best!
           </div>
           <div className="flex items-center justify-center mb-4 text-green-500">
             <FaCheck className="w-12 h-12 sm:w-16 sm:h-16 lg:w-28 lg:h-28 xl:w-40 xl:h-40 rounded-full border-4 border-green-500 p-3" />

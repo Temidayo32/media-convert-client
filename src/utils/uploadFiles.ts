@@ -57,7 +57,7 @@ export function handleFileUpload(
       });
     }
 
-    console.log(newFiles)
+    // console.log(newFiles)
     setUploadedFiles(newFiles);
     setOversizedFiles(oversizedFiles);
   

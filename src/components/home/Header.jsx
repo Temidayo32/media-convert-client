@@ -127,7 +127,7 @@ function Header() {
       };
 
     const handleMenuItemClick = () => setMenuOpen(false);
-    console.log(userCredentials)
+    // console.log(userCredentials)
     
 
     return (
@@ -144,7 +144,7 @@ function Header() {
             <div className="flex items-center gap-12">
               <div className='flex items-center'>
                 <img src="/img/icons/medialogo.svg" alt="Logo" className="w-8 sm:w-12 md:w-14 mr-4 text-teal-800"/>
-                <Link to="/" className="text-teal-800 text-base sm:text-lg md:text-xl font-bold">Media Convert</Link>
+                <Link to="/" className="text-teal-800 text-base sm:text-lg md:text-xl font-bold">Convert Quickly</Link>
               </div>
               <div className="hidden md:flex">
                 <HeaderOptions />

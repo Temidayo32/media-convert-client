@@ -6,7 +6,7 @@ const HowToConvert = () => {
     {
       number: 1,
       icon: <FaFileVideo className="text-teal-700 w-6 h-6 md:w-8 md:h-8" />,
-      description: 'Select from one of Media Convert video converters. e.g. MOV converter.',
+      description: 'Select from one of Convert Quickly video converters. e.g. MOV converter.',
     },
     {
       number: 2,

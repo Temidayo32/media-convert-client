@@ -256,10 +256,12 @@ const convertImage = async (image: FileDetails, user: UserImpl, emailVerified: b
     idToken: string | undefined,
     navigate: ReturnType<typeof useNavigate>,
     setDisplayType: (type: string) => void,
-    setDownloadPageActive: (active: boolean) => void
+    setDownloadPageActive: (active: boolean) => void,
+    setIsLoading: (active: boolean) => void
   ): Promise<void> => {
-    console.log(uploadedImages);
-  
+    // console.log(uploadedImages);
+    setIsLoading(true);
+
     const conversionPromises = uploadedImages.map((image) =>
       convertImage(image, user, emailVerified, idToken)
     );

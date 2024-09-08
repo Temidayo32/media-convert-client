@@ -22,7 +22,7 @@ describe('AccountSuccess Component', () => {
             </Router>
         );
         expect(screen.getByText(/Account Created!/i)).toBeInTheDocument();
-        expect(screen.getByText(/Thank you for signing up to Media Convert, you are the best!/i)).toBeInTheDocument();
+        expect(screen.getByText(/Thank you for signing up to Convert Quickly, you are the best!/i)).toBeInTheDocument();
         expect(screen.getByText(/CONTINUE FOR FREE/i)).toBeInTheDocument();
     });
 

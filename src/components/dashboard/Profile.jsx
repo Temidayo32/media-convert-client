@@ -130,7 +130,7 @@ const Profile = () => {
         <div className="flex justify-center h-screen bg-gray-100">
             <div className="mt-8 items-center justify-center text-center">
                 <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-6 text-center">User Profile</h1>
-                <p className="text-center w-4/5 sm:w-full text-xs md:text-sm lg:text-base mb-6 text-gray-600">Welcome to your user dashboard. Thanks for using Media Convert.</p>
+                <p className="text-center w-4/5 sm:w-full text-xs md:text-sm lg:text-base mb-6 text-gray-600">Welcome to your user dashboard. Thanks for using Convert Quickly.</p>
                 <form onSubmit={handleUpdateProfile}>
                     <div className="flex flex-col items-center mb-6 relative">
                         <div className="relative group">
