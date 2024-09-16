@@ -143,7 +143,7 @@ export function onSuccess(
       callback: () => {
         try {
           const picker = new window.google.picker.PickerBuilder()
-            .setOrigin(window.location.protocol + '//' + window.location.host)
+            .setOrigin(window.location.host)
             .setRelayUrl(window.location.host)
             .enableFeature(window.google.picker.Feature.SUPPORT_DRIVES)
             .enableFeature(window.google.picker.Feature.NAV_HIDDEN)
