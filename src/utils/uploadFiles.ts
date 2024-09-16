@@ -10,7 +10,7 @@ declare global {
   }
 }
 
-
+const FRONTEND_URL = process.env.REACT_APP_BASE_FRONTEND
 const MAX_FILE_SIZE = 1 * 1024 * 1024 * 1024;
 
 function formatFileSize(bytes: number): string {
@@ -143,7 +143,7 @@ export function onSuccess(
       callback: () => {
         try {
           const picker = new window.google.picker.PickerBuilder()
-            .setOrigin("https://localhost:3000")
+            .setOrigin(FRONTEND_URL)
             .enableFeature(window.google.picker.Feature.SUPPORT_DRIVES)
             .enableFeature(window.google.picker.Feature.NAV_HIDDEN)
             .enableFeature(window.google.picker.Feature.MULTISELECT_ENABLED)
