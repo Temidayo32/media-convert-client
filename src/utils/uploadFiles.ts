@@ -107,7 +107,7 @@ export function onSuccess(
     console.log(newFiles);
     setUploadedFiles(newFiles);
     setOversizedFiles(oversizedFiles);
-  
+
     if (oversizedFiles.length > 0) {
       setShowErrorMessages(true);
       setTimeout(() => {
@@ -138,13 +138,13 @@ export function onSuccess(
       return;
     }
     // console.log(accessToken);
-  
+
     gapi.load('picker', {
       callback: () => {
         try {
           const picker = new window.google.picker.PickerBuilder()
             .setOrigin(window.location.host)
-            .setRelayUrl(window.location.host)
+            .setRelayUrl('https://docs.google.com')
             .enableFeature(window.google.picker.Feature.SUPPORT_DRIVES)
             .enableFeature(window.google.picker.Feature.NAV_HIDDEN)
             .enableFeature(window.google.picker.Feature.MULTISELECT_ENABLED)
@@ -158,13 +158,13 @@ export function onSuccess(
                 const selectedFiles = data.docs.filter((doc: any) => doc.mimeType.startsWith(mimeTypePrefix));
                 const newFiles = [...uploadedFiles];
                 const oversizedFiles = [];
-  
+
                 for (let i = 0; i < selectedFiles.length; i++) {
                   if (!emailVerified && selectedFiles[i].sizeBytes > MAX_FILE_SIZE) {
                     oversizedFiles.push(`File size of ${selectedFiles[i].name} exceeds the 1 GB limit.`);
                     continue;
                   }
-  
+
                   newFiles.push({
                     source: 'google',
                     file: selectedFiles[i],
@@ -176,7 +176,7 @@ export function onSuccess(
                     settings: { ...defaultSettings },
                   });
                 }
-  
+
                 setUploadedFiles(newFiles);
                 setOversizedFiles(oversizedFiles);
   
@@ -207,4 +207,4 @@ export function onSuccess(
 export function onCancel() {
     console.log('Cancelled');
   }
-  
+
