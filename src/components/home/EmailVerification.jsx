@@ -59,7 +59,7 @@ function EmailVerification({showMenu }) {
 
     const handleResendVerificationEmail = () => {
         const actionCodeSettings = {
-            url: `http://localhost:3000/verify-email?email=${encodeURIComponent(auth.currentUser.email)}`,
+            url: `https://convertquickly.com/verify-email?email=${encodeURIComponent(auth.currentUser.email)}`,
             handleCodeInApp: true
           };
         setError(null);
