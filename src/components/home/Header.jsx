@@ -22,10 +22,11 @@ function Header() {
     const [showMenu, setShowMenu] = useState(false);
     const {emailVerified, setEmailVerified} = useData(); 
     const [menuOpen, setMenuOpen] = useState(false);
+    const [emailVerificationModal, setEmailVerificationModal] = useState(false);
 
     const auth = getAuth();
     // console.log(auth.currentUser)
-    
+
 
     useEffect(() => {
       const storedUser = getLocalStorageItem('userCredentials');
@@ -118,7 +119,7 @@ function Header() {
     
     const handleOpenEmailVerification = () => {
     setShowEmailVerification(true);
-    setUserCredentials(null); 
+    setEmailVerificationModal(true);
     };
 
     const handleVerificationCompletion = () => {
@@ -152,7 +153,7 @@ function Header() {
             </div>
             {showUser ? (
                 <div className="md:hidden mr-4 flex sm:mr-6">
-                  <Menu showMenu={showMenu} setShowMenu={setShowMenu}  />
+                  <Menu showMenu={showMenu} setShowMenu={setShowMenu} />
                 </div>
               ) :  (
               <div className="flex md:hidden">
@@ -204,7 +205,7 @@ function Header() {
               closeSignUpAndShowSuccess={closeSignUpAndShowSuccess} 
             />
           )}
-          {userCredentials && !showSignUp && <AccountSuccess openEmailVerification={handleOpenEmailVerification} />} 
+          {!emailVerificationModal && userCredentials && !showSignUp && <AccountSuccess openEmailVerification={handleOpenEmailVerification} />}
           {showEmailVerification && <EmailVerification showMenu={handleVerificationCompletion} />}
     </header>
         </>

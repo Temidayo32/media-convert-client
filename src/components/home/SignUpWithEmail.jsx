@@ -7,6 +7,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import { getAuth,linkWithCredential, EmailAuthProvider } from "firebase/auth";
 import { validateEmail, validatePassword } from '../../utils/auth';
+import { useData } from '../../DataContext';
 
 function SignUpWithEmail({setUserCredentials, closeSignUpAndShowSuccess}) {
   const [email, setEmail] = useState('');
@@ -16,6 +17,7 @@ function SignUpWithEmail({setUserCredentials, closeSignUpAndShowSuccess}) {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const {setIdToken, setShowUser, setShowSignUpOptions} = useData();
 
   const auth = getAuth();
   const user = auth.currentUser;
@@ -79,10 +81,10 @@ function SignUpWithEmail({setUserCredentials, closeSignUpAndShowSuccess}) {
           .then((userCredentials) => {
             setShowUser(true);
             setShowSignUpOptions(false)
-            setLocalStorageItem('userCredentials', userCredentials);
             closeSignUpAndShowSuccess();
-            // setIdToken(userCredentials.credential.idToken);
+            setIdToken(userCredentials.user.accessToken);
             console.log("Anonymous account successfully upgraded");
+            setUserCredentials(userCredentials.user)
           }).catch((error) => {
             console.log("Error upgrading anonymous account", error);
           });

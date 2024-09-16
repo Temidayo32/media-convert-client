@@ -12,6 +12,7 @@ function Menu() {
   const auth = getAuth();
   const { userCredentials } = useData();
 
+  // console.log(userCredentials)
   const email = userCredentials.email;
 
   let displayName = userCredentials.displayName || '';
