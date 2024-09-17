@@ -3,6 +3,12 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { gapi } from 'gapi-script';
 import { handleGoogleAuth } from './auth';
 import { FileDetails, ImageFilter, VideoSettings } from '../typings/types';
+import { S3Client, PutObjectCommand, GetObjectCommand, CreateMultipartUploadCommand, UploadPartCommand, CompleteMultipartUploadCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import SparkMD5 from "spark-md5";
+// Create an S3 client
+
+
 
 declare global {
   interface Window {
@@ -11,7 +17,18 @@ declare global {
 }
 
 const FRONTEND_URL = process.env.REACT_APP_BASE_FRONTEND
+const R2_BUCKET_NAME = process.env.REACT_APP_R2_BUCKET_NAME
 const MAX_FILE_SIZE = 1 * 1024 * 1024 * 1024;
+const CHUNK_SIZE = 5 * 1024 * 1024;
+const LARGE_FILE_THRESHOLD = 5 * 1024 * 1024;
+const s3Client = new S3Client({
+  region: 'auto',
+  endpoint: process.env.REACT_APP_R2_ENDPOINT!,
+  credentials: {
+    accessKeyId: process.env.REACT_APP_R2_ACCESS_KEY!,
+    secretAccessKey: process.env.REACT_APP_R2_SECRET_KEY!,
+  },
+});
 
 function formatFileSize(bytes: number): string {
   const mbSize = bytes / (1024 * 1024);
@@ -23,6 +40,143 @@ function formatFileSize(bytes: number): string {
   }
 }
 
+const generatePresignedUrl = async (bucketName: string, key: string) => {
+  try {
+    // Create the command for uploading a file
+    const command = new GetObjectCommand({
+      Bucket: bucketName,
+      Key: key,
+    });
+
+    // Generate the presigned URL, set to expire in 24 hours (60 * 60 * 24 seconds)
+    const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 60 * 60 * 24 });
+    // console.log('Presigned URL:', presignedUrl);
+    return presignedUrl;
+  } catch (error) {
+    console.error('Error generating presigned URL:', error);
+    throw error;
+  }
+};
+
+async function uploadLargeR2Bucket (file: File | Blob, fileName: string, fileType: string) {
+  const createMultipartUploadParams = {
+    Bucket: R2_BUCKET_NAME,
+    Key: fileName,
+    ContentType: fileName,
+  };
+
+  const { UploadId } = await s3Client.send(new CreateMultipartUploadCommand(createMultipartUploadParams));
+
+  let partNumber = 1;
+  const uploadPromises = [];
+
+  // Calculate total chunks
+  const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+
+  // Read and upload each chunk using FileReader
+  for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+    const start = chunkIndex * CHUNK_SIZE;
+    const end = Math.min(start + CHUNK_SIZE, file.size);
+
+    const chunk = file.slice(start, end); // Slice the file into chunks
+
+    const uploadPartParams = {
+      Bucket: R2_BUCKET_NAME,
+      Key: fileName,
+      PartNumber: partNumber,
+      UploadId: UploadId,
+      Body: chunk, // Blob data as Body
+    };
+
+    // console.log(`Uploading part ${partNumber} of size ${chunk.size} bytes`);
+
+    const data = await s3Client.send(new UploadPartCommand(uploadPartParams));
+
+    const eTag: string = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        const arrayBuffer = e.target?.result;
+
+        if (arrayBuffer && arrayBuffer instanceof ArrayBuffer) {
+          const md5Hash = SparkMD5.ArrayBuffer.hash(arrayBuffer);
+          resolve(md5Hash);  // Resolve the ETag (MD5 hash)
+        } else {
+          reject(new Error("Failed to read the file chunk correctly."));
+        }
+      };
+
+      reader.onerror = reject;
+      reader.readAsArrayBuffer(chunk);
+    });
+
+    uploadPromises.push({
+      PartNumber: partNumber,
+      ETag: eTag,
+    });
+
+    partNumber++;
+  }
+
+  // console.log(uploadPromises)
+  // Complete multipart upload
+  const completeMultipartUploadParams = {
+    Bucket: R2_BUCKET_NAME,
+    Key: fileName,
+    UploadId: UploadId,
+    MultipartUpload: {
+      Parts: uploadPromises.map(promise => ({
+        PartNumber: promise.PartNumber,
+        ETag: promise.ETag
+      })),
+    },
+  };
+
+  await s3Client.send(new CompleteMultipartUploadCommand(completeMultipartUploadParams));
+
+  // console.log(`${fileName} uploaded to ${R2_BUCKET_NAME}/${fileName}`);
+};
+
+
+
+export async function uploadToR2Bucket ( file: File | Blob, fileName: string, fileType: string): Promise<void> {
+
+  const command = new PutObjectCommand({
+    Bucket: R2_BUCKET_NAME!,
+    Key: fileName,
+    Body: file,
+    ContentType: fileType,
+  });
+
+  try {
+    // Upload the video to Cloudflare R2
+    await s3Client.send(command);
+    // console.log('Upload successful:', uploadData);
+
+  } catch (error) {
+    console.log(`An error occured: ${error}`)
+  }
+}
+
+export async function uploadR2 (file: File | Blob, fileName: string, fileType: string): Promise<string> {
+  const fileSize = file.size
+
+  try {
+      if (fileSize > LARGE_FILE_THRESHOLD) {
+        // Use multipart upload for larger files
+        await uploadLargeR2Bucket(file, fileName, fileType);
+      } else {
+        // Use regular single-part upload for smaller files
+        await uploadToR2Bucket(file, fileName, fileType);
+      }
+      const presignedUrl = await generatePresignedUrl(R2_BUCKET_NAME!, fileName);
+      // console.log('Presigned URL:', presignedUrl);
+      return presignedUrl
+    } catch (error) {
+      console.log(`An error occured: ${error}`)
+      return 'null'
+    }
+};
 
 //upload for local device
 export function handleFileUpload(

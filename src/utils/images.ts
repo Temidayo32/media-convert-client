@@ -2,6 +2,7 @@ import axios from 'axios';
 import { ImageFilter, FileDetails } from '../typings/types';
 import { UserImpl } from '../typings/user';
 import { useNavigate } from 'react-router-dom';
+import { uploadR2 } from './uploadFiles';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL
 
@@ -192,35 +193,45 @@ export const imageSettingsConfig = [
     },
   ];  
 
-const convertImage = async (image: FileDetails, user: UserImpl, emailVerified: boolean, idToken: string | undefined): Promise<{ success: boolean; data?: any; error?: any }> => {
+const convertImage = async (image: FileDetails, user: UserImpl, emailVerified: boolean, idToken: string | undefined): Promise<{ success: boolean; data?: any; error?: any } | void> => {
     const fileNameWithoutExtension = image.name.split('.')[0];
     const fileExtension = image.name.split('.')[1];
-  
+    let preSignedUrl = null
+    const fileName = fileNameWithoutExtension + image.jobId
+
+    if (image.file instanceof File || image.file instanceof Blob) {
+      preSignedUrl = await uploadR2(image.file, fileName, image.file.type)
+      if (preSignedUrl === null || preSignedUrl === 'null') {
+        console.warn(`Skipping video ${image.name} due to failed URL generation.`);
+        return;
+      }
+    }
+
     const formData = new FormData();
     formData.append('mimeType', 'image');
     formData.append('source', image.source);
-    if (image.file instanceof File || image.file instanceof Blob) {
-      formData.append('image', image.file);
-    } 
     formData.append('imageId', image.fileId || '');
     formData.append('jobId', image.jobId);
     if (image.fileLink) {
       formData.append('dropboxPath', image.fileLink);
+    }
+    if (preSignedUrl) {
+      formData.append('imageUrl', preSignedUrl);
     }
     formData.append('imageName', fileNameWithoutExtension);
     formData.append('imageExt', fileExtension);
     formData.append('imageSize', image.size);
     formData.append('imageFormat', image.format);
     formData.append('imageSettings', JSON.stringify(image.settings));
-  
+
     if (user) {
       formData.append('userId', user.uid);
     }
-  
+
     // for (const [key, value] of formData.entries()) {
     //   console.log(`${key}: ${value}`);
     // }
-  
+
     // Determine the correct endpoint based on email verification
     let endpoint;
     if (emailVerified) {
@@ -268,7 +279,7 @@ const convertImage = async (image: FileDetails, user: UserImpl, emailVerified: b
   
     try {
       const results = await Promise.all(conversionPromises);
-      const successfulConversions = results.filter((result) => result.success);
+      const successfulConversions = results.filter((result) => result && result.success);
       console.log(successfulConversions);
   
       if (successfulConversions.length > 0) {

@@ -5,7 +5,7 @@ import axios from 'axios';
 import io from 'socket.io-client';
 import { getAuth } from 'firebase/auth';
 import { initGoogleAPI, handleGoogleAuth } from '../../utils/auth';
-import { handleOpenPicker, onCancel, onSuccess, handleFileUpload } from '../../utils/uploadFiles';
+import { handleOpenPicker, onCancel, onSuccess, handleFileUpload, uploadR2 } from '../../utils/uploadFiles';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL
 
@@ -125,66 +125,86 @@ const UploadVideo = ({defaultFormat}) => {
     }),
   };
 
-  const handleConvertVideos = () => {
+  const handleConvertVideos = async () => {
     setIsLoading(true);
     // Convert uploaded video
-    uploadedVideos.forEach((video) => {
-      const fileNameWithoutExtension = video.name.split('.')[0];
-      const fileExtension = video.name.split('.')[1];
+    try {
+        const videoPromises = uploadedVideos.map(async (video) => {
+        const fileNameWithoutExtension = video.name.split('.')[0];
+        const fileExtension = video.name.split('.')[1];
 
-      const formData = new FormData();
-      formData.append('mimeType', 'video');
-      formData.append('source', video.source);
-      formData.append('video', video.file)
-      formData.append('videoId', video.fileId);
-      formData.append('jobId', video.jobId)
-      formData.append('dropboxPath', video.fileLink)
-      formData.append('videoName', fileNameWithoutExtension);
-      formData.append('videoExt', fileExtension)
-      formData.append('videoSize', video.size);
-      formData.append('videoFormat', video.format);
-      formData.append('videoSettings', JSON.stringify(video.settings))
-      if (user) {
-        formData.append('userId', user.uid);
+        let preSignedUrl = null
+
+        const fileName = fileNameWithoutExtension + video.jobId
+
+        if (video.file) {
+          preSignedUrl = await uploadR2(video.file, fileName, video.file.type)
+          if (preSignedUrl === null || preSignedUrl === 'null') {
+            console.warn(`Skipping video ${video.name} due to failed URL generation.`);
+            return;
+          }
+        }
+
+        const formData = new FormData();
+        formData.append('mimeType', 'video');
+        formData.append('source', video.source);
+        formData.append('videoUrl', preSignedUrl);
+        formData.append('videoId', video.fileId);
+        formData.append('jobId', video.jobId)
+        formData.append('dropboxPath', video.fileLink)
+        formData.append('videoName', fileNameWithoutExtension);
+        formData.append('videoExt', fileExtension)
+        formData.append('videoSize', video.size);
+        formData.append('videoFormat', video.format);
+        formData.append('videoSettings', JSON.stringify(video.settings))
+        if (user) {
+          formData.append('userId', user.uid);
+        }
+        // for (const [key, value] of formData.entries()) {
+        //   console.log(`${key}: ${value}`);
+        // }
+
+        // Determine the correct endpoint
+      let endpoint;
+      if (emailVerified) {
+        endpoint = video.source === 'local' ? '/video/signed/convert' : '/video/signed/convertcloud';
+      } else {
+        endpoint = video.source === 'local' ? '/video/convert' : '/video/convertcloud';
       }
-      // for (const [key, value] of formData.entries()) {
-      //   console.log(`${key}: ${value}`);
-      // }
-  
-      // Determine the correct endpoint
-    let endpoint;
-    if (emailVerified) {
-      endpoint = video.source === 'local' ? '/video/signed/convert' : '/video/signed/convertcloud';
-    } else {
-      endpoint = video.source === 'local' ? '/video/convert' : '/video/convertcloud';
+
+      // Set up headers
+      const headers = {
+        'Content-Type': 'multipart/form-data'
+      };
+
+      if (idToken) {
+        headers['Authorization'] = `Bearer ${idToken}`;
+        headers['User-Id'] = user.uid;
+        headers['Is-Anonymous'] = user.isAnonymous.toString();
+      }
+
+
+      const requestURL = `${BASE_URL}${endpoint}`;
+
+      axios.post(requestURL, formData, { headers, withCredentials: true })
+        .then(data => console.log(data))
+        .then(() => {
+          console.log('Navigating to conversion-progress page');
+          setDisplayType('videos');
+          setDownloadPageActive(true);
+          navigate('/download');
+        })
+        .catch((error) => {
+          console.error('Error converting video:', error);
+        });
+    });
+
+    await Promise.all(videoPromises);
+    } catch (error) {
+      console.error('Error during video conversion:', error);
+      setIsLoading(false);
     }
 
-    // Set up headers
-    const headers = {
-      'Content-Type': 'multipart/form-data'
-    };
-
-    if (idToken) {
-      headers['Authorization'] = `Bearer ${idToken}`;
-      headers['User-Id'] = user.uid;
-      headers['Is-Anonymous'] = user.isAnonymous.toString();
-    }
-
-
-    const requestURL = `${BASE_URL}${endpoint}`;
-
-    axios.post(requestURL, formData, { headers, withCredentials: true })
-      .then(data => console.log(data))
-      .then(() => {
-        console.log('Navigating to conversion-progress page');
-        setDisplayType('videos');
-        setDownloadPageActive(true);
-        navigate('/download');
-      })
-      .catch((error) => {
-        console.error('Error converting video:', error);
-      });
-  });
   };
 
   const updateVideoSettings = (videoId, newSettings) => {

@@ -2,10 +2,12 @@ import React from 'react';
 import { FaVideo, FaFileImage, FaFileAlt, FaRocket, FaRegFilePdf } from 'react-icons/fa';
 import { BsFiletypePng, BsFiletypeSvg, BsFiletypePdf, BsFiletypeDoc, BsFiletypeMp4, BsFiletypeGif } from "react-icons/bs";
 import { useData } from '../../DataContext';
+import { getLocalStorageItem } from '../../utils/localStorage';
 
 function HeroSection() {
     const { showSignUpOptions, setShowSignUpOptions } = useData();
-    
+    const storedUser = getLocalStorageItem('userCredentials');
+
     const toggleSignUpOptions = () => {
         setShowSignUpOptions(!showSignUpOptions);
     };
@@ -20,12 +22,14 @@ function HeroSection() {
                 Convert videos, images, and documents from one format to another with{' '}
                 <strong className="text-teal-800">ease and speed!</strong>
                 </p>
-                <button
-                onClick={toggleSignUpOptions}
-                className="bg-teal-800 hover:bg-teal-500 text-white py-2 px-4 lg:py-4 lg:px-8 text-lg md:text-xl lg:text-2xl rounded-xl transition-colors duration-300"
-                >
-                Get Started
-                </button>
+                {
+                    storedUser.isAnonymous && <button
+                    onClick={toggleSignUpOptions}
+                    className="bg-teal-800 hover:bg-teal-500 text-white py-2 px-4 lg:py-4 lg:px-8 text-lg md:text-xl lg:text-2xl rounded-xl transition-colors duration-300"
+                    >
+                    Get Started
+                    </button>
+                }
             </div>
             <div className="w-1/2 relative">
                 <div className="relative">
