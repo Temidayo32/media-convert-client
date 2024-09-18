@@ -122,7 +122,7 @@ export const handleGoogleAuth = async (): Promise<string | null> => {
     const dbx = new DropboxAuth({ clientId: DROPBOX_CLIENT_ID });
   
     const authUrl = await dbx.getAuthenticationUrl(
-      DROPBOX_REDIRECT_URI,
+      DROPBOX_REDIRECT_URI!,
       STATE,
       'code',
       'offline',
@@ -153,7 +153,7 @@ export const handleGoogleAuth = async (): Promise<string | null> => {
   
             if (code) {
               dbx
-              .getAccessTokenFromCode(DROPBOX_REDIRECT_URI, code)
+              .getAccessTokenFromCode(DROPBOX_REDIRECT_URI!, code)
               .then((response: DropboxResponse<any>) => {
                 console.log(response)
                 const token = response.result.access_token as string; // Adjust this according to DropboxResponse structure
