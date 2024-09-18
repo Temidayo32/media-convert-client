@@ -10,7 +10,7 @@ import { Task } from '../typings/types';
 const SCOPES = 'https://www.googleapis.com/auth/drive.file';
 const DROPBOX_CLIENT_ID =  dropboxAppKey;
 const STATE = 'random_string';
-const DROPBOX_REDIRECT_URI = 'http://localhost:3000';
+const DROPBOX_REDIRECT_URI =  process.env.REACT_APP_BASE_FRONTEND//'http://localhost:3000';
 
 export const validateEmail = (email: string): boolean => {
   const re = /\S+@\S+\.\S+/;
