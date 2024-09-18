@@ -138,7 +138,7 @@ export const handleGoogleAuth = async (): Promise<string | null> => {
         try {
           if (authWindow.closed) {
             clearInterval(interval);
-            // new Error('Popup closed by user');
+            reject(new Error('Popup closed by user'));
           }
   
           const authUrl = new URL(authWindow.location.href);
@@ -169,10 +169,10 @@ export const handleGoogleAuth = async (): Promise<string | null> => {
         }
       }, 2000);
   
-      authWindow.onbeforeunload = () => {
-        clearInterval(interval);
-        reject(new Error('Popup closed by user'));
-      };
+      // authWindow.onbeforeunload = () => {
+      //   clearInterval(interval);
+      //   reject(new Error('Popup closed by user'));
+      // };
     });
   };
   
