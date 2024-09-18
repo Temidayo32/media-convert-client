@@ -40,11 +40,11 @@ function formatFileSize(bytes: number): string {
   }
 }
 
-const generatePresignedUrl = async (bucketName: string, key: string) => {
+const generatePresignedUrl = async (key: string) => {
   try {
     // Create the command for uploading a file
     const command = new GetObjectCommand({
-      Bucket: bucketName,
+      Bucket: R2_BUCKET_NAME,
       Key: key,
     });
 
@@ -169,7 +169,7 @@ export async function uploadR2 (file: File | Blob, fileName: string, fileType: s
         // Use regular single-part upload for smaller files
         await uploadToR2Bucket(file, fileName, fileType);
       }
-      const presignedUrl = await generatePresignedUrl(R2_BUCKET_NAME!, fileName);
+      const presignedUrl = await generatePresignedUrl(fileName);
       // console.log('Presigned URL:', presignedUrl);
       return presignedUrl
     } catch (error) {
