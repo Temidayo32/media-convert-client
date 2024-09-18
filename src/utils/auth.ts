@@ -138,7 +138,7 @@ export const handleGoogleAuth = async (): Promise<string | null> => {
         try {
           if (authWindow.closed) {
             clearInterval(interval);
-            reject(new Error('Popup closed by user'));
+            // new Error('Popup closed by user');
           }
   
           const authUrl = new URL(authWindow.location.href);
