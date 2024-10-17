@@ -1,12 +1,12 @@
-export const getLocalStorageItem = <T>(key: string): T | null => {
-  const item = localStorage.getItem(key);
+export const getSessionStorageItem = <T>(key: string): T | null => {
+  const item = sessionStorage.getItem(key);
   return item ? JSON.parse(item) : null;
 };
 
-export const setLocalStorageItem = (key: string, value: any): void => {
-  localStorage.setItem(key, JSON.stringify(value));
+export const setSessionStorageItem = (key: string, value: any): void => {
+  sessionStorage.setItem(key, JSON.stringify(value));
 };
 
-export const removeLocalStorageItem = (key: string): void => {
+export const removeSessionStorageItem = (key: string): void => {
   localStorage.removeItem(key);
 };
