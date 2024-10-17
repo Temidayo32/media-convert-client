@@ -61,23 +61,23 @@ function Header() {
           setShowMenu(false);
 
           // Sign in anonymously if no user is found
-        signInAnonymously(auth)
-        .then((userCredentials) => {
-          const user = userCredentials.user;
-          setUserCredentials(user);
-          setShowUser(false);
-          setEmailVerified(user.emailVerified);
-          setShowLogin(false);
-          setLocalStorageItem('userCredentials', user);
+          signInAnonymously(auth)
+          .then((userCredentials) => {
+            const user = userCredentials.user;
+            setUserCredentials(user);
+            setShowUser(false);
+            setEmailVerified(user.emailVerified);
+            setShowLogin(false);
+            setLocalStorageItem('userCredentials', user);
 
-          user.getIdToken(true).then((token) => {
-            setIdToken(token);
-            setLocalStorageItem('idToken', token);
+            user.getIdToken(true).then((token) => {
+              setIdToken(token);
+              setLocalStorageItem('idToken', token);
+            });
+          })
+          .catch((error) => {
+            console.error('Anonymous sign-in failed:', error);
           });
-        })
-        .catch((error) => {
-          console.error('Anonymous sign-in failed:', error);
-        });
         }
       });
   

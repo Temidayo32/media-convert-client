@@ -1,12 +1,15 @@
 import React from 'react';
 import { useData } from '../../DataContext';
 import { getLocalStorageItem } from '../../utils/localStorage';
+import { getAuth } from 'firebase/auth';
 
 
 
 const Signupmodal = () => {
   const { showSignUpOptions, setShowSignUpOptions } = useData();
   const storedUser = getLocalStorageItem('userCredentials');
+  const auth = getAuth();
+  const user = auth.currentUser
 
 
   const toggleSignUpOptions = () => {
@@ -15,7 +18,7 @@ const Signupmodal = () => {
   return (
     <div>
         {
-        storedUser.isAnonymous && <div className="bg-teal-500 border mx-4 sm:mx-8 md:mx-16 lg:mx-24 xl:mx-48 my-8 p-8 sm:p-12 md:p-16 border-teal-600 rounded-lg shadow-2xl transition-transform duration-300 hover:scale-105 text-center">
+        user.isAnonymous && <div className="bg-teal-500 border mx-4 sm:mx-8 md:mx-16 lg:mx-24 xl:mx-48 my-8 p-8 sm:p-12 md:p-16 border-teal-600 rounded-lg shadow-2xl transition-transform duration-300 hover:scale-105 text-center">
         <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white mb-4 sm:mb-6 md:mb-8 px-4 sm:px-8 md:px-16 lg:px-24">
           Get unlimited access to convert as many files as you want
         </h2>
