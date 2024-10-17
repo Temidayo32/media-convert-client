@@ -1,7 +1,7 @@
 import React, {useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Login, PasswordReset, Signup, AccountSuccess, EmailVerification, EmailAdminVerication, EmailVerificationMenu, Menu, HeaderOptions } from '..';
-import { getSessionStorageItem, setSessionStorageItem, removeSessionStorageItem } from '../../utils/localStorage';
+import { getLocalStorageItem, setLocalStorageItem, removeLocalStorageItem } from '../../utils/localStorage';
 import { getAuth, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 import { useData } from '../../DataContext';
 import { GoogleAuthProvider } from "firebase/auth";
@@ -29,8 +29,8 @@ function Header() {
 
 
     useEffect(() => {
-      const storedUser = getSessionStorageItem('userCredentials');
-      const storedToken = getSessionStorageItem('idToken');
+      const storedUser = getLocalStorageItem('userCredentials');
+      const storedToken = getLocalStorageItem('idToken');
 
       if (storedUser && !storedUser.isAnonymous) {
         setUserCredentials(storedUser);
@@ -49,11 +49,11 @@ function Header() {
           setShowUser(true);
           setEmailVerified(user.emailVerified);
           setShowLogin(false);
-          setSessionStorageItem('userCredentials', user);
+          setLocalStorageItem('userCredentials', user);
           
           user.getIdToken(true).then((token) => {
             setIdToken(token);
-            setSessionStorageItem('idToken', token);
+            setLocalStorageItem('idToken', token);
           });
         } else {
           setUserCredentials(null);
@@ -68,7 +68,7 @@ function Header() {
             setShowUser(false);
             setEmailVerified(user.emailVerified);
             setShowLogin(false);
-            setSessionStorageItem('userCredentials', user);
+            setLocalStorageItem('userCredentials', user);
 
             user.getIdToken(true).then((token) => {
               setIdToken(token);

@@ -2,11 +2,11 @@ import React from 'react';
 import { FaVideo, FaFileImage, FaFileAlt, FaRocket, FaRegFilePdf } from 'react-icons/fa';
 import { BsFiletypePng, BsFiletypeSvg, BsFiletypePdf, BsFiletypeDoc, BsFiletypeMp4, BsFiletypeGif } from "react-icons/bs";
 import { useData } from '../../DataContext';
-import { getSessionStorageItem } from '../../utils/localStorage';
+import { getLocalStorageItem } from '../../utils/localStorage';
 
 function HeroSection() {
     const { showSignUpOptions, setShowSignUpOptions } = useData();
-    const storedUser = getSessionStorageItem('userCredentials');
+    const storedUser = getLocalStorageItem('userCredentials');
 
     const toggleSignUpOptions = () => {
         setShowSignUpOptions(!showSignUpOptions);

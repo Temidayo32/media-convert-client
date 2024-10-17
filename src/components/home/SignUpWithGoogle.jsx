@@ -5,7 +5,7 @@ import 'firebase/compat/auth';
 import  { useData } from '../../DataContext';
 import { handleGoogleSignIn } from '../../utils/auth';
 import { GoogleAuthProvider, getAuth,  linkWithCredential  } from 'firebase/auth';
-import { setSessionStorageItem } from '../../utils/localStorage';
+import { setLocalStorageItem } from '../../utils/localStorage';
 import { handleAnonymousUpgradeMergeConflict } from '../../utils/auth';
 import { db } from '../../config/firebase_config';
 
@@ -34,7 +34,7 @@ function SignUpWithGoogle() {
           const userCredentials = await linkWithCredential(user, credential);
           setShowUser(true);
           setShowSignUpOptions(false);
-          setSessionStorageItem('userCredentials', userCredentials);
+          setLocalStorageItem('userCredentials', userCredentials);
           console.log("Anonymous account successfully upgraded");
         } catch (error) {
           if (error.code === 'auth/credential-already-in-use') {

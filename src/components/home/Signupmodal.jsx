@@ -1,12 +1,12 @@
 import React from 'react';
 import { useData } from '../../DataContext';
-import { getSessionStorageItem } from '../../utils/localStorage';
+import { getLocalStorageItem } from '../../utils/localStorage';
 
 
 
 const Signupmodal = () => {
   const { showSignUpOptions, setShowSignUpOptions } = useData();
-  const storedUser = getSessionStorageItem('userCredentials');
+  const storedUser = getLocalStorageItem('userCredentials');
 
 
   const toggleSignUpOptions = () => {
