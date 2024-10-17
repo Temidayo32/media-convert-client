@@ -36,20 +36,20 @@ function Login({onForgotPasswordClick, show, onClose, showSignUp }) {
     return (
       <div>
         {show && (
-        <div id='closeLogin' class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-20" onClick={handleClick}>
+        <div id='closeLogin' className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-20" onClick={handleClick}>
             <div ref={loginRef} className="bg-white p-8 sm:p-12 w-10/12 h-fit md:w-2/3 lg:w-1/2 xl:w-2/5 rounded-lg shadow-xl">
-            <div class="mb-12 text-center"><p className="font-weight-bold text-lg md:text-2xl mb-0">Log In</p></div>
-            <div class="mb-4 w-100 text-center">
+            <div className="mb-12 text-center"><p className="font-weight-bold text-lg md:text-2xl mb-0">Log In</p></div>
+            <div className="mb-4 w-100 text-center">
                 <SignUpWithGoogle />
             </div>
             <div>
-                <div class="mb-4 text-sm md:text-base text-center py-2"><strong>Or</strong></div>
+                <div className="mb-4 text-sm md:text-base text-center py-2"><strong>Or</strong></div>
             </div>
             <div>
                 <LoginWithEmail onForgotPasswordClick={onForgotPasswordClick} />
             </div>
-            <hr class="mb-4 mt-4"></hr>
-            <div class="text-center text-sm md:text-base">
+            <hr className="mb-4 mt-4"></hr>
+            <div className="text-center text-sm md:text-base">
                 Don't have an account yet? <Link onClick={showSignUp} className='text-teal-500 hover:text-teal-300 transition-colors duration-300'>Sign Up</Link>
             </div>
             </div>

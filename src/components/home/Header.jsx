@@ -20,7 +20,7 @@ function Header() {
     const { userCredentials, setUserCredentials } = useData();
     const [showEmailVerification, setShowEmailVerification] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
-    const {emailVerified, setEmailVerified} = useData();
+    const {emailVerified, setEmailVerified} = useData(); 
     const [menuOpen, setMenuOpen] = useState(false);
     const [emailVerificationModal, setEmailVerificationModal] = useState(false);
 
@@ -31,66 +31,58 @@ function Header() {
     useEffect(() => {
       const storedUser = getLocalStorageItem('userCredentials');
       const storedToken = getLocalStorageItem('idToken');
-    
+
       if (storedUser && !storedUser.isAnonymous) {
         setUserCredentials(storedUser);
         setShowUser(true);
         setEmailVerified(storedUser.emailVerified);
         setShowLogin(false);
       }
-    
+  
       if (storedToken) {
         setIdToken(storedToken);
       }
-    
-      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+  
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
         if (user && !user.isAnonymous) {
-          try {
-            const token = await user.getIdToken(true);
-            setUserCredentials(user);
-            setShowUser(true);
-            setEmailVerified(user.emailVerified);
-            setShowLogin(false);
+          setUserCredentials(user);
+          setShowUser(true);
+          setEmailVerified(user.emailVerified);
+          setShowLogin(false);
+          setLocalStorageItem('userCredentials', user);
+          
+          user.getIdToken(true).then((token) => {
             setIdToken(token);
-    
-            // Store both credentials and token in localStorage after successful login
-            setLocalStorageItem('userCredentials', user);
             setLocalStorageItem('idToken', token);
-          } catch (error) {
-            console.error('Error retrieving token:', error);
-          }
+          });
         } else {
-          // Clear local storage and reset user state
-          removeLocalStorageItem('userCredentials');
-          removeLocalStorageItem('idToken');
           setUserCredentials(null);
           setShowUser(false);
           setShowMenu(false);
-    
-          // Sign in anonymously
-          try {
-            const userCredentials = await signInAnonymously(auth);
-            const user = userCredentials.user;
-            const token = await user.getIdToken(true);
-    
-            setUserCredentials(user);
-            setShowUser(false);
-            setEmailVerified(user.emailVerified);
-            setShowLogin(false);
+
+          // Sign in anonymously if no user is found
+        signInAnonymously(auth)
+        .then((userCredentials) => {
+          const user = userCredentials.user;
+          setUserCredentials(user);
+          setShowUser(false);
+          setEmailVerified(user.emailVerified);
+          setShowLogin(false);
+          setLocalStorageItem('userCredentials', user);
+
+          user.getIdToken(true).then((token) => {
             setIdToken(token);
-    
-            // Store anonymous credentials and token
-            setLocalStorageItem('userCredentials', user);
             setLocalStorageItem('idToken', token);
-          } catch (error) {
-            console.error('Anonymous sign-in failed:', error);
-          }
+          });
+        })
+        .catch((error) => {
+          console.error('Anonymous sign-in failed:', error);
+        });
         }
       });
-    
+  
       return () => unsubscribe();
     }, [auth, setIdToken]);
-
     
 
     // useEffect(() => {
