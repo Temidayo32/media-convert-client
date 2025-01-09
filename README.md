@@ -8,9 +8,6 @@ Check out [Convert Quickly (backend)](https://github.com/Temidayo32/media-conver
 
 [![Watch the video](https://img.youtube.com/vi/G3hXirKg_7s/maxresdefault.jpg)](https://youtu.be/G3hXirKg_7s)
 
-I'll update the frontend architecture to include the routing and component organization structure.
-
-
 
 ```mermaid
 flowchart TB
